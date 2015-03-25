@@ -78,6 +78,7 @@ class JSchSftpClient implements SftpClient {
         return status;
     }
 
+    @Override
     public void download(String remoteFilename, String localFilename) throws SshException {
         setStatus("Starting Session...");
         Session session = getSession();
