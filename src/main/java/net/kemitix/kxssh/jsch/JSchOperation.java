@@ -69,51 +69,6 @@ public class JSchOperation implements StatusProvider {
         return session;
     }
 
-    // ACK
-    private static final String ERROR_ACK = "ACK Error: ";
-    private static final String ERROR_ACK_FATAL = "Fatal ACK Error: ";
-    private static final String ERROR_READING_ACK = "Error reading ACK";
-
-    protected int checkAck(JSchIOChannel ioChannel) throws SshException {
-        int status;
-        try {
-            status = ioChannel.read();
-            // b may be 0 for success,
-            //          1 for error,
-            //          2 for fatal error,
-            //          -1
-            if (status == 0) {
-                return status;
-            }
-            if (status == -1) {
-                return status;
-            }
-
-            if (status == 1 || status == 2) {
-                StringBuilder sb = new StringBuilder();
-                int c;
-                do {
-                    c = ioChannel.read();
-                    sb.append((char) c);
-                } while (c != '\n');
-                if (status == 1) { // error
-                    System.out.print(sb.toString());
-                    updateStatus(SshErrorStatus.ACK_ERROR);
-                    throw new SshException(ERROR_ACK + sb.toString());
-                }
-                if (status == 2) { // fatal error
-                    System.out.print(sb.toString());
-                    updateStatus(SshErrorStatus.ACK_FATAL_ERROR);
-                    throw new SshException(ERROR_ACK_FATAL + sb.toString());
-                }
-            }
-        } catch (IOException ex) {
-            updateStatus(SshErrorStatus.ACK_READ_ERROR);
-            throw new SshException(ERROR_READING_ACK, ex);
-        }
-        return status;
-    }
-
     //STREAM TO FILE
     private static final String ERROR_FILE_REMOTE_READ = "Error reading remote file";
     private static final String ERROR_FILE_LOCAL_WRITE = "Error writing local file";

@@ -36,7 +36,7 @@ public class JSchDownload extends JSchOperation implements SshDownload {
 
         updateStatus(SshOperationStatus.DOWNLOADING);
         while (true) {
-            int c = checkAck(ioChannel);
+            int c = ioChannel.checkStatus();
             if (c != 'C') {
                 break;
             }
@@ -51,7 +51,7 @@ public class JSchDownload extends JSchOperation implements SshDownload {
                 updateStatus(SshErrorStatus.FILE_CLOSE_ERROR);
                 throw new SshException(ERROR_FILE_LOCAL_CLOSE, ex);
             }
-            if (checkAck(ioChannel) != 0) {
+            if (ioChannel.checkStatus() != JSchIOChannel.SUCCESS) {
                 updateStatus(SshErrorStatus.ACK_ERROR);
                 throw new SshException(ERROR_ACK);
             }

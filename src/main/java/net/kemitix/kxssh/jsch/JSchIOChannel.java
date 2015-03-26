@@ -78,4 +78,40 @@ public class JSchIOChannel {
         output.flush();
     }
 
+    // STATUS
+    private static final String ERROR_STATUS = "Status Error: ";
+    private static final String ERROR_READING_STATUS = "Error reading status";
+
+    public static final int EOF = -1;
+    public static final int SUCCESS = 0;
+    public static final int ERROR = 1;
+    public static final int FATAL = 2;
+
+    protected int checkStatus() throws SshException {
+        try {
+            int status = read();
+            switch (status) {
+                case ERROR:
+                case FATAL:
+                    throw new SshException(ERROR_STATUS + readToEol());
+                case EOF:
+                case SUCCESS:
+                default:
+                    return status;
+            }
+        } catch (IOException ex) {
+            throw new SshException(ERROR_READING_STATUS, ex);
+        }
+    }
+
+    private String readToEol() throws IOException {
+        StringBuilder sb = new StringBuilder();
+        int c;
+        do {
+            c = read();
+            sb.append((char) c);
+        } while (c != '\n');
+        return sb.toString();
+    }
+
 }
