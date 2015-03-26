@@ -8,8 +8,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import lombok.Getter;
 import lombok.Setter;
 import net.kemitix.kxssh.SshException;
@@ -29,10 +27,8 @@ public class JSchIOChannel {
         try {
             ioChannel.setChannel(session.openChannel("exec"));
         } catch (JSchException ex) {
-            Logger.getLogger(JSchSftpClient.class.getName()).log(Level.SEVERE, null, ex);
             throw new SshException("Error opening exec channel", ex);
         } catch (IOException ex) {
-            Logger.getLogger(JSchSftpClient.class.getName()).log(Level.SEVERE, null, ex);
             throw new SshException("Error getting Input/Output Streams from channel", ex);
         }
         return ioChannel;
@@ -57,7 +53,6 @@ public class JSchIOChannel {
         try {
             channel.connect();
         } catch (JSchException ex) {
-            Logger.getLogger(JSchIOChannel.class.getName()).log(Level.SEVERE, null, ex);
             throw new SshException("Error connecting  channel", ex);
         }
     }
