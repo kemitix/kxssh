@@ -62,8 +62,16 @@ public class JSchIOChannel {
         }
     }
 
-    int read(byte[] buffer, int offset, int length) throws IOException {
-        return input.read(buffer, offset, length);
+    private static final String ERROR_FILE_REMOTE_READ = "Error reading remote file";
+
+    int read(byte[] buffer, int offset, int length) throws SshException {
+        int bytesRead;
+        try {
+            bytesRead = input.read(buffer, offset, length);
+        } catch (IOException ex) {
+            throw new SshException(ERROR_FILE_REMOTE_READ, ex);
+        }
+        return bytesRead;
     }
 
     int read() throws IOException {

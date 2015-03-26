@@ -70,7 +70,6 @@ public class JSchOperation implements StatusProvider {
     }
 
     //STREAM TO FILE
-    private static final String ERROR_FILE_REMOTE_READ = "Error reading remote file";
     private static final String ERROR_FILE_LOCAL_WRITE = "Error writing local file";
 
     protected void writeIOChannelToOutputStream(
@@ -91,12 +90,7 @@ public class JSchOperation implements StatusProvider {
                 bytesToRead = remaining;
             }
             int bytesRead;
-            try {
-                bytesRead = ioChannel.read(buffer, 0, bytesToRead);
-            } catch (IOException ex) {
-                updateStatus(SshErrorStatus.CHANNEL_READ_ERROR);
-                throw new SshException(ERROR_FILE_REMOTE_READ, ex);
-            }
+            bytesRead = ioChannel.read(buffer, 0, bytesToRead);
             if (bytesRead < 0) {
                 // error
                 break;
@@ -152,37 +146,26 @@ public class JSchOperation implements StatusProvider {
     protected int readMetaData(JSchIOChannel ioChannel) throws SshException {
         byte[] buf = new byte[1024];
         int filesize = 0;
-        try {
-            // read file unix permissions, 4 chars with a space terminator
-            // e.g. '0644 '
-            ioChannel.read(buf, 0, 5);
-
-            // read filesize as a string, terminated by a null or space
-            StringBuilder sb = new StringBuilder();
-            while (true) {
-                if (ioChannel.read(buf, 0, 1) < 0) {
-                    // error
-                    break;
-                }
-                if (buf[0] == ' ') {
-                    break;
-                }
-                sb.append(buf[0] - '0');
+        ioChannel.read(buf, 0, 5);
+        StringBuilder sb = new StringBuilder();
+        while (true) {
+            if (ioChannel.read(buf, 0, 1) < 0) {
+                // error
+                break;
             }
-            filesize = Integer.parseInt(sb.toString());
-
-            // read filename (?), terminated by 0x0a
-            String file = null;
-            for (int i = 0;; i++) {
-                ioChannel.read(buf, i, 1);
-                if (buf[i] == (byte) 0x0a) {
-                    file = new String(buf, 0, i);
-                    break;
-                }
+            if (buf[0] == ' ') {
+                break;
             }
-        } catch (IOException ex) {
-            updateStatus(SshErrorStatus.METADATA_READ_ERROR);
-            throw new SshException(ERROR_METADATA_READ, ex);
+            sb.append(buf[0] - '0');
+        }
+        filesize = Integer.parseInt(sb.toString());
+        String file = null;
+        for (int i = 0;; i++) {
+            ioChannel.read(buf, i, 1);
+            if (buf[i] == (byte) 0x0a) {
+                file = new String(buf, 0, i);
+                break;
+            }
         }
         return filesize;
     }
