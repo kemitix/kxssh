@@ -63,6 +63,7 @@ public class JSchIOChannel {
     }
 
     private static final String ERROR_FILE_REMOTE_READ = "Error reading remote file";
+    private static final String ERROR_READ_OVERRUN = "Error tried to read past end of file";
 
     int read(byte[] buffer, int offset, int length) throws SshException {
         int bytesRead;
@@ -70,6 +71,9 @@ public class JSchIOChannel {
             bytesRead = input.read(buffer, offset, length);
         } catch (IOException ex) {
             throw new SshException(ERROR_FILE_REMOTE_READ, ex);
+        }
+        if (bytesRead == -1) {
+            throw new SshException(ERROR_READ_OVERRUN);
         }
         return bytesRead;
     }
