@@ -9,8 +9,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.kemitix.kxssh.SshAuthentication;
 import net.kemitix.kxssh.SshConnectionProperties;
+import net.kemitix.kxssh.SshErrorStatus;
 import net.kemitix.kxssh.SshException;
 import net.kemitix.kxssh.SshPasswordAuthentication;
+import net.kemitix.kxssh.SshStatus;
 import net.kemitix.kxssh.StatusListener;
 import net.kemitix.kxssh.StatusProvider;
 
@@ -39,16 +41,16 @@ public class JSchOperation implements StatusProvider {
             try {
                 jsch.setKnownHosts(SSHKNOWN_HOSTS);
             } catch (JSchException ex) {
-                updateStatus(SSHKNOWN_HOSTS + " not found");
+                updateStatus(SshErrorStatus.KNOWN_HOSTS_ERROR);
                 throw new RuntimeException(SSHKNOWN_HOSTS + " not found");
             }
         }
         if (authentication.getUsername() == null) {
-            updateStatus(ERROR_SESSION_USERNAME);
+            updateStatus(SshErrorStatus.USERNAME_ERROR);
             throw new RuntimeException(ERROR_SESSION_USERNAME);
         }
         if (connectionProperties.getHostname() == null) {
-            updateStatus(ERROR_SESSION_HOST);
+            updateStatus(SshErrorStatus.HOSTNAME_ERROR);
             throw new RuntimeException(ERROR_SESSION_HOST);
         }
 
@@ -56,7 +58,7 @@ public class JSchOperation implements StatusProvider {
         try {
             session = jsch.getSession(authentication.getUsername(), connectionProperties.getHostname());
         } catch (JSchException ex) {
-            updateStatus(ERROR_SESSION_CREATE);
+            updateStatus(SshErrorStatus.SESSION_CREATE_ERROR);
             throw new SshException(ERROR_SESSION_CREATE, ex);
         }
 
@@ -71,7 +73,7 @@ public class JSchOperation implements StatusProvider {
                             connectionProperties.getHostname(), SSHKNOWN_HOSTS
                         });
             }
-            updateStatus(ERROR_SESSION_CONNECT);
+            updateStatus(SshErrorStatus.SESSION_CONNECT_ERROR);
             throw new SshException(ERROR_SESSION_CONNECT, ex);
         }
 
@@ -107,17 +109,17 @@ public class JSchOperation implements StatusProvider {
                 } while (c != '\n');
                 if (status == 1) { // error
                     System.out.print(sb.toString());
-                    updateStatus(ERROR_ACK + sb.toString());
+                    updateStatus(SshErrorStatus.ACK_ERROR);
                     throw new SshException(ERROR_ACK + sb.toString());
                 }
                 if (status == 2) { // fatal error
                     System.out.print(sb.toString());
-                    updateStatus(ERROR_ACK_FATAL + sb.toString());
+                    updateStatus(SshErrorStatus.ACK_FATAL_ERROR);
                     throw new SshException(ERROR_ACK_FATAL + sb.toString());
                 }
             }
         } catch (IOException ex) {
-            updateStatus(ERROR_READING_ACK);
+            updateStatus(SshErrorStatus.ACK_READ_ERROR);
             throw new SshException(ERROR_READING_ACK, ex);
         }
         return status;
@@ -148,7 +150,7 @@ public class JSchOperation implements StatusProvider {
             try {
                 bytesRead = ioChannel.read(buf, 0, bytesToRead);
             } catch (IOException ex) {
-                updateStatus(ERROR_FILE_REMOTE_READ);
+                updateStatus(SshErrorStatus.CHANNEL_READ_ERROR);
                 throw new SshException(ERROR_FILE_REMOTE_READ, ex);
             }
             if (bytesRead < 0) {
@@ -162,7 +164,7 @@ public class JSchOperation implements StatusProvider {
             try {
                 fos.write(buf, 0, bytesRead);
             } catch (IOException ex) {
-                updateStatus(ERROR_FILE_LOCAL_WRITE);
+                updateStatus(SshErrorStatus.FILE_WRITE_ERROR);
                 throw new SshException(ERROR_FILE_LOCAL_WRITE, ex);
             }
             remaining -= bytesRead;
@@ -170,7 +172,7 @@ public class JSchOperation implements StatusProvider {
                 break;
             }
             if (remaining < 0) {
-                updateStatus("Overrun!");
+                updateStatus(SshErrorStatus.OVERRUN_ERROR);
                 break;
             }
             updateProgress(filesize - remaining, filesize);
@@ -194,9 +196,9 @@ public class JSchOperation implements StatusProvider {
     }
 
     @Override
-    public void updateStatus(String message) {
+    public void updateStatus(SshStatus status) {
         if (statusListener != null) {
-            statusListener.onUpdateStatus(message);
+            statusListener.onUpdateStatus(status);
         }
     }
 
@@ -235,7 +237,7 @@ public class JSchOperation implements StatusProvider {
                 }
             }
         } catch (IOException ex) {
-            updateStatus(ERROR_METADATA_READ);
+            updateStatus(SshErrorStatus.METADATA_READ_ERROR);
             throw new SshException(ERROR_METADATA_READ, ex);
         }
         return filesize;
@@ -251,7 +253,7 @@ public class JSchOperation implements StatusProvider {
             ioChannel.write(buf, 0, 1);
             ioChannel.flush();
         } catch (IOException ex) {
-            updateStatus(ERROR_REMOTE_NOTIFY);
+            updateStatus(SshErrorStatus.REMOTE_NOTIFY_ERROR);
             throw new SshException(ERROR_REMOTE_NOTIFY, ex);
         }
     }

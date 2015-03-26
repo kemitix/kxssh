@@ -4,6 +4,6 @@ public interface StatusListener {
 
     void onUpdateProgress(int remaining, int filesize);
 
-    void onUpdateStatus(String message);
+    void onUpdateStatus(SshStatus status);
 
 }

@@ -7,7 +7,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import net.kemitix.kxssh.SshConnectionProperties;
 import net.kemitix.kxssh.SshDownload;
+import net.kemitix.kxssh.SshErrorStatus;
 import net.kemitix.kxssh.SshException;
+import net.kemitix.kxssh.SshOperationStatus;
 
 public class JSchDownload extends JSchOperation implements SshDownload {
 
@@ -21,16 +23,18 @@ public class JSchDownload extends JSchOperation implements SshDownload {
 
     @Override
     public void download(String remoteFilename, String localFilename) throws SshException {
-        updateStatus("Starting Session...");
+        updateStatus(SshOperationStatus.STARTING);
         Session session = getSession();
         JSchIOChannel ioChannel = JSchIOChannel.createExecIOChannel(session);
         ioChannel.setRemoteFilename(remoteFilename);
         final File localFile = new File(localFilename);
         ioChannel.setLocalFile(localFile);
-        updateStatus("Connecting...");
+
+        updateStatus(SshOperationStatus.CONNECTING);
         ioChannel.connect();
         notifyRemoteReady(ioChannel);
-        updateStatus("Downloading...");
+
+        updateStatus(SshOperationStatus.DOWNLOADING);
         while (true) {
             int c = checkAck(ioChannel);
             if (c != 'C') {
@@ -41,21 +45,22 @@ public class JSchDownload extends JSchOperation implements SshDownload {
             try (FileOutputStream fos = new FileOutputStream(localFile)) {
                 writeIOChannelToOutputStream(ioChannel, fos, filesize);
             } catch (FileNotFoundException ex) {
-                updateStatus(ERROR_FILE_LOCAL_OPEN);
+                updateStatus(SshErrorStatus.FILE_OPEN_ERROR);
                 throw new SshException(ERROR_FILE_LOCAL_OPEN, ex);
             } catch (IOException ex) {
-                updateStatus(ERROR_FILE_LOCAL_CLOSE);
+                updateStatus(SshErrorStatus.FILE_CLOSE_ERROR);
                 throw new SshException(ERROR_FILE_LOCAL_CLOSE, ex);
             }
             if (checkAck(ioChannel) != 0) {
-                updateStatus(ERROR_ACK);
+                updateStatus(SshErrorStatus.ACK_ERROR);
                 throw new SshException(ERROR_ACK);
             }
             notifyRemoteReady(ioChannel);
         }
-        updateStatus("Disconnecting...");
+
+        updateStatus(SshOperationStatus.DISCONNECTING);
         session.disconnect();
-        updateStatus("Downloaded");
+        updateStatus(SshOperationStatus.DISCONNECTED);
     }
 
 }

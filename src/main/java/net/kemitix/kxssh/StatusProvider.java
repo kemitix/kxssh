@@ -6,6 +6,6 @@ public interface StatusProvider {
 
     void updateProgress(int progress, int total);
 
-    void updateStatus(String message);
+    void updateStatus(SshStatus status);
 
 }
