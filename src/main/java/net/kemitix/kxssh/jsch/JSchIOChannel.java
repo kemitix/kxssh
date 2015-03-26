@@ -18,11 +18,11 @@ import net.kemitix.kxssh.SshException;
 @Getter
 public class JSchIOChannel {
 
-    Channel channel;
-    OutputStream output;
-    InputStream input;
-    String remoteFilename;
-    File localFile;
+    private Channel channel;
+    private OutputStream output;
+    private InputStream input;
+    private String remoteFilename;
+    private File localFile;
 
     public static JSchIOChannel createExecIOChannel(Session session) throws SshException {
         JSchIOChannel ioChannel = new JSchIOChannel();
