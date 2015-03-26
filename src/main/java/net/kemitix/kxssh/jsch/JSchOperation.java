@@ -45,18 +45,20 @@ public class JSchOperation implements StatusProvider {
                 throw new RuntimeException(SSHKNOWN_HOSTS + " not found");
             }
         }
-        if (authentication.getUsername() == null) {
+        String username = authentication.getUsername();
+        if (username == null) {
             updateStatus(SshErrorStatus.USERNAME_ERROR);
             throw new RuntimeException(ERROR_SESSION_USERNAME);
         }
-        if (connectionProperties.getHostname() == null) {
+        String hostname = connectionProperties.getHostname();
+        if (hostname == null) {
             updateStatus(SshErrorStatus.HOSTNAME_ERROR);
             throw new RuntimeException(ERROR_SESSION_HOST);
         }
 
         Session session;
         try {
-            session = jsch.getSession(authentication.getUsername(), connectionProperties.getHostname());
+            session = jsch.getSession(username, hostname);
         } catch (JSchException ex) {
             updateStatus(SshErrorStatus.SESSION_CREATE_ERROR);
             throw new SshException(ERROR_SESSION_CREATE, ex);
@@ -70,7 +72,7 @@ public class JSchOperation implements StatusProvider {
             if (ex.getMessage().contains("UnknownHostKey")) {
                 Logger.getLogger(this.getClass().getName())
                         .log(Level.SEVERE, "Try adding key with: ssh-keyscan -t rsa {0} >> {1}", new Object[]{
-                            connectionProperties.getHostname(), SSHKNOWN_HOSTS
+                            hostname, SSHKNOWN_HOSTS
                         });
             }
             updateStatus(SshErrorStatus.SESSION_CONNECT_ERROR);
