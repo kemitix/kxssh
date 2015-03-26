@@ -26,16 +26,17 @@ public class JSchDownload extends JSchOperation implements SshDownload {
         updateStatus(SshOperationStatus.STARTING);
 
         Session session = getSession();
-
         JSchIOChannel ioChannel = JSchIOChannel.createExecIOChannel(session);
         ioChannel.setRemoteFilename(remoteFilename);
         ioChannel.setLocalFile(localFile);
 
         updateStatus(SshOperationStatus.CONNECTING);
+
         ioChannel.connect();
         notifyRemoteReady(ioChannel);
 
         updateStatus(SshOperationStatus.DOWNLOADING);
+
         while (true) {
             int c = ioChannel.checkStatus();
             if (c != 'C') {
@@ -60,7 +61,9 @@ public class JSchDownload extends JSchOperation implements SshDownload {
         }
 
         updateStatus(SshOperationStatus.DISCONNECTING);
+
         session.disconnect();
+
         updateStatus(SshOperationStatus.DISCONNECTED);
     }
 
