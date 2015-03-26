@@ -43,8 +43,8 @@ public class JSchDownload extends JSchOperation implements SshDownload {
             }
             int filesize = readMetaData(ioChannel);
             ioChannel.notifyReady();
-            try (FileOutputStream fos = new FileOutputStream(localFile)) {
-                writeIOChannelToOutputStream(ioChannel, fos, filesize);
+            try (FileOutputStream stream = new FileOutputStream(localFile)) {
+                writeIOChannelToOutputStream(ioChannel, stream, filesize);
             } catch (FileNotFoundException ex) {
                 updateStatus(SshErrorStatus.FILE_OPEN_ERROR);
                 throw new SshException(ERROR_FILE_LOCAL_OPEN, ex);
