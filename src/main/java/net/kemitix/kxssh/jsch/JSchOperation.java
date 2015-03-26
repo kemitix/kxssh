@@ -75,24 +75,24 @@ public class JSchOperation implements StatusProvider {
 
     protected void writeIOChannelToOutputStream(
             JSchIOChannel ioChannel,
-            FileOutputStream fos,
+            FileOutputStream stream,
             int filesize)
             throws SshException {
-        byte[] buf = new byte[1024];
+        byte[] buffer = new byte[1024];
         int remaining = filesize;
         /**
          * loop over buf.length sized blocks of input
          */
         while (true) {
             int bytesToRead;
-            if (buf.length < remaining) {
-                bytesToRead = buf.length;
+            if (buffer.length < remaining) {
+                bytesToRead = buffer.length;
             } else {
                 bytesToRead = remaining;
             }
             int bytesRead;
             try {
-                bytesRead = ioChannel.read(buf, 0, bytesToRead);
+                bytesRead = ioChannel.read(buffer, 0, bytesToRead);
             } catch (IOException ex) {
                 updateStatus(SshErrorStatus.CHANNEL_READ_ERROR);
                 throw new SshException(ERROR_FILE_REMOTE_READ, ex);
@@ -106,7 +106,7 @@ public class JSchOperation implements StatusProvider {
                 bytesRead = remaining;
             }
             try {
-                fos.write(buf, 0, bytesRead);
+                stream.write(buffer, 0, bytesRead);
             } catch (IOException ex) {
                 updateStatus(SshErrorStatus.FILE_WRITE_ERROR);
                 throw new SshException(ERROR_FILE_LOCAL_WRITE, ex);
