@@ -3,8 +3,7 @@ package net.kemitix.kxssh;
 public enum SshErrorStatus implements SshStatus {
 
     HOSTNAME_ERROR,
-    SESSION_CREATE_ERROR,
-    SESSION_CONNECT_ERROR,
+    SESSION_ERROR,
     FILE_OPEN_ERROR,
     CHANNEL_READ_ERROR,
     METADATA_READ_ERROR,

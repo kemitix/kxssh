@@ -36,8 +36,7 @@ public class JSchOperation implements StatusProvider {
 
     // SESSION
     private static final String ERROR_SESSION_HOST = "Error host not set";
-    private static final String ERROR_SESSION_CREATE = "Error creating session";
-    private static final String ERROR_SESSION_CONNECT = "Error connecting session";
+    private static final String ERROR_SESSION = "Error creating/connecting session";
 
     protected Session getSession() throws SshException {
         SshAuthentication authentication = connectionProperties.getAuthentication();
@@ -55,14 +54,7 @@ public class JSchOperation implements StatusProvider {
         Session session;
         try {
             session = jsch.getSession(username, hostname);
-        } catch (JSchException ex) {
-            updateStatus(SshErrorStatus.SESSION_CREATE_ERROR);
-            throw new SshException(ERROR_SESSION_CREATE, ex);
-        }
-
-        session.setPassword(((SshPasswordAuthentication) authentication).getPassword().getBytes());
-
-        try {
+            session.setPassword(((SshPasswordAuthentication) authentication).getPassword().getBytes());
             session.connect();
         } catch (JSchException ex) {
             if (ex.getMessage().contains("UnknownHostKey")) {
@@ -71,10 +63,9 @@ public class JSchOperation implements StatusProvider {
                             hostname, SSHKNOWN_HOSTS
                         });
             }
-            updateStatus(SshErrorStatus.SESSION_CONNECT_ERROR);
-            throw new SshException(ERROR_SESSION_CONNECT, ex);
+            updateStatus(SshErrorStatus.SESSION_ERROR);
+            throw new SshException(ERROR_SESSION, ex);
         }
-
         return session;
     }
 
