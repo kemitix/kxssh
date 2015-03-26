@@ -1,12 +1,12 @@
 package net.kemitix.kxssh.jsch;
 
-import net.kemitix.kxssh.SshDownload;
 import com.jcraft.jsch.Session;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import net.kemitix.kxssh.SshConnectionProperties;
+import net.kemitix.kxssh.SshDownload;
 import net.kemitix.kxssh.SshException;
 
 public class JSchDownload extends JSchOperation implements SshDownload {
@@ -38,10 +38,8 @@ public class JSchDownload extends JSchOperation implements SshDownload {
             }
             int filesize = readMetaData(ioChannel);
             notifyRemoteReady(ioChannel);
-            try {
-                FileOutputStream fos = new FileOutputStream(localFile);
+            try (FileOutputStream fos = new FileOutputStream(localFile)) {
                 writeIOChannelToOutputStream(ioChannel, fos, filesize);
-                fos.close();
             } catch (FileNotFoundException ex) {
                 updateStatus(ERROR_FILE_LOCAL_OPEN);
                 throw new SshException(ERROR_FILE_LOCAL_OPEN, ex);
