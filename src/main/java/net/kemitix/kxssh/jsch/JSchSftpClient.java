@@ -1,5 +1,6 @@
 package net.kemitix.kxssh.jsch;
 
+import java.io.File;
 import net.kemitix.kxssh.SftpClient;
 import net.kemitix.kxssh.SshConnectionProperties;
 import net.kemitix.kxssh.SshDownload;
@@ -14,9 +15,9 @@ public class JSchSftpClient implements SftpClient {
     }
 
     @Override
-    public void download(String remoteFilename, String localFilename) throws SshException {
+    public void download(String remoteFilename, File localFile) throws SshException {
         SshDownload download = new JSchDownload(connectionProperties);
-        download.download(remoteFilename, localFilename);
+        download.download(remoteFilename, localFile);
     }
 
 }

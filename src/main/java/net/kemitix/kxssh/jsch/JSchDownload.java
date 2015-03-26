@@ -22,12 +22,13 @@ public class JSchDownload extends JSchOperation implements SshDownload {
     private static final String ERROR_ACK = "Error in ACK";
 
     @Override
-    public void download(String remoteFilename, String localFilename) throws SshException {
+    public void download(String remoteFilename, File localFile) throws SshException {
         updateStatus(SshOperationStatus.STARTING);
+
         Session session = getSession();
+
         JSchIOChannel ioChannel = JSchIOChannel.createExecIOChannel(session);
         ioChannel.setRemoteFilename(remoteFilename);
-        final File localFile = new File(localFilename);
         ioChannel.setLocalFile(localFile);
 
         updateStatus(SshOperationStatus.CONNECTING);
