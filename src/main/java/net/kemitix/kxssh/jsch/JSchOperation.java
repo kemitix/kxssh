@@ -79,26 +79,12 @@ public class JSchOperation implements StatusProvider {
             throws SshException {
         byte[] buffer = new byte[1024];
         int remaining = filesize;
-        /**
-         * loop over buf.length sized blocks of input
-         */
-        while (true) {
-            int bytesToRead;
-            if (buffer.length < remaining) {
-                bytesToRead = buffer.length;
-            } else {
-                bytesToRead = remaining;
-            }
-            int bytesRead;
-            bytesRead = ioChannel.read(buffer, 0, bytesToRead);
-            if (bytesRead < 0) {
-                // error
-                break;
-            }
+        // loop over buffer.length sized blocks of input
+        do {
+            int bytesToRead = Integer.min(buffer.length, remaining);
+            int bytesRead = ioChannel.read(buffer, 0, bytesToRead);
             // prevent overrun
-            if (bytesRead > remaining) {
-                bytesRead = remaining;
-            }
+            bytesRead = Integer.min(bytesRead, bytesToRead);
             try {
                 stream.write(buffer, 0, bytesRead);
             } catch (IOException ex) {
@@ -106,15 +92,8 @@ public class JSchOperation implements StatusProvider {
                 throw new SshException(ERROR_FILE_LOCAL_WRITE, ex);
             }
             remaining -= bytesRead;
-            if (remaining == 0) {
-                break;
-            }
-            if (remaining < 0) {
-                updateStatus(SshErrorStatus.OVERRUN_ERROR);
-                break;
-            }
             updateProgress(filesize - remaining, filesize);
-        }
+        } while (remaining > 0);
         updateProgress(remaining < 0 ? filesize : filesize - remaining, filesize);
     }
 
