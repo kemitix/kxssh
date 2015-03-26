@@ -7,6 +7,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 class JSchSftpClient implements SftpClient {
 
@@ -251,6 +253,12 @@ class JSchSftpClient implements SftpClient {
         try {
             session.connect();
         } catch (JSchException ex) {
+            if (ex.getMessage().contains("UnknownHostKey")) {
+                Logger.getLogger(this.getClass().getName())
+                        .log(Level.SEVERE, "Try adding key with: ssh-keyscan -t rsa {0} >> {1}", new Object[]{
+                            connectionProperties.getHostname(), SSHKNOWN_HOSTS
+                        });
+            }
             setStatus(ERROR_CONNECTING_SESSION);
             throw new SshException(ERROR_CONNECTING_SESSION, ex);
         }
