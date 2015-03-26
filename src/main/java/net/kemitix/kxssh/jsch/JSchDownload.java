@@ -38,8 +38,7 @@ public class JSchDownload extends JSchOperation implements SshDownload {
         updateStatus(SshOperationStatus.DOWNLOADING);
 
         while (true) {
-            int c = ioChannel.checkStatus();
-            if (c != 'C') {
+            if (ioChannel.checkStatus() != JSchIOChannel.CONTINUE) {
                 break;
             }
             int filesize = readMetaData(ioChannel);

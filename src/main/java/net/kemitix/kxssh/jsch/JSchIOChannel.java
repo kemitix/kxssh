@@ -86,6 +86,7 @@ public class JSchIOChannel {
     public static final int SUCCESS = 0;
     public static final int ERROR = 1;
     public static final int FATAL = 2;
+    public static final int CONTINUE = 'C';
 
     protected int checkStatus() throws SshException {
         try {
