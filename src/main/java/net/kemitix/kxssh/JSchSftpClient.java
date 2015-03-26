@@ -7,8 +7,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 class JSchSftpClient implements SftpClient {
 
@@ -71,7 +69,6 @@ class JSchSftpClient implements SftpClient {
                 }
             }
         } catch (IOException ex) {
-            Logger.getLogger(JSchSftpClient.class.getName()).log(Level.SEVERE, null, ex);
             setStatus(ERROR_READING_ACK);
             throw new SshException(ERROR_READING_ACK, ex);
         }
@@ -102,11 +99,9 @@ class JSchSftpClient implements SftpClient {
                 writeIOChannelToOutputStream(ioChannel, fos, filesize);
                 fos.close();
             } catch (FileNotFoundException ex) {
-                Logger.getLogger(JSchSftpClient.class.getName()).log(Level.SEVERE, null, ex);
                 setStatus(ERROR_OPENING_LOCAL_FILE_FOR_WRITING);
                 throw new SshException(ERROR_OPENING_LOCAL_FILE_FOR_WRITING, ex);
             } catch (IOException ex) {
-                Logger.getLogger(JSchSftpClient.class.getName()).log(Level.SEVERE, null, ex);
                 setStatus(ERROR_CLOSING_LOCAL_FILE);
                 throw new SshException(ERROR_CLOSING_LOCAL_FILE, ex);
             }
@@ -142,7 +137,6 @@ class JSchSftpClient implements SftpClient {
             try {
                 bytesRead = ioChannel.read(buf, 0, bytesToRead);
             } catch (IOException ex) {
-                Logger.getLogger(JSchSftpClient.class.getName()).log(Level.SEVERE, null, ex);
                 setStatus(ERROR_READING_REMOTE_FILE);
                 throw new SshException(ERROR_READING_REMOTE_FILE, ex);
             }
@@ -157,7 +151,6 @@ class JSchSftpClient implements SftpClient {
             try {
                 fos.write(buf, 0, bytesRead);
             } catch (IOException ex) {
-                Logger.getLogger(JSchSftpClient.class.getName()).log(Level.SEVERE, null, ex);
                 setStatus(ERROR_WRITING_LOCAL_FILE);
                 throw new SshException(ERROR_WRITING_LOCAL_FILE, ex);
             }
@@ -206,7 +199,6 @@ class JSchSftpClient implements SftpClient {
                 }
             }
         } catch (IOException ex) {
-            Logger.getLogger(JSchSftpClient.class.getName()).log(Level.SEVERE, null, ex);
             setStatus(ERROR_READING_ON_INPUT_STREAM);
             throw new SshException(ERROR_READING_ON_INPUT_STREAM, ex);
         }
@@ -221,7 +213,6 @@ class JSchSftpClient implements SftpClient {
             ioChannel.write(buf, 0, 1);
             ioChannel.flush();
         } catch (IOException ex) {
-            Logger.getLogger(JSchSftpClient.class.getName()).log(Level.SEVERE, null, ex);
             setStatus(ERROR_WRITING_ON_OUTPUT_STREAM);
             throw new SshException(ERROR_WRITING_ON_OUTPUT_STREAM, ex);
         }
@@ -234,7 +225,6 @@ class JSchSftpClient implements SftpClient {
             try {
                 jsch.setKnownHosts(SSHKNOWN_HOSTS);
             } catch (JSchException ex) {
-                Logger.getLogger(JSchSftpClient.class.getName()).log(Level.SEVERE, null, ex);
                 setStatus(SSHKNOWN_HOSTS + " not found");
                 throw new RuntimeException(SSHKNOWN_HOSTS + " not found");
             }
@@ -252,7 +242,6 @@ class JSchSftpClient implements SftpClient {
         try {
             session = jsch.getSession(authentication.getUsername(), connectionProperties.getHostname());
         } catch (JSchException ex) {
-            Logger.getLogger(JSchSftpClient.class.getName()).log(Level.SEVERE, null, ex);
             setStatus(ERROR_CREATING_SESSION);
             throw new SshException(ERROR_CREATING_SESSION, ex);
         }
@@ -262,7 +251,6 @@ class JSchSftpClient implements SftpClient {
         try {
             session.connect();
         } catch (JSchException ex) {
-            Logger.getLogger(JSchSftpClient.class.getName()).log(Level.SEVERE, null, ex);
             setStatus(ERROR_CONNECTING_SESSION);
             throw new SshException(ERROR_CONNECTING_SESSION, ex);
         }
