@@ -147,7 +147,6 @@ public class JSchIOChannel {
         IOChannelMetadata metadata = new IOChannelMetadata();
         byte[] header = new byte[6];
         byte[] buffer = new byte[1024]; // needs to be able to hold a filename
-        int filesize;
 
         // read 5-byte header
         read(header, 0, 5);
