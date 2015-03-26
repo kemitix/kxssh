@@ -57,6 +57,7 @@ public class JSchIOChannel {
         }
     }
 
+    // READ, WRITE & FLUSH
     private static final String ERROR_FILE_REMOTE_READ = "Error reading remote file";
     private static final String ERROR_READ_OVERRUN = "Error tried to read past end of file";
 
