@@ -1,4 +1,4 @@
-package net.kemitix.kxssh;
+package net.kemitix.kxssh.jsch;
 
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
@@ -9,8 +9,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.kemitix.kxssh.SftpClient;
+import net.kemitix.kxssh.SshAuthentication;
+import net.kemitix.kxssh.SshConnectionProperties;
+import net.kemitix.kxssh.SshException;
+import net.kemitix.kxssh.SshPasswordAuthentication;
 
-class JSchSftpClient implements SftpClient {
+public class JSchSftpClient implements SftpClient {
 
     private static final String SSHKNOWN_HOSTS = "~/.ssh/known_hosts";
 
@@ -33,11 +38,11 @@ class JSchSftpClient implements SftpClient {
 
     private final SshConnectionProperties connectionProperties;
 
-    JSchSftpClient(SshConnectionProperties connectionProperties) {
+    public JSchSftpClient(SshConnectionProperties connectionProperties) {
         this.connectionProperties = connectionProperties;
     }
 
-    int checkAck(SshIOChannel ioChannel) throws SshException {
+    int checkAck(JSchIOChannel ioChannel) throws SshException {
         int status;
         try {
             status = ioChannel.read();
@@ -81,7 +86,7 @@ class JSchSftpClient implements SftpClient {
     public void download(String remoteFilename, String localFilename) throws SshException {
         setStatus("Starting Session...");
         Session session = getSession();
-        SshIOChannel ioChannel = SshIOChannel.createExecIOChannel(session);
+        JSchIOChannel ioChannel = JSchIOChannel.createExecIOChannel(session);
         ioChannel.setRemoteFilename(remoteFilename);
         final File localFile = new File(localFilename);
         ioChannel.setLocalFile(localFile);
@@ -119,7 +124,7 @@ class JSchSftpClient implements SftpClient {
     }
 
     private void writeIOChannelToOutputStream(
-            SshIOChannel ioChannel,
+            JSchIOChannel ioChannel,
             FileOutputStream fos,
             int filesize)
             throws SshException {
@@ -169,7 +174,7 @@ class JSchSftpClient implements SftpClient {
         notifyProgress(remaining < 0 ? 0 : remaining, filesize);
     }
 
-    private int readMetaData(SshIOChannel ioChannel) throws SshException {
+    private int readMetaData(JSchIOChannel ioChannel) throws SshException {
         byte[] buf = new byte[1024];
         int filesize = 0;
         try {
@@ -207,7 +212,7 @@ class JSchSftpClient implements SftpClient {
         return filesize;
     }
 
-    private void notifyRemoteReady(SshIOChannel ioChannel) throws SshException {
+    private void notifyRemoteReady(JSchIOChannel ioChannel) throws SshException {
         byte[] buf = new byte[1];
         // send '\0'
         buf[0] = 0;

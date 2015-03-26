@@ -1,4 +1,4 @@
-package net.kemitix.kxssh;
+package net.kemitix.kxssh.jsch;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
@@ -12,10 +12,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Getter;
 import lombok.Setter;
+import net.kemitix.kxssh.SshException;
 
 @Setter
 @Getter
-public class SshIOChannel {
+class JSchIOChannel {
 
     Channel channel;
     OutputStream output;
@@ -23,8 +24,8 @@ public class SshIOChannel {
     String remoteFilename;
     File localFile;
 
-    public static SshIOChannel createExecIOChannel(Session session) throws SshException {
-        SshIOChannel ioChannel = new SshIOChannel();
+    public static JSchIOChannel createExecIOChannel(Session session) throws SshException {
+        JSchIOChannel ioChannel = new JSchIOChannel();
         try {
             ioChannel.setChannel(session.openChannel("exec"));
         } catch (JSchException ex) {
@@ -56,7 +57,7 @@ public class SshIOChannel {
         try {
             channel.connect();
         } catch (JSchException ex) {
-            Logger.getLogger(SshIOChannel.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(JSchIOChannel.class.getName()).log(Level.SEVERE, null, ex);
             throw new SshException("Error connecting  channel", ex);
         }
     }
