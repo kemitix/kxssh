@@ -53,7 +53,7 @@ public class JSchIOChannel {
         try {
             channel.connect();
         } catch (JSchException ex) {
-            throw new SshException("Error connecting  channel", ex);
+            throw new SshException("Error connecting channel", ex);
         }
     }
 
