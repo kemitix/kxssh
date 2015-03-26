@@ -18,17 +18,23 @@ import net.kemitix.kxssh.StatusProvider;
 
 public class JSchOperation implements StatusProvider {
 
-    private JSch jsch;
+    private static final String SSHKNOWN_HOSTS = "~/.ssh/known_hosts";
+
+    private final JSch jsch;
 
     protected final SshConnectionProperties connectionProperties;
 
     public JSchOperation(SshConnectionProperties connectionProperties) {
         this.connectionProperties = connectionProperties;
+        jsch = new JSch();
+        try {
+            jsch.setKnownHosts(SSHKNOWN_HOSTS);
+        } catch (JSchException ex) {
+            throw new RuntimeException(SSHKNOWN_HOSTS, ex);
+        }
     }
 
     // SESSION
-    private static final String SSHKNOWN_HOSTS = "~/.ssh/known_hosts";
-
     private static final String ERROR_SESSION_USERNAME = "Error username not set";
     private static final String ERROR_SESSION_HOST = "Error host not set";
     private static final String ERROR_SESSION_CREATE = "Error creating session";
@@ -36,24 +42,16 @@ public class JSchOperation implements StatusProvider {
 
     protected Session getSession() throws SshException {
         SshAuthentication authentication = connectionProperties.getAuthentication();
-        if (jsch == null) {
-            jsch = new JSch();
-            try {
-                jsch.setKnownHosts(SSHKNOWN_HOSTS);
-            } catch (JSchException ex) {
-                updateStatus(SshErrorStatus.KNOWN_HOSTS_ERROR);
-                throw new RuntimeException(SSHKNOWN_HOSTS + " not found");
-            }
-        }
-        String username = authentication.getUsername();
-        if (username == null) {
-            updateStatus(SshErrorStatus.USERNAME_ERROR);
-            throw new RuntimeException(ERROR_SESSION_USERNAME);
-        }
         String hostname = connectionProperties.getHostname();
+        String username = authentication.getUsername();
+
         if (hostname == null) {
             updateStatus(SshErrorStatus.HOSTNAME_ERROR);
             throw new RuntimeException(ERROR_SESSION_HOST);
+        }
+        if (username == null) {
+            updateStatus(SshErrorStatus.USERNAME_ERROR);
+            throw new RuntimeException(ERROR_SESSION_USERNAME);
         }
 
         Session session;
