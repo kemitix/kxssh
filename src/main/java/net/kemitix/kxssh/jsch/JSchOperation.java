@@ -119,32 +119,4 @@ public class JSchOperation implements StatusProvider {
         }
     }
 
-    // METADATA
-    protected int readMetaData(JSchIOChannel ioChannel) throws SshException {
-        byte[] buf = new byte[1024];
-        int filesize = 0;
-        ioChannel.read(buf, 0, 5);
-        StringBuilder sb = new StringBuilder();
-        while (true) {
-            if (ioChannel.read(buf, 0, 1) < 0) {
-                // error
-                break;
-            }
-            if (buf[0] == ' ') {
-                break;
-            }
-            sb.append(buf[0] - '0');
-        }
-        filesize = Integer.parseInt(sb.toString());
-        String file = null;
-        for (int i = 0;; i++) {
-            ioChannel.read(buf, i, 1);
-            if (buf[i] == (byte) 0x0a) {
-                file = new String(buf, 0, i);
-                break;
-            }
-        }
-        return filesize;
-    }
-
 }

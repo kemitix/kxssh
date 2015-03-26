@@ -141,4 +141,48 @@ public class JSchIOChannel {
         }
     }
 
+    // METADATA
+    /**
+     * Read metadata, which consists of the file size followed by the filename.
+     *
+     * @return the file size
+     * @throws SshException
+     */
+    protected IOChannelMetadata readMetaData() throws SshException {
+        IOChannelMetadata metadata = new IOChannelMetadata();
+        byte[] header = new byte[6];
+        byte[] buffer = new byte[1024]; // needs to be able to hold a filename
+        int filesize;
+
+        // read 5-byte header
+        read(header, 0, 5);
+        metadata.setHeader(header);
+
+        // read filesize, as a string, terminated by a space
+        StringBuilder sb = new StringBuilder();
+        while (true) {
+            read(buffer, 0, 1);
+            if (buffer[0] == ' ') {
+                break;
+            }
+            sb.append(buffer[0] - '0');
+        }
+        metadata.setFilesize(Integer.parseInt(sb.toString()));
+
+        /**
+         * Continue reading to remove the filename from the channel, terminated
+         * by a line feed (ascii hex 0a). Although we don't do anything file the
+         * filename, we still needed to remove it from the channel.
+         */
+        for (int i = 0;; i++) {
+            read(buffer, i, 1);
+            if (buffer[i] == (byte) 0x0a) {
+                metadata.setFilename(new String(buffer, 0, i));
+                break;
+            }
+        }
+
+        return metadata;
+    }
+
 }
