@@ -35,7 +35,6 @@ public class JSchOperation implements StatusProvider {
     }
 
     // SESSION
-    private static final String ERROR_SESSION_USERNAME = "Error username not set";
     private static final String ERROR_SESSION_HOST = "Error host not set";
     private static final String ERROR_SESSION_CREATE = "Error creating session";
     private static final String ERROR_SESSION_CONNECT = "Error connecting session";
@@ -49,9 +48,8 @@ public class JSchOperation implements StatusProvider {
             updateStatus(SshErrorStatus.HOSTNAME_ERROR);
             throw new RuntimeException(ERROR_SESSION_HOST);
         }
-        if (username == null) {
-            updateStatus(SshErrorStatus.USERNAME_ERROR);
-            throw new RuntimeException(ERROR_SESSION_USERNAME);
+        if (username == null || username.equals("")) {
+            username = System.getProperty("user.name");
         }
 
         Session session;

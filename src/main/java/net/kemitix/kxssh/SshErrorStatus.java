@@ -2,7 +2,6 @@ package net.kemitix.kxssh;
 
 public enum SshErrorStatus implements SshStatus {
 
-    USERNAME_ERROR,
     HOSTNAME_ERROR,
     SESSION_CREATE_ERROR,
     SESSION_CONNECT_ERROR,
