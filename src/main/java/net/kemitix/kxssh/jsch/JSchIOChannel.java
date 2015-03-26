@@ -16,7 +16,7 @@ import net.kemitix.kxssh.SshException;
 
 @Setter
 @Getter
-class JSchIOChannel {
+public class JSchIOChannel {
 
     Channel channel;
     OutputStream output;
