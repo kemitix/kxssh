@@ -120,8 +120,6 @@ public class JSchOperation implements StatusProvider {
     }
 
     // METADATA
-    private static final String ERROR_METADATA_READ = "Error reading initial metadata from input stream";
-
     protected int readMetaData(JSchIOChannel ioChannel) throws SshException {
         byte[] buf = new byte[1024];
         int filesize = 0;
