@@ -114,4 +114,18 @@ public class JSchIOChannel {
         return sb.toString();
     }
 
+    // NOTIFY READY
+    private static final String ERROR_REMOTE_NOTIFY = "Error writing/flushing null on output stream";
+
+    protected void notifyReady() throws SshException {
+        byte[] buf = new byte[1];
+        buf[0] = 0; // send '\0' - null
+        try {
+            write(buf, 0, 1);
+            flush();
+        } catch (IOException ex) {
+            throw new SshException(ERROR_REMOTE_NOTIFY, ex);
+        }
+    }
+
 }

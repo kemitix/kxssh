@@ -33,7 +33,7 @@ public class JSchDownload extends JSchOperation implements SshDownload {
         updateStatus(SshOperationStatus.CONNECTING);
 
         ioChannel.connect();
-        notifyRemoteReady(ioChannel);
+        ioChannel.notifyReady();
 
         updateStatus(SshOperationStatus.DOWNLOADING);
 
@@ -43,7 +43,7 @@ public class JSchDownload extends JSchOperation implements SshDownload {
                 break;
             }
             int filesize = readMetaData(ioChannel);
-            notifyRemoteReady(ioChannel);
+            ioChannel.notifyReady();
             try (FileOutputStream fos = new FileOutputStream(localFile)) {
                 writeIOChannelToOutputStream(ioChannel, fos, filesize);
             } catch (FileNotFoundException ex) {
@@ -57,7 +57,7 @@ public class JSchDownload extends JSchOperation implements SshDownload {
                 updateStatus(SshErrorStatus.ACK_ERROR);
                 throw new SshException(ERROR_ACK);
             }
-            notifyRemoteReady(ioChannel);
+            ioChannel.notifyReady();
         }
 
         updateStatus(SshOperationStatus.DISCONNECTING);

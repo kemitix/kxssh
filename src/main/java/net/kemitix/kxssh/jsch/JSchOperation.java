@@ -187,19 +187,4 @@ public class JSchOperation implements StatusProvider {
         return filesize;
     }
 
-    private static final String ERROR_REMOTE_NOTIFY = "Error writing/flushing null on output stream";
-
-    protected void notifyRemoteReady(JSchIOChannel ioChannel) throws SshException {
-        byte[] buf = new byte[1];
-        // send '\0'
-        buf[0] = 0;
-        try {
-            ioChannel.write(buf, 0, 1);
-            ioChannel.flush();
-        } catch (IOException ex) {
-            updateStatus(SshErrorStatus.REMOTE_NOTIFY_ERROR);
-            throw new SshException(ERROR_REMOTE_NOTIFY, ex);
-        }
-    }
-
 }
