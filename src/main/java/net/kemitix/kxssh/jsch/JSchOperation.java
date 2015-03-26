@@ -44,9 +44,9 @@ public class JSchOperation implements StatusProvider {
         String hostname = connectionProperties.getHostname();
         String username = authentication.getUsername();
 
-        if (hostname == null) {
+        if (hostname == null || hostname.equals("")) {
             updateStatus(SshErrorStatus.HOSTNAME_ERROR);
-            throw new RuntimeException(ERROR_SESSION_HOST);
+            throw new SshException(ERROR_SESSION_HOST);
         }
         if (username == null || username.equals("")) {
             username = System.getProperty("user.name");
