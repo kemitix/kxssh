@@ -36,11 +36,28 @@ public class JSchOperation implements StatusProvider {
         }
     }
 
+    // IOCHANNEL
+    private JSchIOChannel ioChannel;
+
+    protected JSchIOChannel getExecIOChannel() throws SshException {
+        if (ioChannel == null) {
+            initSession();
+            ioChannel = JSchIOChannel.createExecIOChannel(session);
+        }
+        return ioChannel;
+    }
+
+    protected void releaseIOChannel() {
+        if (ioChannel != null) {
+            ioChannel = null;
+        }
+    }
+
     // SESSION
     private static final String ERROR_SESSION_HOST = "Error host not set";
     private static final String ERROR_SESSION = "Error creating/connecting session";
 
-    protected Session session;
+    private Session session;
 
     protected void initSession() throws SshException {
         if (session != null) {

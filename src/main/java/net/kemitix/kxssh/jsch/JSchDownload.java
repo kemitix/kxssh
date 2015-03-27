@@ -24,8 +24,7 @@ public class JSchDownload extends JSchOperation implements SshDownload {
     public void download(String remoteFilename, File localFile) throws SshException {
         updateStatus(SshOperationStatus.STARTING);
 
-        initSession();
-        JSchIOChannel ioChannel = JSchIOChannel.createExecIOChannel(session);
+        JSchIOChannel ioChannel = getExecIOChannel();
         ioChannel.setRemoteFilename(remoteFilename);
         ioChannel.setLocalFile(localFile);
 
@@ -60,6 +59,7 @@ public class JSchDownload extends JSchOperation implements SshDownload {
 
         updateStatus(SshOperationStatus.DISCONNECTING);
 
+        releaseIOChannel();
         disconnect();
 
         updateStatus(SshOperationStatus.DISCONNECTED);
