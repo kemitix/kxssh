@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import lombok.Setter;
 import net.kemitix.kxssh.SshAuthentication;
 import net.kemitix.kxssh.SshConnectionProperties;
 import net.kemitix.kxssh.SshErrorStatus;
@@ -16,6 +17,7 @@ import net.kemitix.kxssh.SshStatus;
 import net.kemitix.kxssh.StatusListener;
 import net.kemitix.kxssh.StatusProvider;
 
+@Setter
 public class JSchOperation implements StatusProvider {
 
     private static final String SSHKNOWN_HOSTS = "~/.ssh/known_hosts";
@@ -38,7 +40,12 @@ public class JSchOperation implements StatusProvider {
     private static final String ERROR_SESSION_HOST = "Error host not set";
     private static final String ERROR_SESSION = "Error creating/connecting session";
 
-    protected Session getSession() throws SshException {
+    protected Session session;
+
+    protected void initSession() throws SshException {
+        if (session != null) {
+            return;
+        }
         SshAuthentication authentication = connectionProperties.getAuthentication();
         String hostname = connectionProperties.getHostname();
         String username = authentication.getUsername();
@@ -51,7 +58,6 @@ public class JSchOperation implements StatusProvider {
             username = System.getProperty("user.name");
         }
 
-        Session session;
         try {
             session = jsch.getSession(username, hostname);
             session.setPassword(((SshPasswordAuthentication) authentication).getPassword());
@@ -66,7 +72,13 @@ public class JSchOperation implements StatusProvider {
             updateStatus(SshErrorStatus.SESSION_ERROR);
             throw new SshException(ERROR_SESSION, ex);
         }
-        return session;
+    }
+
+    protected void disconnect() {
+        if (session != null) {
+            session.disconnect();
+            session = null;
+        }
     }
 
     //STREAM TO FILE

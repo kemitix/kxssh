@@ -1,6 +1,5 @@
 package net.kemitix.kxssh.jsch;
 
-import com.jcraft.jsch.Session;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -25,7 +24,7 @@ public class JSchDownload extends JSchOperation implements SshDownload {
     public void download(String remoteFilename, File localFile) throws SshException {
         updateStatus(SshOperationStatus.STARTING);
 
-        Session session = getSession();
+        initSession();
         JSchIOChannel ioChannel = JSchIOChannel.createExecIOChannel(session);
         ioChannel.setRemoteFilename(remoteFilename);
         ioChannel.setLocalFile(localFile);
@@ -61,7 +60,7 @@ public class JSchDownload extends JSchOperation implements SshDownload {
 
         updateStatus(SshOperationStatus.DISCONNECTING);
 
-        session.disconnect();
+        disconnect();
 
         updateStatus(SshOperationStatus.DISCONNECTED);
     }
