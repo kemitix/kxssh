@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 import lombok.Getter;
 import lombok.Setter;
 import net.kemitix.kxssh.SshException;
@@ -172,7 +173,7 @@ public class JSchIOChannel {
         for (int i = 0;; i++) {
             read(buffer, i, 1);
             if (buffer[i] == (byte) 0x0a) {
-                metadata.setFilename(new String(buffer, 0, i));
+                metadata.setFilename(Arrays.toString(buffer).substring(0, i));
                 break;
             }
         }
