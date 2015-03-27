@@ -54,7 +54,7 @@ public class JSchOperation implements StatusProvider {
         Session session;
         try {
             session = jsch.getSession(username, hostname);
-            session.setPassword(((SshPasswordAuthentication) authentication).getPassword().getBytes());
+            session.setPassword(((SshPasswordAuthentication) authentication).getPassword());
             session.connect();
         } catch (JSchException ex) {
             if (ex.getMessage().contains("UnknownHostKey")) {
