@@ -4,12 +4,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import lombok.Setter;
 import net.kemitix.kxssh.SshConnectionProperties;
 import net.kemitix.kxssh.SshDownload;
 import net.kemitix.kxssh.SshErrorStatus;
 import net.kemitix.kxssh.SshException;
 import net.kemitix.kxssh.SshOperationStatus;
 
+@Setter
 public class JSchDownload extends JSchOperation implements SshDownload {
 
     public JSchDownload(SshConnectionProperties connectionProperties) {
@@ -41,7 +43,7 @@ public class JSchDownload extends JSchOperation implements SshDownload {
             }
             IOChannelMetadata metadata = ioChannel.readMetaData();
             ioChannel.notifyReady();
-            try (FileOutputStream stream = new FileOutputStream(localFile)) {
+            try (FileOutputStream stream = getOutputStream(localFile)) {
                 writeIOChannelToOutputStream(ioChannel, stream, metadata.getFilesize());
             } catch (FileNotFoundException ex) {
                 updateStatus(SshErrorStatus.FILE_OPEN_ERROR);
@@ -49,6 +51,8 @@ public class JSchDownload extends JSchOperation implements SshDownload {
             } catch (IOException ex) {
                 updateStatus(SshErrorStatus.FILE_CLOSE_ERROR);
                 throw new SshException(ERROR_FILE_LOCAL_CLOSE, ex);
+            } finally {
+                releaseOutputStream();
             }
             if (ioChannel.checkStatus() != JSchIOChannel.SUCCESS) {
                 updateStatus(SshErrorStatus.ACK_ERROR);
@@ -63,6 +67,21 @@ public class JSchDownload extends JSchOperation implements SshDownload {
         disconnect();
 
         updateStatus(SshOperationStatus.DISCONNECTED);
+    }
+
+    private FileOutputStream outputStream;
+
+    private FileOutputStream getOutputStream(File localFile) throws FileNotFoundException {
+        if (outputStream == null) {
+            outputStream = new FileOutputStream(localFile);
+        }
+        return outputStream;
+    }
+
+    private void releaseOutputStream() {
+        if (outputStream != null) {
+            outputStream = null;
+        }
     }
 
 }
