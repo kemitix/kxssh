@@ -21,23 +21,26 @@ import net.kemitix.kxssh.StatusProvider;
 @Setter
 public abstract class JSchOperation implements StatusProvider {
 
-    private static final String SSHKNOWN_HOSTS = "~/.ssh/known_hosts";
-
-    private JSch jsch;
+    private String knownHosts = "~/.ssh/known_hosts";
 
     protected final SshConnectionProperties connectionProperties;
 
     protected SshIOFactory ioFactory;
 
+    private JSchFactory jschFactory;
+
     public JSchOperation(SshConnectionProperties connectionProperties) {
         this.connectionProperties = connectionProperties;
-        jsch = new JSch();
-        try {
-            jsch.setKnownHosts(SSHKNOWN_HOSTS);
-        } catch (JSchException ex) {
-            throw new RuntimeException(SSHKNOWN_HOSTS, ex);
-        }
+        jschFactory = new JSchFactory();
         ioFactory = new SshIOFactory();
+    }
+
+    protected JSch getJSch() {
+        try {
+            return jschFactory.build(knownHosts);
+        } catch (JSchException ex) {
+            throw new RuntimeException(knownHosts, ex);
+        }
     }
 
     // IOCHANNEL
@@ -80,14 +83,14 @@ public abstract class JSchOperation implements StatusProvider {
         }
 
         try {
-            session = jsch.getSession(username, hostname);
+            session = getJSch().getSession(username, hostname);
             session.setPassword(((SshPasswordAuthentication) authentication).getPassword());
             session.connect();
         } catch (JSchException ex) {
             if (ex.getMessage().contains("UnknownHostKey")) {
                 Logger.getLogger(this.getClass().getName())
                         .log(Level.SEVERE, "Try adding key with: ssh-keyscan -t rsa {0} >> {1}", new Object[]{
-                            hostname, SSHKNOWN_HOSTS
+                            hostname, knownHosts
                         });
             }
             updateStatus(SshErrorStatus.SESSION_ERROR);
@@ -127,7 +130,7 @@ public abstract class JSchOperation implements StatusProvider {
             remaining -= bytesRead;
             updateProgress(filesize - remaining, filesize);
         } while (remaining > 0);
-        updateProgress(remaining < 0 ? filesize : filesize - remaining, filesize);
+        updateProgress(filesize, filesize);
     }
 
     //STATUS LISTENER
