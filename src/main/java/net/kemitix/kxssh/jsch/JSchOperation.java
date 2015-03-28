@@ -19,7 +19,7 @@ import net.kemitix.kxssh.StatusListener;
 import net.kemitix.kxssh.StatusProvider;
 
 @Setter
-public class JSchOperation implements StatusProvider {
+public abstract class JSchOperation implements StatusProvider {
 
     private static final String SSHKNOWN_HOSTS = "~/.ssh/known_hosts";
 
