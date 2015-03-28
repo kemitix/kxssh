@@ -3,8 +3,8 @@ package net.kemitix.kxssh.jsch;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Setter;
@@ -103,7 +103,7 @@ public class JSchOperation implements StatusProvider {
 
     protected void writeIOChannelToOutputStream(
             JSchIOChannel ioChannel,
-            FileOutputStream stream,
+            OutputStream stream,
             int filesize)
             throws SshException {
         byte[] buffer = new byte[1024];
