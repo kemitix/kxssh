@@ -3,7 +3,7 @@ package net.kemitix.kxssh.jsch;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.OutputStream;
 import lombok.Setter;
 import net.kemitix.kxssh.SshConnectionProperties;
 import net.kemitix.kxssh.SshDownload;
@@ -43,17 +43,9 @@ public class JSchDownload extends JSchOperation implements SshDownload {
             }
             IOChannelMetadata metadata = ioChannel.readMetaData();
             ioChannel.notifyReady();
-            try (FileOutputStream stream = getOutputStream(localFile)) {
-                writeIOChannelToOutputStream(ioChannel, stream, metadata.getFilesize());
-            } catch (FileNotFoundException ex) {
-                updateStatus(SshErrorStatus.FILE_OPEN_ERROR);
-                throw new SshException(ERROR_FILE_LOCAL_OPEN, ex);
-            } catch (IOException ex) {
-                updateStatus(SshErrorStatus.FILE_CLOSE_ERROR);
-                throw new SshException(ERROR_FILE_LOCAL_CLOSE, ex);
-            } finally {
-                releaseOutputStream();
-            }
+
+            OutputStream stream = getOutputStream(localFile);
+            writeIOChannelToOutputStream(ioChannel, stream, metadata.getFilesize());
             if (ioChannel.checkStatus() != JSchIOChannel.SUCCESS) {
                 updateStatus(SshErrorStatus.ACK_ERROR);
                 throw new SshException(ERROR_ACK);
@@ -69,18 +61,12 @@ public class JSchDownload extends JSchOperation implements SshDownload {
         updateStatus(SshOperationStatus.DISCONNECTED);
     }
 
-    private FileOutputStream outputStream;
-
-    private FileOutputStream getOutputStream(File localFile) throws FileNotFoundException {
-        if (outputStream == null) {
-            outputStream = new FileOutputStream(localFile);
-        }
-        return outputStream;
-    }
-
-    private void releaseOutputStream() {
-        if (outputStream != null) {
-            outputStream = null;
+    private FileOutputStream getOutputStream(File localFile) throws SshException {
+        try {
+            return new FileOutputStream(localFile);
+        } catch (FileNotFoundException ex) {
+            updateStatus(SshErrorStatus.FILE_OPEN_ERROR);
+            throw new SshException(ERROR_FILE_LOCAL_OPEN, ex);
         }
     }
 
