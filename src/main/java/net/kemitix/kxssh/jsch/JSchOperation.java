@@ -23,7 +23,7 @@ public abstract class JSchOperation implements StatusProvider {
 
     private static final String SSHKNOWN_HOSTS = "~/.ssh/known_hosts";
 
-    private final JSch jsch;
+    private JSch jsch;
 
     protected final SshConnectionProperties connectionProperties;
 
