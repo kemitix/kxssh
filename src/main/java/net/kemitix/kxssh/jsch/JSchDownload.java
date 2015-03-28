@@ -19,7 +19,6 @@ public class JSchDownload extends JSchOperation implements SshDownload {
     }
 
     private static final String ERROR_FILE_LOCAL_OPEN = "Error opening local file for writing";
-    private static final String ERROR_FILE_LOCAL_CLOSE = "Error closing local file";
     private static final String ERROR_ACK = "Error in ACK";
 
     @Override
