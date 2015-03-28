@@ -62,7 +62,7 @@ public class JSchDownload extends JSchOperation implements SshDownload {
 
     private FileOutputStream getOutputStream(File localFile) throws SshException {
         try {
-            return new FileOutputStream(localFile);
+            return ioFactory.createFileOutputStream(localFile);
         } catch (FileNotFoundException ex) {
             updateStatus(SshErrorStatus.FILE_OPEN_ERROR);
             throw new SshException(ERROR_FILE_LOCAL_OPEN, ex);

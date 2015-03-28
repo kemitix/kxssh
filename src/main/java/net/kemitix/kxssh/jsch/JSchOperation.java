@@ -12,6 +12,7 @@ import net.kemitix.kxssh.SshAuthentication;
 import net.kemitix.kxssh.SshConnectionProperties;
 import net.kemitix.kxssh.SshErrorStatus;
 import net.kemitix.kxssh.SshException;
+import net.kemitix.kxssh.SshIOFactory;
 import net.kemitix.kxssh.SshPasswordAuthentication;
 import net.kemitix.kxssh.SshStatus;
 import net.kemitix.kxssh.StatusListener;
@@ -26,6 +27,8 @@ public class JSchOperation implements StatusProvider {
 
     protected final SshConnectionProperties connectionProperties;
 
+    protected SshIOFactory ioFactory;
+
     public JSchOperation(SshConnectionProperties connectionProperties) {
         this.connectionProperties = connectionProperties;
         jsch = new JSch();
@@ -34,6 +37,7 @@ public class JSchOperation implements StatusProvider {
         } catch (JSchException ex) {
             throw new RuntimeException(SSHKNOWN_HOSTS, ex);
         }
+        ioFactory = new SshIOFactory();
     }
 
     // IOCHANNEL
