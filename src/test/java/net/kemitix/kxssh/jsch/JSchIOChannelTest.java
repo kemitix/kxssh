@@ -104,4 +104,75 @@ public class JSchIOChannelTest {
         //then
     }
 
+    /**
+     * Test of read(byte[], int, int) method, of class JSchIOChannel.
+     *
+     * @throws net.kemitix.kxssh.SshException
+     * @throws java.io.IOException
+     */
+    @Test
+    public void testRead() throws SshException, IOException {
+        System.out.println("read(byte[], int, int)");
+        //given
+        ioChannel.setInput(input);
+        byte[] buffer = new byte[10];
+        int offset = 0;
+        int length = 10;
+        when(input.read(buffer, offset, length)).thenReturn(length);
+
+        //when
+        int result = ioChannel.read(buffer, offset, length);
+
+        //then
+        assertThat(result, is(length));
+    }
+
+    /**
+     * Test of read(byte[], int, int) method, of class JSchIOChannel.
+     *
+     * Throws IOException.
+     *
+     * @throws net.kemitix.kxssh.SshException
+     * @throws java.io.IOException
+     */
+    @Test(expected = SshException.class)
+    public void testReadIOException() throws SshException, IOException {
+        System.out.println("read(byte[], int, int) throws IOException");
+        //given
+        ioChannel.setInput(input);
+        byte[] buffer = new byte[10];
+        int offset = 0;
+        int length = 10;
+        when(input.read(buffer, offset, length)).thenThrow(IOException.class);
+
+        //when
+        ioChannel.read(buffer, offset, length);
+
+        //then
+    }
+
+    /**
+     * Test of read(byte[], int, int) method, of class JSchIOChannel.
+     *
+     * Reach end of stream.
+     *
+     * @throws net.kemitix.kxssh.SshException
+     * @throws java.io.IOException
+     */
+    @Test(expected = SshException.class)
+    public void testReadEndOfStream() throws SshException, IOException {
+        System.out.println("read(byte[], int, int) reach end of stream");
+        //given
+        ioChannel.setInput(input);
+        byte[] buffer = new byte[10];
+        int offset = 0;
+        int length = 10;
+        when(input.read(buffer, offset, length)).thenReturn(-1);
+
+        //when
+        ioChannel.read(buffer, offset, length);
+
+        //then
+    }
+
 }
