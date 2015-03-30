@@ -115,6 +115,7 @@ public abstract class JSchOperation implements StatusProvider {
             throws SshException {
         int blockSize = 1024;
         int remaining = filesize;
+        updateProgress(0, filesize);
         // loop over buffer.length sized blocks of input
         do {
             int bytesToRead = Integer.min(blockSize, remaining);
