@@ -32,6 +32,9 @@ public class JSchDownload extends JSchOperation implements SshDownload {
         updateStatus(SshOperationStatus.CONNECTING);
 
         ioChannel.connect();
+
+        updateStatus(SshOperationStatus.CONNECTED);
+
         ioChannel.notifyReady();
 
         updateStatus(SshOperationStatus.DOWNLOADING);
