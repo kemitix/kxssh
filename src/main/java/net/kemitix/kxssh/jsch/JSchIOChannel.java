@@ -39,7 +39,7 @@ public class JSchIOChannel {
         setExecCommand("scp -f " + remoteFilename);
     }
 
-    private void setChannel(Channel sessionChannel) throws IOException {
+    protected void setChannel(Channel sessionChannel) throws IOException {
         this.channel = sessionChannel;
         setOutput(sessionChannel.getOutputStream());
         setInput(sessionChannel.getInputStream());
