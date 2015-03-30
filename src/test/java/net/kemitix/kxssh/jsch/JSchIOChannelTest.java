@@ -16,7 +16,10 @@ import org.junit.runner.RunWith;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(BlockJUnit4ClassRunner.class)
@@ -373,5 +376,50 @@ public class JSchIOChannelTest {
         ioChannel.checkStatus();
 
         //then
+    }
+
+    /**
+     * Test for notifyReady() method, of class JSchIOChannel.
+     *
+     * @throws net.kemitix.kxssh.SshException
+     * @throws java.io.IOException
+     */
+    @Test
+    public void testNotifyReady() throws SshException, IOException {
+        System.out.println("notifyReady");
+        //given
+        ioChannel.setOutput(output);
+
+        //when
+        ioChannel.notifyReady();
+
+        //then
+        verify(output, times(1)).write(any(), eq(0), eq(1));
+        verify(output, times(1)).flush();
+    }
+
+    /**
+     * Test for notifyReady() method, of class JSchIOChannel.
+     *
+     * Throws an IOException
+     *
+     * @throws net.kemitix.kxssh.SshException
+     * @throws java.io.IOException
+     */
+    @Test(expected = SshException.class)
+    public void testNotifyReadyIOException() throws SshException, IOException {
+        System.out.println("notifyReady throws IOException");
+        //given
+        ioChannel.setOutput(output);
+        doThrow(IOException.class)
+                .when(output)
+                .flush();
+
+        //when
+        ioChannel.notifyReady();
+
+        //then
+        verify(output, times(1)).write(any(), eq(0), eq(1));
+        verify(output, times(1)).flush();
     }
 }
