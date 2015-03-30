@@ -22,6 +22,10 @@ public class JSchIOChannel {
     private String remoteFilename;
     private File localFile;
 
+    public JSchIOChannel() {
+        readReplyFactory = new IOChannelReadReplyFactory();
+    }
+
     public static JSchIOChannel createExecIOChannel(Session session) throws SshException {
         JSchIOChannel ioChannel = new JSchIOChannel();
         try {
