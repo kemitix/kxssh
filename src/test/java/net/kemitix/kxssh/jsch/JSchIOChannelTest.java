@@ -1,6 +1,7 @@
 package net.kemitix.kxssh.jsch;
 
 import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import java.io.File;
@@ -15,6 +16,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.contains;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -39,7 +41,7 @@ public class JSchIOChannelTest {
         ioChannel = new JSchIOChannel();
 
         readReplyFactory = mock(IOChannelReadReplyFactory.class);
-        channel = mock(Channel.class);
+        channel = mock(ChannelExec.class);
         output = mock(OutputStream.class);
         input = mock(InputStream.class);
         remoteFilename = "remote.txt";
@@ -421,5 +423,23 @@ public class JSchIOChannelTest {
         //then
         verify(output, times(1)).write(any(), eq(0), eq(1));
         verify(output, times(1)).flush();
+    }
+
+    /**
+     * Test for setRemoteFilename method, of class JSchIOChannel.
+     *
+     * @throws java.io.IOException
+     */
+    @Test
+    public void testSetRemoteFilename() throws IOException {
+        System.out.println("setRemoteFilename");
+        //given
+        ioChannel.setChannel(channel);
+
+        //when
+        ioChannel.setRemoteFilename(remoteFilename);
+
+        //then
+        verify((ChannelExec) channel, times(1)).setCommand(contains(remoteFilename));
     }
 }
