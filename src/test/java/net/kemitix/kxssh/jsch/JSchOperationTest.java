@@ -351,8 +351,12 @@ public class JSchOperationTest {
         //given
         int filesize = 100;
         int chunk = 50;
-        when(ioChannel.read(any(), eq(0), eq(filesize))).thenReturn(chunk);
-        when(ioChannel.read(any(), eq(0), eq(filesize - chunk))).thenReturn(chunk);
+        IOChannelReadReply reply1 = mock(IOChannelReadReply.class);
+        when(reply1.getBytesRead()).thenReturn(chunk);
+        IOChannelReadReply reply2 = mock(IOChannelReadReply.class);
+        when(reply2.getBytesRead()).thenReturn(chunk);
+        when(ioChannel.read(eq(filesize))).thenReturn(reply1);
+        when(ioChannel.read(eq(filesize - chunk))).thenReturn(reply2);
 
         //when
         operation.writeIOChannelToOutputStream(ioChannel, outputStream, filesize);
@@ -375,7 +379,9 @@ public class JSchOperationTest {
         System.out.println("writeIOChannelToOutputStream when throws exception");
         //given
         int filesize = 123;
-        when(ioChannel.read(any(), eq(0), eq(filesize))).thenReturn(filesize);
+        IOChannelReadReply reply = mock(IOChannelReadReply.class);
+        when(reply.getBytesRead()).thenReturn(filesize);
+        when(ioChannel.read(eq(filesize))).thenReturn(reply);
         doThrow(IOException.class).when(outputStream).write(any(), eq(0), eq(filesize));
 
         //when
