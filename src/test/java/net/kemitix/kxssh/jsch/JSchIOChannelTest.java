@@ -442,4 +442,129 @@ public class JSchIOChannelTest {
         //then
         verify((ChannelExec) channel, times(1)).setCommand(contains(remoteFilename));
     }
+
+    /**
+     * Test for connect method, of class JSchIOChannel.
+     *
+     * @throws net.kemitix.kxssh.SshException
+     * @throws java.io.IOException
+     * @throws com.jcraft.jsch.JSchException
+     */
+    @Test
+    public void testConnect() throws SshException, IOException, JSchException {
+        System.out.println("connect");
+        //given
+        ioChannel.setChannel(channel);
+
+        //when
+        ioChannel.connect();
+
+        //then
+        verify(channel, times(1)).connect();
+    }
+
+    /**
+     * Test for connect method, of class JSchIOChannel.
+     *
+     * Throws a JSchException
+     *
+     * @throws net.kemitix.kxssh.SshException
+     * @throws java.io.IOException
+     * @throws com.jcraft.jsch.JSchException
+     */
+    @Test(expected = SshException.class)
+    public void testConnectJSchException() throws SshException, IOException, JSchException {
+        System.out.println("connect throws JSchException");
+        //given
+        ioChannel.setChannel(channel);
+        doThrow(JSchException.class)
+                .when(channel)
+                .connect();
+
+        //when
+        ioChannel.connect();
+
+        //then
+        verify(channel, times(1)).connect();
+    }
+
+    /**
+     * Test for set/getLocalFile() methods, of class JSchIOChannel.
+     */
+    @Test
+    public void testSetGetLocalFile() {
+        System.out.println("set/getLocalFile");
+        //given
+
+        //when
+        ioChannel.setLocalFile(localFile);
+
+        //then
+        assertThat(ioChannel.getLocalFile(), is(localFile));
+    }
+
+    /**
+     * Test for set/getOutput methods, of class JSchIOChannel.
+     */
+    @Test
+    public void testSetGetOutput() {
+        System.out.println("set/getOutput");
+        //given
+        ioChannel.setOutput(output);
+
+        //when
+        OutputStream result = ioChannel.getOutput();
+
+        //then
+        assertThat(result, is(output));
+    }
+
+    /**
+     * Test for set/getInput methods, of class JSchIOChannel.
+     */
+    @Test
+    public void testSetGetInput() {
+        System.out.println("set/getInput");
+        //given
+        ioChannel.setInput(input);
+
+        //when
+        InputStream result = ioChannel.getInput();
+
+        //then
+        assertThat(result, is(input));
+    }
+
+    /**
+     * Test for set/getRemoteFilename methods, of class JSchIOChannel.
+     *
+     * @throws java.io.IOException
+     */
+    @Test
+    public void testSetGetRemoteFilename() throws IOException {
+        System.out.println("set/getRemoteFilename");
+        //given
+        ioChannel.setChannel(channel);
+
+        //when
+        ioChannel.setRemoteFilename(remoteFilename);
+
+        //then
+        assertThat(ioChannel.getRemoteFilename(), is(remoteFilename));
+    }
+
+    /**
+     * Test for set/getReadReplyFactory methods, of class JSchIOChannel.
+     */
+    @Test
+    public void testSetGetReadReplyFactory() {
+        System.out.println("set/getReadReplyFactory");
+        //given
+
+        //when
+        ioChannel.setReadReplyFactory(readReplyFactory);
+
+        //then
+        assertThat(ioChannel.getReadReplyFactory(), is(readReplyFactory));
+    }
 }
