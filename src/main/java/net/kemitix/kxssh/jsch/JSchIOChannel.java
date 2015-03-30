@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Arrays;
 import lombok.Getter;
 import lombok.Setter;
 import net.kemitix.kxssh.SshException;
@@ -146,7 +145,6 @@ public class JSchIOChannel {
      */
     protected IOChannelMetadata readMetaData() throws SshException {
         IOChannelMetadata metadata = new IOChannelMetadata();
-        byte[] buffer = new byte[1024]; // needs to be able to hold a filename
         // read 5-byte permissions '0644 '
         IOChannelReadReply permissionsReply = read(5);
         metadata.setHeader(permissionsReply.getBuffer());
@@ -168,13 +166,15 @@ public class JSchIOChannel {
          * by a line feed (ascii hex 0a). Although we don't do anything file the
          * filename, we still needed to remove it from the channel.
          */
+        StringBuilder filename = new StringBuilder();
         for (int i = 0;; i++) {
             IOChannelReadReply filenameCharReply = read(1);
             byte c = filenameCharReply.getBuffer()[0];
             if (c == (byte) 0x0a) {
-                metadata.setFilename(Arrays.toString(buffer).substring(0, i));
+                metadata.setFilename(filename.toString());
                 break;
             }
+            filename.append((char) c);
         }
 
         return metadata;
