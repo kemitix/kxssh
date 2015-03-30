@@ -242,4 +242,136 @@ public class JSchIOChannelTest {
         assertThat(metadata.getFilesize(), is(7));
         assertThat(metadata.getFilename(), is("f"));
     }
+
+    /**
+     * Test of checkStatus() method, of class JSchIOChannel.
+     *
+     * Status SUCCESS
+     *
+     * @throws java.io.IOException
+     * @throws net.kemitix.kxssh.SshException
+     */
+    @Test
+    public void testCheckStatusSuccess() throws IOException, SshException {
+        System.out.println("checkStatus SUCCESS");
+        //given
+        ioChannel.setInput(input);
+        when(input.read()).thenReturn(JSchIOChannel.SUCCESS);
+
+        //when
+        int status = ioChannel.checkStatus();
+
+        //then
+        assertThat(status, is(JSchIOChannel.SUCCESS));
+    }
+
+    /**
+     * Test of checkStatus() method, of class JSchIOChannel.
+     *
+     * Status EOF
+     *
+     * @throws java.io.IOException
+     * @throws net.kemitix.kxssh.SshException
+     */
+    @Test
+    public void testCheckStatusEOF() throws IOException, SshException {
+        System.out.println("checkStatus EOF");
+        //given
+        ioChannel.setInput(input);
+        when(input.read()).thenReturn(JSchIOChannel.EOF);
+
+        //when
+        int status = ioChannel.checkStatus();
+
+        //then
+        assertThat(status, is(JSchIOChannel.EOF));
+    }
+
+    /**
+     * Test of checkStatus() method, of class JSchIOChannel.
+     *
+     * Status CONTINUE
+     *
+     * @throws java.io.IOException
+     * @throws net.kemitix.kxssh.SshException
+     */
+    @Test
+    public void testCheckStatusContinue() throws IOException, SshException {
+        System.out.println("checkStatus CONTINUE");
+        //given
+        ioChannel.setInput(input);
+        when(input.read()).thenReturn(JSchIOChannel.CONTINUE);
+
+        //when
+        int status = ioChannel.checkStatus();
+
+        //then
+        assertThat(status, is(JSchIOChannel.CONTINUE));
+    }
+
+    /**
+     * Test of checkStatus() method, of class JSchIOChannel.
+     *
+     * Status ERROR
+     *
+     * @throws java.io.IOException
+     * @throws net.kemitix.kxssh.SshException
+     */
+    @Test(expected = SshException.class)
+    public void testCheckStatusError() throws IOException, SshException {
+        System.out.println("checkStatus ERROR");
+        //given
+        ioChannel.setInput(input);
+        when(input.read()).thenReturn(JSchIOChannel.ERROR).thenReturn((int) '\n');
+
+        //when
+        ioChannel.checkStatus();
+
+        //then
+    }
+
+    /**
+     * Test of checkStatus() method, of class JSchIOChannel.
+     *
+     * Status FATAL
+     *
+     * @throws java.io.IOException
+     * @throws net.kemitix.kxssh.SshException
+     */
+    @Test(expected = SshException.class)
+    public void testCheckStatusFatal() throws IOException, SshException {
+        System.out.println("checkStatus FATAL");
+        //given
+        ioChannel.setInput(input);
+        when(input.read())
+                .thenReturn(JSchIOChannel.FATAL)
+                .thenReturn((int) 'a')
+                .thenReturn((int) '\n');
+
+        //when
+        ioChannel.checkStatus();
+
+        //then
+    }
+
+    /**
+     * Test of checkStatus() method, of class JSchIOChannel.
+     *
+     * Throws an IOException
+     *
+     * @throws java.io.IOException
+     * @throws net.kemitix.kxssh.SshException
+     */
+    @Test(expected = SshException.class)
+    public void testCheckStatusIOEXception() throws IOException, SshException {
+        System.out.println("checkStatus IOException");
+        //given
+        ioChannel.setInput(input);
+        when(input.read()).thenThrow(IOException.class);
+
+        //when
+        ioChannel.checkStatus();
+
+        //then
+    }
 }
