@@ -60,23 +60,24 @@ public class JSchIOChannel {
 
     // READ, WRITE & FLUSH
     private static final String ERROR_FILE_REMOTE_READ = "Error reading remote file";
-    private static final String ERROR_READ_OVERRUN = "Error tried to read past end of file";
+    private static final String ERROR_READ_EOF = "Error tried to read past end of file";
 
-    int read(byte[] buffer, int offset, int length) throws SshException {
+    IOChannelReadReply read(int length) throws SshException {
+        byte[] buffer = new byte[length];
         int bytesRead;
+        IOChannelReadReply reply = new IOChannelReadReply();
         try {
-            bytesRead = input.read(buffer, offset, length);
+            bytesRead = input.read(buffer, 0, length);
+            reply.setBuffer(buffer);
+            reply.setBytesRequested(length);
+            reply.setBytesRead(bytesRead);
         } catch (IOException ex) {
             throw new SshException(ERROR_FILE_REMOTE_READ, ex);
         }
         if (bytesRead == -1) {
-            throw new SshException(ERROR_READ_OVERRUN);
+            throw new SshException(ERROR_READ_EOF);
         }
-        return bytesRead;
-    }
-
-    int read() throws IOException {
-        return input.read();
+        return reply;
     }
 
     void write(byte[] buffer, int offset, int length) throws IOException {
@@ -99,7 +100,7 @@ public class JSchIOChannel {
 
     protected int checkStatus() throws SshException {
         try {
-            int status = read();
+            int status = input.read();
             switch (status) {
                 case ERROR:
                 case FATAL:
@@ -118,7 +119,7 @@ public class JSchIOChannel {
         StringBuilder sb = new StringBuilder();
         int c;
         do {
-            c = read();
+            c = input.read();
             sb.append((char) c);
         } while (c != '\n');
         return sb.toString();
@@ -147,21 +148,20 @@ public class JSchIOChannel {
      */
     protected IOChannelMetadata readMetaData() throws SshException {
         IOChannelMetadata metadata = new IOChannelMetadata();
-        byte[] header = new byte[6];
         byte[] buffer = new byte[1024]; // needs to be able to hold a filename
-
-        // read 5-byte header
-        read(header, 0, 5);
-        metadata.setHeader(header);
+        // read 5-byte permissions '0644 '
+        IOChannelReadReply permissionsReply = read(5);
+        metadata.setHeader(permissionsReply.getBuffer());
 
         // read filesize, as a string, terminated by a space
         StringBuilder sb = new StringBuilder();
         while (true) {
-            read(buffer, 0, 1);
-            if (buffer[0] == ' ') {
+            IOChannelReadReply filesizeCharReply = read(1);
+            byte c = filesizeCharReply.getBuffer()[0];
+            if (c == ' ') {
                 break;
             }
-            sb.append(buffer[0] - '0');
+            sb.append(c - '0');
         }
         metadata.setFilesize(Integer.parseInt(sb.toString()));
 
@@ -171,8 +171,9 @@ public class JSchIOChannel {
          * filename, we still needed to remove it from the channel.
          */
         for (int i = 0;; i++) {
-            read(buffer, i, 1);
-            if (buffer[i] == (byte) 0x0a) {
+            IOChannelReadReply filenameCharReply = read(1);
+            byte c = filenameCharReply.getBuffer()[0];
+            if (c == (byte) 0x0a) {
                 metadata.setFilename(Arrays.toString(buffer).substring(0, i));
                 break;
             }

@@ -113,16 +113,17 @@ public abstract class JSchOperation implements StatusProvider {
             OutputStream stream,
             int filesize)
             throws SshException {
-        byte[] buffer = new byte[1024];
+        int blockSize = 1024;
         int remaining = filesize;
         // loop over buffer.length sized blocks of input
         do {
-            int bytesToRead = Integer.min(buffer.length, remaining);
-            int bytesRead = ioChannel.read(buffer, 0, bytesToRead);
+            int bytesToRead = Integer.min(blockSize, remaining);
+            IOChannelReadReply channelReadReply = ioChannel.read(bytesToRead);
+            int bytesRead = channelReadReply.getBytesRead();
             // prevent overrun
             bytesRead = Integer.min(bytesRead, bytesToRead);
             try {
-                stream.write(buffer, 0, bytesRead);
+                stream.write(channelReadReply.getBuffer(), 0, bytesRead);
             } catch (IOException ex) {
                 updateStatus(SshErrorStatus.FILE_WRITE_ERROR);
                 throw new SshException(ERROR_FILE_LOCAL_WRITE, ex);
