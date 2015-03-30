@@ -14,6 +14,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.BlockJUnit4ClassRunner;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -22,6 +24,7 @@ public class JSchIOChannelTest {
 
     private JSchIOChannel ioChannel;
 
+    private IOChannelReadReplyFactory readReplyFactory;
     private Channel channel;
     private OutputStream output;
     private InputStream input;
@@ -32,6 +35,7 @@ public class JSchIOChannelTest {
     public void setUp() throws IOException {
         ioChannel = new JSchIOChannel();
 
+        readReplyFactory = mock(IOChannelReadReplyFactory.class);
         channel = mock(Channel.class);
         output = mock(OutputStream.class);
         input = mock(InputStream.class);
@@ -105,30 +109,34 @@ public class JSchIOChannelTest {
     }
 
     /**
-     * Test of read(byte[], int, int) method, of class JSchIOChannel.
+     * Test of read(int) method, of class JSchIOChannel.
      *
      * @throws net.kemitix.kxssh.SshException
      * @throws java.io.IOException
      */
     @Test
     public void testRead() throws SshException, IOException {
-        System.out.println("read(byte[], int, int)");
+        System.out.println("read(int)");
         //given
         ioChannel.setInput(input);
         byte[] buffer = new byte[10];
         int offset = 0;
         int length = 10;
         when(input.read(buffer, offset, length)).thenReturn(length);
+        ioChannel.setReadReplyFactory(readReplyFactory);
+        IOChannelReadReply reply = mock(IOChannelReadReply.class);
+        when(readReplyFactory.createReply(eq(length), eq(length), any()))
+                .thenReturn(reply);
 
         //when
-        int result = ioChannel.read(buffer, offset, length);
+        IOChannelReadReply result = ioChannel.read(length);
 
         //then
-        assertThat(result, is(length));
+        assertThat(result, is(reply));
     }
 
     /**
-     * Test of read(byte[], int, int) method, of class JSchIOChannel.
+     * Test of read(int) method, of class JSchIOChannel.
      *
      * Throws IOException.
      *
@@ -137,7 +145,7 @@ public class JSchIOChannelTest {
      */
     @Test(expected = SshException.class)
     public void testReadIOException() throws SshException, IOException {
-        System.out.println("read(byte[], int, int) throws IOException");
+        System.out.println("read(int) throws IOException");
         //given
         ioChannel.setInput(input);
         byte[] buffer = new byte[10];
@@ -146,13 +154,13 @@ public class JSchIOChannelTest {
         when(input.read(buffer, offset, length)).thenThrow(IOException.class);
 
         //when
-        ioChannel.read(buffer, offset, length);
+        ioChannel.read(length);
 
         //then
     }
 
     /**
-     * Test of read(byte[], int, int) method, of class JSchIOChannel.
+     * Test of read(int) method, of class JSchIOChannel.
      *
      * Reach end of stream.
      *
@@ -161,7 +169,7 @@ public class JSchIOChannelTest {
      */
     @Test(expected = SshException.class)
     public void testReadEndOfStream() throws SshException, IOException {
-        System.out.println("read(byte[], int, int) reach end of stream");
+        System.out.println("read(int) reach end of stream");
         //given
         ioChannel.setInput(input);
         byte[] buffer = new byte[10];
@@ -170,7 +178,7 @@ public class JSchIOChannelTest {
         when(input.read(buffer, offset, length)).thenReturn(-1);
 
         //when
-        ioChannel.read(buffer, offset, length);
+        ioChannel.read(length);
 
         //then
     }
