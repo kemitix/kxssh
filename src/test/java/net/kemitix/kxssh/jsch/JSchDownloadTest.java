@@ -14,7 +14,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.BlockJUnit4ClassRunner;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -42,7 +41,6 @@ public class JSchDownloadTest {
         listener = mock(StatusListener.class);
         factory = mock(SshIOFactory.class);
         outputStream = mock(FileOutputStream.class);
-        filesize = 231;
         download = new JSchDownload(connectionProperties);
         download.setSession(session);
         download.setIoChannel(ioChannel);
@@ -53,19 +51,28 @@ public class JSchDownloadTest {
     /**
      * Test of download method, of class JSchDownload.
      *
+     * Simulates downloading a 231 byte file, which should be completed using a
+     * single loop/read from the InputStream.
+     *
      * @throws java.lang.Exception
      */
-    @Test
+    @Test(timeout = 100L)
     public void testDownload() throws Exception {
         System.out.println("download");
         //given
         String remote = "remote.txt";
+        filesize = 231;
         File localFile = new File("local.txt");
         when(ioChannel.checkStatus())
                 .thenReturn(JSchIOChannel.CONTINUE)
-                .thenReturn(JSchIOChannel.SUCCESS);
+                .thenReturn(JSchIOChannel.SUCCESS)
+                .thenReturn(JSchIOChannel.EOF);
         when(ioChannel.readMetaData()).thenReturn(metaData);
-        when(ioChannel.read(any(), eq(0), eq(filesize))).thenReturn(filesize);
+        IOChannelReadReply reply = mock(IOChannelReadReply.class);
+        when(reply.getBytesRead()).thenReturn(filesize);
+        byte[] buffer = new byte[filesize];
+        when(reply.getBuffer()).thenReturn(buffer);
+        when(ioChannel.read(eq(filesize))).thenReturn(reply);
         when(metaData.getFilesize()).thenReturn(filesize);
         when(factory.createFileOutputStream(localFile)).thenReturn(outputStream);
 
@@ -81,7 +88,10 @@ public class JSchDownloadTest {
         verify(ioChannel, times(1)).readMetaData();
         verify(listener, times(1)).onUpdateStatus(SshOperationStatus.STARTING);
         verify(listener, times(1)).onUpdateStatus(SshOperationStatus.CONNECTING);
+        verify(listener, times(1)).onUpdateStatus(SshOperationStatus.CONNECTED);
         verify(listener, times(1)).onUpdateStatus(SshOperationStatus.DOWNLOADING);
+        verify(listener, times(1)).onUpdateProgress(0, filesize);
+        verify(listener, times(2)).onUpdateProgress(filesize, filesize);
         verify(listener, times(1)).onUpdateStatus(SshOperationStatus.DISCONNECTING);
         verify(listener, times(1)).onUpdateStatus(SshOperationStatus.DISCONNECTED);
     }
@@ -93,17 +103,22 @@ public class JSchDownloadTest {
      *
      * @throws java.lang.Exception
      */
-    @Test(expected = SshException.class)
+    @Test(expected = SshException.class, timeout = 100L)
     public void testDownloadFailure() throws Exception {
         System.out.println("download w/failure");
         //given
         String remote = "remote.txt";
+        filesize = 231;
         File localFile = new File("local.txt");
         when(ioChannel.checkStatus())
                 .thenReturn(JSchIOChannel.CONTINUE)
-                .thenReturn(JSchIOChannel.ERROR);
+                .thenReturn(JSchIOChannel.ERROR);// i.e. not SUCCESS
         when(ioChannel.readMetaData()).thenReturn(metaData);
-        when(ioChannel.read(any(), eq(0), eq(filesize))).thenReturn(filesize);
+        IOChannelReadReply reply = mock(IOChannelReadReply.class);
+        when(reply.getBytesRead()).thenReturn(filesize);
+        byte[] buffer = new byte[filesize];
+        when(reply.getBuffer()).thenReturn(buffer);
+        when(ioChannel.read(eq(filesize))).thenReturn(reply);
         when(metaData.getFilesize()).thenReturn(filesize);
         when(factory.createFileOutputStream(localFile)).thenReturn(outputStream);
 
@@ -119,6 +134,7 @@ public class JSchDownloadTest {
         verify(ioChannel, times(1)).readMetaData();
         verify(listener, times(1)).onUpdateStatus(SshOperationStatus.STARTING);
         verify(listener, times(1)).onUpdateStatus(SshOperationStatus.CONNECTING);
+        verify(listener, times(1)).onUpdateStatus(SshOperationStatus.CONNECTED);
         verify(listener, times(1)).onUpdateStatus(SshOperationStatus.DOWNLOADING);
         verify(listener, times(1)).onUpdateStatus(SshErrorStatus.ACK_ERROR);
     }
@@ -130,16 +146,17 @@ public class JSchDownloadTest {
      *
      * @throws java.lang.Exception
      */
-    @Test(expected = SshException.class)
-    public void testDownloadFileNotFound() throws Exception {
-        System.out.println("download w/file not found");
+    @Test(expected = SshException.class, timeout = 100L)
+    public void testDownloadLocalFileNotFound() throws Exception {
+        System.out.println("download w/local file not found");
         //given
         String remote = "remote.txt";
         File localFile = new File("local.txt");
         when(ioChannel.checkStatus())
                 .thenReturn(JSchIOChannel.CONTINUE);
         when(ioChannel.readMetaData()).thenReturn(metaData);
-        when(factory.createFileOutputStream(localFile)).thenThrow(FileNotFoundException.class);
+        when(factory.createFileOutputStream(localFile))
+                .thenThrow(FileNotFoundException.class);
 
         //when
         download.download(remote, localFile);
@@ -153,6 +170,7 @@ public class JSchDownloadTest {
         verify(ioChannel, times(1)).readMetaData();
         verify(listener, times(1)).onUpdateStatus(SshOperationStatus.STARTING);
         verify(listener, times(1)).onUpdateStatus(SshOperationStatus.CONNECTING);
+        verify(listener, times(1)).onUpdateStatus(SshOperationStatus.CONNECTED);
         verify(listener, times(1)).onUpdateStatus(SshOperationStatus.DOWNLOADING);
     }
 
