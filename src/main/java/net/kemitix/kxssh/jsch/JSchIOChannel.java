@@ -62,22 +62,20 @@ public class JSchIOChannel {
     private static final String ERROR_FILE_REMOTE_READ = "Error reading remote file";
     private static final String ERROR_READ_EOF = "Error tried to read past end of file";
 
+    private IOChannelReadReplyFactory readReplyFactory;
+
     IOChannelReadReply read(int length) throws SshException {
         byte[] buffer = new byte[length];
         int bytesRead;
-        IOChannelReadReply reply = new IOChannelReadReply();
         try {
             bytesRead = input.read(buffer, 0, length);
-            reply.setBuffer(buffer);
-            reply.setBytesRequested(length);
-            reply.setBytesRead(bytesRead);
+            if (bytesRead == -1) {
+                throw new SshException(ERROR_READ_EOF);
+            }
+            return readReplyFactory.createReply(length, bytesRead, buffer);
         } catch (IOException ex) {
             throw new SshException(ERROR_FILE_REMOTE_READ, ex);
         }
-        if (bytesRead == -1) {
-            throw new SshException(ERROR_READ_EOF);
-        }
-        return reply;
     }
 
     void write(byte[] buffer, int offset, int length) throws IOException {
