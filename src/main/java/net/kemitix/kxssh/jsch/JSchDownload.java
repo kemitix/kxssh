@@ -27,17 +27,10 @@ public class JSchDownload extends JSchOperation implements SshDownload {
 
         JSchIOChannel ioChannel = getExecIOChannel();
         ioChannel.setRemoteFilename(remoteFilename);
-        ioChannel.setLocalFile(localFile);
-
-        updateStatus(SshOperationStatus.CONNECTING);
-
-        ioChannel.connect();
-
-        updateStatus(SshOperationStatus.CONNECTED);
-
-        ioChannel.notifyReady();
 
         updateStatus(SshOperationStatus.DOWNLOADING);
+
+        ioChannel.setLocalFile(localFile);
 
         while (true) {
             if (ioChannel.checkStatus() != JSchIOChannel.CONTINUE) {
