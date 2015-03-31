@@ -56,6 +56,7 @@ public abstract class JSchOperation implements StatusProvider {
 
     protected void releaseIOChannel() {
         if (ioChannel != null) {
+            ioChannel.disconnect();
             ioChannel = null;
         }
     }
