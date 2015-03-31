@@ -17,6 +17,7 @@ import net.kemitix.kxssh.SshException;
 public class JSchIOChannel {
 
     private Channel channel;
+    private boolean connected;
     private OutputStream output;
     private InputStream input;
     private String remoteFilename;
@@ -24,6 +25,7 @@ public class JSchIOChannel {
 
     public JSchIOChannel() {
         readReplyFactory = new IOChannelReadReplyFactory();
+        connected = false;
     }
 
     public static JSchIOChannel createExecIOChannel(Session session) throws SshException {
@@ -49,15 +51,32 @@ public class JSchIOChannel {
         setInput(sessionChannel.getInputStream());
     }
 
-    private void setExecCommand(String remoteCommand) {
+    private void setExecCommand(String remoteCommand) throws SshException {
+        requireConnection();
         ((ChannelExec) channel).setCommand(remoteCommand);
     }
 
     public void connect() throws SshException {
-        try {
-            channel.connect();
-        } catch (JSchException ex) {
-            throw new SshException("Error connecting channel", ex);
+        if (!connected) {
+            try {
+                channel.connect();
+                connected = true;
+            } catch (JSchException ex) {
+                throw new SshException("Error connecting channel", ex);
+            }
+        }
+    }
+
+    public void disconnect() {
+        if (connected) {
+            channel.disconnect();
+            connected = false;
+        }
+    }
+
+    private void requireConnection() throws SshException {
+        if (!connected) {
+            throw new SshException("Not connected to channel");
         }
     }
 
@@ -68,6 +87,7 @@ public class JSchIOChannel {
     private IOChannelReadReplyFactory readReplyFactory;
 
     IOChannelReadReply read(int length) throws SshException {
+        requireConnection();
         byte[] buffer = new byte[length];
         int bytesRead;
         try {
@@ -81,11 +101,13 @@ public class JSchIOChannel {
         }
     }
 
-    void write(byte[] buffer, int offset, int length) throws IOException {
+    void write(byte[] buffer, int offset, int length) throws IOException, SshException {
+        requireConnection();
         output.write(buffer, offset, length);
     }
 
-    void flush() throws IOException {
+    void flush() throws IOException, SshException {
+        requireConnection();
         output.flush();
     }
 
@@ -100,6 +122,7 @@ public class JSchIOChannel {
     public static final int CONTINUE = 'C';
 
     protected int checkStatus() throws SshException {
+        requireConnection();
         try {
             int status = input.read();
             switch (status) {
@@ -116,7 +139,8 @@ public class JSchIOChannel {
         }
     }
 
-    private String readToEol() throws IOException {
+    private String readToEol() throws IOException, SshException {
+        requireConnection();
         StringBuilder sb = new StringBuilder();
         int c;
         do {
@@ -130,6 +154,7 @@ public class JSchIOChannel {
     private static final String ERROR_REMOTE_NOTIFY = "Error writing/flushing null on output stream";
 
     protected void notifyReady() throws SshException {
+        requireConnection();
         byte[] buf = new byte[1];
         buf[0] = 0; // send '\0' - null
         try {
