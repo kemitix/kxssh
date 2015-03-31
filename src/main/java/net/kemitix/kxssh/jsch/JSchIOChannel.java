@@ -20,7 +20,6 @@ public class JSchIOChannel {
     private boolean connected;
     private OutputStream output;
     private InputStream input;
-    private String remoteFilename;
     private File localFile;
 
     public JSchIOChannel() {
@@ -40,18 +39,13 @@ public class JSchIOChannel {
         return ioChannel;
     }
 
-    public void setRemoteFilename(String remoteFilename) {
-        this.remoteFilename = remoteFilename;
-        setExecCommand("scp -f " + remoteFilename);
-    }
-
     protected void setChannel(Channel sessionChannel) throws IOException {
         this.channel = sessionChannel;
         setOutput(sessionChannel.getOutputStream());
         setInput(sessionChannel.getInputStream());
     }
 
-    private void setExecCommand(String remoteCommand) throws SshException {
+    public void setExecCommand(String remoteCommand) throws SshException {
         requireConnection();
         ((ChannelExec) channel).setCommand(remoteCommand);
     }

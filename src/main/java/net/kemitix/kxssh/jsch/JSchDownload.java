@@ -26,10 +26,11 @@ public class JSchDownload extends JSchOperation implements SshDownload {
         updateStatus(SshOperationStatus.STARTING);
 
         JSchIOChannel ioChannel = getExecIOChannel();
-        ioChannel.setRemoteFilename(remoteFilename);
 
         updateStatus(SshOperationStatus.DOWNLOADING);
 
+        // scp "from"
+        ioChannel.setExecCommand("scp -f " + remoteFilename);
         ioChannel.setLocalFile(localFile);
 
         while (true) {
