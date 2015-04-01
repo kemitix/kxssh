@@ -3,6 +3,7 @@ package net.kemitix.kxssh.jsch;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import lombok.Setter;
 import net.kemitix.kxssh.SshConnectionProperties;
@@ -42,7 +43,12 @@ public class JSchDownload extends JSchOperation implements SshDownload {
             if (ioChannel.checkStatus() != JSchIOChannel.CONTINUE) {
                 break;
             }
-            ScpCommand scpCommand = ioChannel.readScpCommand();
+            ScpCommand scpCommand;
+            try {
+                scpCommand = ioChannel.readScpCommand();
+            } catch (IOException ex) {
+                throw new SshException("Error reading SCP protocol command", ex);
+            }
             if (!(scpCommand instanceof ScpCopyCommand)) {
                 throw new SshException("Unexpected SCP protocol command (only support single files)");
             }
