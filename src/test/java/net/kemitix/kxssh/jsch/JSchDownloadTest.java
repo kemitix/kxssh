@@ -68,7 +68,7 @@ public class JSchDownloadTest {
                 .thenReturn(JSchIOChannel.CONTINUE)
                 .thenReturn(JSchIOChannel.SUCCESS)
                 .thenReturn(JSchIOChannel.EOF);
-        when(ioChannel.readMetaData()).thenReturn(metaData);
+        when(ioChannel.readScpCommand()).thenReturn(metaData);
         IOChannelReadReply reply = mock(IOChannelReadReply.class);
         when(reply.getBytesRead()).thenReturn(filesize);
         byte[] buffer = new byte[filesize];
@@ -85,7 +85,7 @@ public class JSchDownloadTest {
         verify(ioChannel, times(1)).setLocalFile(localFile);
         verify(ioChannel, times(2)).notifyReady();// top loop 1, bottom loop 1
         verify(ioChannel, times(3)).checkStatus();// start of loop 1, bottom of loop 1, top of loop 2
-        verify(ioChannel, times(1)).readMetaData();
+        verify(ioChannel, times(1)).readScpCommand();
         verify(listener, times(1)).onUpdateStatus(SshOperationStatus.STARTING);
         verify(listener, times(1)).onUpdateStatus(SshOperationStatus.DOWNLOADING);
         verify(listener, times(1)).onUpdateProgress(0, filesize);
@@ -111,7 +111,7 @@ public class JSchDownloadTest {
         when(ioChannel.checkStatus())
                 .thenReturn(JSchIOChannel.CONTINUE)
                 .thenReturn(JSchIOChannel.ERROR);// i.e. not SUCCESS
-        when(ioChannel.readMetaData()).thenReturn(metaData);
+        when(ioChannel.readScpCommand()).thenReturn(metaData);
         IOChannelReadReply reply = mock(IOChannelReadReply.class);
         when(reply.getBytesRead()).thenReturn(filesize);
         byte[] buffer = new byte[filesize];
@@ -129,7 +129,7 @@ public class JSchDownloadTest {
         verify(ioChannel, times(1)).connect();
         verify(ioChannel, times(3)).notifyReady();// pre-loop, top loop 1, bottom loop 1
         verify(ioChannel, times(2)).checkStatus();// start of loop 1, bottom of loop 1
-        verify(ioChannel, times(1)).readMetaData();
+        verify(ioChannel, times(1)).readScpCommand();
         verify(listener, times(1)).onUpdateStatus(SshOperationStatus.STARTING);
         verify(listener, times(1)).onUpdateStatus(SshOperationStatus.CONNECTING);
         verify(listener, times(1)).onUpdateStatus(SshOperationStatus.CONNECTED);
@@ -152,7 +152,7 @@ public class JSchDownloadTest {
         File localFile = new File("local.txt");
         when(ioChannel.checkStatus())
                 .thenReturn(JSchIOChannel.CONTINUE);
-        when(ioChannel.readMetaData()).thenReturn(metaData);
+        when(ioChannel.readScpCommand()).thenReturn(metaData);
         when(factory.createFileOutputStream(localFile))
                 .thenThrow(FileNotFoundException.class);
 
@@ -165,7 +165,7 @@ public class JSchDownloadTest {
         verify(ioChannel, times(1)).connect();
         verify(ioChannel, times(2)).notifyReady();// pre-loop, top loop 1
         verify(ioChannel, times(1)).checkStatus();// start of loop 1
-        verify(ioChannel, times(1)).readMetaData();
+        verify(ioChannel, times(1)).readScpCommand();
         verify(listener, times(1)).onUpdateStatus(SshOperationStatus.STARTING);
         verify(listener, times(1)).onUpdateStatus(SshOperationStatus.CONNECTING);
         verify(listener, times(1)).onUpdateStatus(SshOperationStatus.CONNECTED);

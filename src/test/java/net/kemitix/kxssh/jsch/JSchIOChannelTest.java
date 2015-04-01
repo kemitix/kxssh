@@ -193,7 +193,7 @@ public class JSchIOChannelTest {
     }
 
     /**
-     * Test of readMetaData method, of class JSchIOChannel.
+     * Test of readScpCommand method, of class JSchIOChannel.
      *
      * @throws net.kemitix.kxssh.SshException
      * @throws java.io.IOException
@@ -244,7 +244,7 @@ public class JSchIOChannelTest {
                 .thenReturn(filenameDelimiterReply);
 
         //when
-        IOChannelMetadata metadata = ioChannel.readMetaData();
+        IOChannelMetadata metadata = ioChannel.readScpCommand();
 
         //then
         assertThat(metadata.getHeader(), is(headerBuffer));
