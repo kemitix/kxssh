@@ -10,7 +10,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import net.kemitix.kxssh.SshException;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -572,5 +574,130 @@ public class JSchIOChannelTest {
 
         //then
         assertThat(ioChannel.getReadReplyFactory(), is(readReplyFactory));
+    }
+
+    /**
+     * Test for connect method, of class JSchIOChannel.
+     *
+     * When not connected
+     *
+     * @throws net.kemitix.kxssh.SshException
+     * @throws java.io.IOException
+     */
+    @Test
+    public void testConnectNotConnected() throws SshException, IOException {
+        System.out.println("connect not connected");
+        //given
+        ioChannel.setConnected(false);
+        ioChannel.setChannel(channel);
+
+        //when
+        ioChannel.connect();
+
+        //then
+        assertTrue(ioChannel.isConnected());
+    }
+
+    /**
+     * Test for connect method, of class JSchIOChannel.
+     *
+     * When connected
+     *
+     * @throws net.kemitix.kxssh.SshException
+     * @throws java.io.IOException
+     */
+    @Test
+    public void testConnectConnected() throws SshException, IOException {
+        System.out.println("connect connected");
+        //given
+        ioChannel.setConnected(true);
+        ioChannel.setChannel(channel);
+
+        //when
+        ioChannel.connect();
+
+        //then
+    }
+
+    /**
+     * Test for disconnect method, of class JSchIOChannel.
+     *
+     * @throws java.io.IOException
+     */
+    @Test
+    public void testDisconnect() throws IOException {
+        System.out.println("disconnect");
+        //given
+        ioChannel.setChannel(channel);
+        ioChannel.setConnected(true);
+
+        //when
+        ioChannel.disconnect();
+
+        //then
+        verify(channel, times(1)).disconnect();
+        assertFalse(ioChannel.isConnected());
+    }
+
+    /**
+     * Test for disconnect method, of class JSchIOChannel.
+     *
+     * When not connected
+     *
+     * @throws java.io.IOException
+     */
+    @Test
+    public void testDisconnectNotConnected() throws IOException {
+        System.out.println("disconnect");
+        //given
+        ioChannel.setChannel(channel);
+        ioChannel.setConnected(false);
+
+        //when
+        ioChannel.disconnect();
+
+        //then
+        verify(channel, times(0)).disconnect();
+        assertFalse(ioChannel.isConnected());
+    }
+
+    /**
+     * Test for requireConnection method, of class JSchIOChannel.
+     *
+     * When connected
+     *
+     * @throws net.kemitix.kxssh.SshException
+     * @throws java.io.IOException
+     */
+    @Test
+    public void testRequireConnectionConnected() throws SshException, IOException {
+        System.out.println("requireConnection connected");
+        //given
+        ioChannel.setConnected(true);
+        ioChannel.setChannel(channel);
+
+        //when
+        ioChannel.setExecCommand(remoteFilename);
+
+        //then
+    }
+
+    /**
+     * Test for requireConnection method, of class JSchIOChannel.
+     *
+     * When not connected
+     *
+     * @throws net.kemitix.kxssh.SshException
+     */
+    @Test(expected = SshException.class)
+    public void testRequireNotConnectionConnected() throws SshException {
+        System.out.println("requireConnection not connected");
+        //given
+        ioChannel.setConnected(false);
+
+        //when
+        ioChannel.setExecCommand(remoteFilename);
+
+        //then
     }
 }
