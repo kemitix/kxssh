@@ -40,7 +40,7 @@ public class JSchSftpClient implements SftpClient {
     }
 
     @Override
-    public void updateProgress(int progress, int total) {
+    public void updateProgress(long progress, long total) {
         statusListener.onUpdateProgress(progress, total);
     }
 

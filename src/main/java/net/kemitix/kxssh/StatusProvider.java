@@ -4,7 +4,7 @@ public interface StatusProvider {
 
     void setStatusListener(StatusListener statusListener);
 
-    void updateProgress(int progress, int total);
+    void updateProgress(long progress, long total);
 
     void updateStatus(SshStatus status);
 
