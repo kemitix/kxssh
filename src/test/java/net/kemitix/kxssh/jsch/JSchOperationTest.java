@@ -5,6 +5,7 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import net.kemitix.kxssh.SshConnectionProperties;
 import net.kemitix.kxssh.SshErrorStatus;
@@ -42,6 +43,7 @@ public class JSchOperationTest {
     private StatusListener listener;
     private Channel channel;
     private OutputStream outputStream;
+    private InputStream inputStream;
     private JSchIOChannel ioChannel;
 
     @Before
@@ -55,6 +57,7 @@ public class JSchOperationTest {
         listener = mock(StatusListener.class);
         channel = mock(Channel.class);
         outputStream = mock(OutputStream.class);
+        inputStream = mock(InputStream.class);
         ioChannel = mock(JSchIOChannel.class);
 
         operation = new JSchOperation(connectionProperties) {
@@ -305,12 +308,16 @@ public class JSchOperationTest {
      *
      * @throws net.kemitix.kxssh.SshException
      * @throws com.jcraft.jsch.JSchException
+     * @throws java.io.IOException
      */
     @Test
-    public void testGetExecIOChannel() throws SshException, JSchException {
+    public void testGetExecIOChannel() throws SshException, JSchException, IOException {
         System.out.println("getExecIOChannel");
         //given
         operation.setIoChannel(null);
+        when(session.openChannel("exec")).thenReturn(channel);
+        when(channel.getOutputStream()).thenReturn(outputStream);
+        when(channel.getInputStream()).thenReturn(inputStream);
 
         //when
         operation.getExecIOChannel();

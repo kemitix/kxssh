@@ -49,6 +49,8 @@ public class JSchIOChannelTest {
 
         when(channel.getInputStream()).thenReturn(input);
         when(channel.getOutputStream()).thenReturn(output);
+
+        ioChannel.setConnected(true);
     }
 
     /**
@@ -426,18 +428,19 @@ public class JSchIOChannelTest {
     }
 
     /**
-     * Test for setRemoteFilename method, of class JSchIOChannel.
+     * Test for setRemoteDownloadFilename method, of class JSchIOChannel.
      *
      * @throws java.io.IOException
+     * @throws net.kemitix.kxssh.SshException
      */
     @Test
-    public void testSetRemoteFilename() throws IOException {
+    public void testSetRemoteFilename() throws IOException, SshException {
         System.out.println("setRemoteFilename");
         //given
         ioChannel.setChannel(channel);
 
         //when
-        ioChannel.setRemoteFilename(remoteFilename);
+        ioChannel.setExecCommand(remoteFilename);
 
         //then
         verify((ChannelExec) channel, times(1)).setCommand(contains(remoteFilename));
@@ -455,6 +458,7 @@ public class JSchIOChannelTest {
         System.out.println("connect");
         //given
         ioChannel.setChannel(channel);
+        ioChannel.setConnected(false);
 
         //when
         ioChannel.connect();
@@ -477,6 +481,7 @@ public class JSchIOChannelTest {
         System.out.println("connect throws JSchException");
         //given
         ioChannel.setChannel(channel);
+        ioChannel.setConnected(false);
         doThrow(JSchException.class)
                 .when(channel)
                 .connect();
@@ -539,18 +544,19 @@ public class JSchIOChannelTest {
      * Test for set/getRemoteFilename methods, of class JSchIOChannel.
      *
      * @throws java.io.IOException
+     * @throws net.kemitix.kxssh.SshException
      */
     @Test
-    public void testSetGetRemoteFilename() throws IOException {
+    public void testSetGetRemoteFilename() throws IOException, SshException {
         System.out.println("set/getRemoteFilename");
         //given
         ioChannel.setChannel(channel);
 
         //when
-        ioChannel.setRemoteFilename(remoteFilename);
+        ioChannel.setExecCommand(remoteFilename);
 
         //then
-        assertThat(ioChannel.getRemoteFilename(), is(remoteFilename));
+        verify((ChannelExec) channel).setCommand(contains(remoteFilename));
     }
 
     /**

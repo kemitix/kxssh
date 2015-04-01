@@ -14,6 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.BlockJUnit4ClassRunner;
+import static org.mockito.Matchers.contains;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -80,15 +81,12 @@ public class JSchDownloadTest {
         download.download(remote, localFile);
 
         //then
-        verify(ioChannel, times(1)).setRemoteFilename(remote);
+        verify(ioChannel, times(1)).setExecCommand(contains(remote));
         verify(ioChannel, times(1)).setLocalFile(localFile);
-        verify(ioChannel, times(1)).connect();
-        verify(ioChannel, times(3)).notifyReady();// pre-loop, top loop 1, bottom loop 1
+        verify(ioChannel, times(2)).notifyReady();// top loop 1, bottom loop 1
         verify(ioChannel, times(3)).checkStatus();// start of loop 1, bottom of loop 1, top of loop 2
         verify(ioChannel, times(1)).readMetaData();
         verify(listener, times(1)).onUpdateStatus(SshOperationStatus.STARTING);
-        verify(listener, times(1)).onUpdateStatus(SshOperationStatus.CONNECTING);
-        verify(listener, times(1)).onUpdateStatus(SshOperationStatus.CONNECTED);
         verify(listener, times(1)).onUpdateStatus(SshOperationStatus.DOWNLOADING);
         verify(listener, times(1)).onUpdateProgress(0, filesize);
         verify(listener, times(2)).onUpdateProgress(filesize, filesize);
@@ -126,7 +124,7 @@ public class JSchDownloadTest {
         download.download(remote, localFile);
 
         //then
-        verify(ioChannel, times(1)).setRemoteFilename(remote);
+        verify(ioChannel, times(1)).setExecCommand(contains(remote));
         verify(ioChannel, times(1)).setLocalFile(localFile);
         verify(ioChannel, times(1)).connect();
         verify(ioChannel, times(3)).notifyReady();// pre-loop, top loop 1, bottom loop 1
@@ -162,7 +160,7 @@ public class JSchDownloadTest {
         download.download(remote, localFile);
 
         //then
-        verify(ioChannel, times(1)).setRemoteFilename(remote);
+        verify(ioChannel, times(1)).setExecCommand(contains(remote));
         verify(ioChannel, times(1)).setLocalFile(localFile);
         verify(ioChannel, times(1)).connect();
         verify(ioChannel, times(2)).notifyReady();// pre-loop, top loop 1
