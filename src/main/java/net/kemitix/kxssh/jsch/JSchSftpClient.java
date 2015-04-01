@@ -23,11 +23,15 @@ public class JSchSftpClient implements SftpClient {
 
     @Override
     public void download(String remoteFilename, File localFile) throws SshException {
+        requireDownload();
+        download.download(remoteFilename, localFile);
+    }
+
+    protected void requireDownload() {
         if (download == null) {
             download = new JSchDownload(connectionProperties);
             download.setStatusListener(statusListener);
         }
-        download.download(remoteFilename, localFile);
     }
 
     @Override
