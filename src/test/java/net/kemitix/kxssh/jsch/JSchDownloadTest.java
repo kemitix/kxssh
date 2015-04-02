@@ -10,6 +10,7 @@ import net.kemitix.kxssh.SshException;
 import net.kemitix.kxssh.SshIOFactory;
 import net.kemitix.kxssh.SshOperationStatus;
 import net.kemitix.kxssh.StatusListener;
+import net.kemitix.kxssh.scp.ScpCopyCommand;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,8 +28,8 @@ public class JSchDownloadTest {
     private JSchDownload download;
     private Session session;
     private JSchIOChannel ioChannel;
-    private IOChannelMetadata metaData;
-    private int filesize;
+    private ScpCopyCommand scpCopyCommand;
+    private long filesize;
     private StatusListener listener;
     private SshIOFactory factory;
     private FileOutputStream outputStream;
@@ -38,7 +39,7 @@ public class JSchDownloadTest {
         SshConnectionProperties connectionProperties = mock(SshConnectionProperties.class);
         session = mock(Session.class);
         ioChannel = mock(JSchIOChannel.class);
-        metaData = mock(IOChannelMetadata.class);
+        scpCopyCommand = mock(ScpCopyCommand.class);
         listener = mock(StatusListener.class);
         factory = mock(SshIOFactory.class);
         outputStream = mock(FileOutputStream.class);
@@ -62,19 +63,18 @@ public class JSchDownloadTest {
         System.out.println("download");
         //given
         String remote = "remote.txt";
-        filesize = 231;
+        filesize = 231L;
         File localFile = new File("local.txt");
         when(ioChannel.checkStatus())
-                .thenReturn(JSchIOChannel.CONTINUE)
                 .thenReturn(JSchIOChannel.SUCCESS)
                 .thenReturn(JSchIOChannel.EOF);
-        when(ioChannel.readMetaData()).thenReturn(metaData);
+        when(ioChannel.readScpCommand()).thenReturn(scpCopyCommand);
         IOChannelReadReply reply = mock(IOChannelReadReply.class);
-        when(reply.getBytesRead()).thenReturn(filesize);
-        byte[] buffer = new byte[filesize];
+        when(reply.getBytesRead()).thenReturn((int) filesize);
+        byte[] buffer = new byte[(int) filesize];
         when(reply.getBuffer()).thenReturn(buffer);
-        when(ioChannel.read(eq(filesize))).thenReturn(reply);
-        when(metaData.getFilesize()).thenReturn(filesize);
+        when(ioChannel.read(eq((int) filesize))).thenReturn(reply);
+        when(scpCopyCommand.getLength()).thenReturn(filesize);
         when(factory.createFileOutputStream(localFile)).thenReturn(outputStream);
 
         //when
@@ -83,9 +83,9 @@ public class JSchDownloadTest {
         //then
         verify(ioChannel, times(1)).setExecCommand(contains(remote));
         verify(ioChannel, times(1)).setLocalFile(localFile);
-        verify(ioChannel, times(2)).notifyReady();// top loop 1, bottom loop 1
-        verify(ioChannel, times(3)).checkStatus();// start of loop 1, bottom of loop 1, top of loop 2
-        verify(ioChannel, times(1)).readMetaData();
+        verify(ioChannel, times(3)).notifyReady();// pre-loop 1, middle loop 1, bottom loop 1
+        verify(ioChannel, times(2)).checkStatus();// near bottom of loop 1, bottom of loop 1
+        verify(ioChannel, times(1)).readScpCommand();
         verify(listener, times(1)).onUpdateStatus(SshOperationStatus.STARTING);
         verify(listener, times(1)).onUpdateStatus(SshOperationStatus.DOWNLOADING);
         verify(listener, times(1)).onUpdateProgress(0, filesize);
@@ -111,13 +111,13 @@ public class JSchDownloadTest {
         when(ioChannel.checkStatus())
                 .thenReturn(JSchIOChannel.CONTINUE)
                 .thenReturn(JSchIOChannel.ERROR);// i.e. not SUCCESS
-        when(ioChannel.readMetaData()).thenReturn(metaData);
+        when(ioChannel.readScpCommand()).thenReturn(scpCopyCommand);
         IOChannelReadReply reply = mock(IOChannelReadReply.class);
-        when(reply.getBytesRead()).thenReturn(filesize);
-        byte[] buffer = new byte[filesize];
+        when(reply.getBytesRead()).thenReturn((int) filesize);
+        byte[] buffer = new byte[(int) filesize];
         when(reply.getBuffer()).thenReturn(buffer);
-        when(ioChannel.read(eq(filesize))).thenReturn(reply);
-        when(metaData.getFilesize()).thenReturn(filesize);
+        when(ioChannel.read(eq((int) filesize))).thenReturn(reply);
+        when(scpCopyCommand.getLength()).thenReturn(filesize);
         when(factory.createFileOutputStream(localFile)).thenReturn(outputStream);
 
         //when
@@ -129,7 +129,7 @@ public class JSchDownloadTest {
         verify(ioChannel, times(1)).connect();
         verify(ioChannel, times(3)).notifyReady();// pre-loop, top loop 1, bottom loop 1
         verify(ioChannel, times(2)).checkStatus();// start of loop 1, bottom of loop 1
-        verify(ioChannel, times(1)).readMetaData();
+        verify(ioChannel, times(1)).readScpCommand();
         verify(listener, times(1)).onUpdateStatus(SshOperationStatus.STARTING);
         verify(listener, times(1)).onUpdateStatus(SshOperationStatus.CONNECTING);
         verify(listener, times(1)).onUpdateStatus(SshOperationStatus.CONNECTED);
@@ -152,7 +152,7 @@ public class JSchDownloadTest {
         File localFile = new File("local.txt");
         when(ioChannel.checkStatus())
                 .thenReturn(JSchIOChannel.CONTINUE);
-        when(ioChannel.readMetaData()).thenReturn(metaData);
+        when(ioChannel.readScpCommand()).thenReturn(scpCopyCommand);
         when(factory.createFileOutputStream(localFile))
                 .thenThrow(FileNotFoundException.class);
 
@@ -165,7 +165,7 @@ public class JSchDownloadTest {
         verify(ioChannel, times(1)).connect();
         verify(ioChannel, times(2)).notifyReady();// pre-loop, top loop 1
         verify(ioChannel, times(1)).checkStatus();// start of loop 1
-        verify(ioChannel, times(1)).readMetaData();
+        verify(ioChannel, times(1)).readScpCommand();
         verify(listener, times(1)).onUpdateStatus(SshOperationStatus.STARTING);
         verify(listener, times(1)).onUpdateStatus(SshOperationStatus.CONNECTING);
         verify(listener, times(1)).onUpdateStatus(SshOperationStatus.CONNECTED);

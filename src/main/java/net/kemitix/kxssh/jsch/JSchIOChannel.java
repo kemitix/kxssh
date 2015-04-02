@@ -11,6 +11,7 @@ import java.io.OutputStream;
 import lombok.Getter;
 import lombok.Setter;
 import net.kemitix.kxssh.SshException;
+import net.kemitix.kxssh.scp.ScpCommand;
 
 @Setter
 @Getter
@@ -132,7 +133,7 @@ public class JSchIOChannel {
         }
     }
 
-    private String readToEol() throws IOException, SshException {
+    public String readToEol() throws IOException, SshException {
         requireConnection();
         StringBuilder sb = new StringBuilder();
         int c;
@@ -162,44 +163,14 @@ public class JSchIOChannel {
     /**
      * Read metadata, which consists of the file size followed by the filename.
      *
-     * @return the file size
+     * @return the scp protocol command
+     * @throws java.io.IOException
      * @throws SshException
      */
-    protected IOChannelMetadata readMetaData() throws SshException {
-        IOChannelMetadata metadata = new IOChannelMetadata();
-        // read 5-byte permissions '0644 '
-        IOChannelReadReply permissionsReply = read(5);
-        metadata.setHeader(permissionsReply.getBuffer());
-
-        // read filesize, as a string, terminated by a space
-        StringBuilder sb = new StringBuilder();
-        while (true) {
-            IOChannelReadReply filesizeCharReply = read(1);
-            byte c = filesizeCharReply.getBuffer()[0];
-            if (c == ' ') {
-                break;
-            }
-            sb.append(c - '0');
-        }
-        metadata.setFilesize(Integer.parseInt(sb.toString()));
-
-        /**
-         * Continue reading to remove the filename from the channel, terminated
-         * by a line feed (ascii hex 0a). Although we don't do anything file the
-         * filename, we still needed to remove it from the channel.
-         */
-        StringBuilder filename = new StringBuilder();
-        for (int i = 0;; i++) {
-            IOChannelReadReply filenameCharReply = read(1);
-            byte c = filenameCharReply.getBuffer()[0];
-            if (c == (byte) 0x0a) {
-                metadata.setFilename(filename.toString());
-                break;
-            }
-            filename.append((char) c);
-        }
-
-        return metadata;
+    protected ScpCommand readScpCommand() throws IOException, SshException {
+        String commandLine = readToEol();
+        ScpCommand scpCommand = ScpCommand.parse(commandLine);
+        return scpCommand;
     }
 
 }
