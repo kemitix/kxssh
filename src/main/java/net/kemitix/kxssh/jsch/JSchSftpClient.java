@@ -4,18 +4,18 @@ import java.io.File;
 import lombok.Setter;
 import net.kemitix.kxssh.SftpClient;
 import net.kemitix.kxssh.SshConnectionProperties;
-import net.kemitix.kxssh.SshDownload;
+import net.kemitix.kxssh.ScpDownload;
 import net.kemitix.kxssh.SshException;
 import net.kemitix.kxssh.SshStatus;
-import net.kemitix.kxssh.StatusListener;
+import net.kemitix.kxssh.SshStatusListener;
 
 @Setter
 public class JSchSftpClient implements SftpClient {
 
     private final SshConnectionProperties connectionProperties;
-    private SshDownload download;
+    private ScpDownload download;
 
-    private StatusListener statusListener;
+    private SshStatusListener statusListener;
 
     public JSchSftpClient(SshConnectionProperties connectionProperties) {
         this.connectionProperties = connectionProperties;
@@ -29,13 +29,13 @@ public class JSchSftpClient implements SftpClient {
 
     protected void requireDownload() {
         if (download == null) {
-            download = new JSchDownload(connectionProperties);
+            download = new JSchScpDownload(connectionProperties);
             download.setStatusListener(statusListener);
         }
     }
 
     @Override
-    public void setStatusListener(StatusListener statusListener) {
+    public void setStatusListener(SshStatusListener statusListener) {
         this.statusListener = statusListener;
     }
 

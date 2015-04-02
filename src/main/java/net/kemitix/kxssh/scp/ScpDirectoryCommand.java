@@ -2,7 +2,7 @@ package net.kemitix.kxssh.scp;
 
 import java.io.UnsupportedEncodingException;
 
-class ScpDirectoryCommand extends ScpCDCommand {
+class ScpDirectoryCommand extends ScpTransferCommand {
 
     public ScpDirectoryCommand() {
         setLength(0);

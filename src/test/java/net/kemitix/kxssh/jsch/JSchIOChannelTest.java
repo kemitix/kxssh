@@ -8,12 +8,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import net.kemitix.kxssh.IOChannelReadReply;
+import net.kemitix.kxssh.IOChannelReadReplyFactory;
 import net.kemitix.kxssh.SshException;
 import net.kemitix.kxssh.scp.ScpCopyCommand;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,8 +53,7 @@ public class JSchIOChannelTest {
 
         when(channel.getInputStream()).thenReturn(input);
         when(channel.getOutputStream()).thenReturn(output);
-
-        ioChannel.setConnected(true);
+        ioChannel.setChannel(channel);
     }
 
     /**
@@ -137,6 +137,7 @@ public class JSchIOChannelTest {
         IOChannelReadReply reply = mock(IOChannelReadReply.class);
         when(readReplyFactory.createReply(eq(length), eq(length), any()))
                 .thenReturn(reply);
+        when(channel.isConnected()).thenReturn(true);
 
         //when
         IOChannelReadReply result = ioChannel.read(length);
@@ -146,27 +147,23 @@ public class JSchIOChannelTest {
     }
 
     /**
-     * Test of read(int) method, of class JSchIOChannel.
+     * Test for read method, of class JSchIOChannel.
      *
-     * Throws IOException.
+     * Where reading throws an IOException
      *
-     * @throws net.kemitix.kxssh.SshException
      * @throws java.io.IOException
+     * @throws net.kemitix.kxssh.SshException
      */
     @Test(expected = SshException.class)
-    public void testReadIOException() throws SshException, IOException {
-        System.out.println("read(int) throws IOException");
+    public void testReadIOException() throws IOException, SshException {
+        System.out.println("read IOException");
         //given
-        ioChannel.setInput(input);
-        byte[] buffer = new byte[10];
-        int offset = 0;
-        int length = 10;
-        when(input.read(buffer, offset, length)).thenThrow(IOException.class);
+        when(channel.isConnected()).thenReturn(true);
+        int length = 1;
+        when(input.read(any(), eq(0), eq(length))).thenThrow(IOException.class);
 
         //when
         ioChannel.read(length);
-
-        //then
     }
 
     /**
@@ -205,6 +202,7 @@ public class JSchIOChannelTest {
         //given
         ioChannel.setInput(input);
         ioChannel.setReadReplyFactory(readReplyFactory);
+        when(channel.isConnected()).thenReturn(true);
 
         when(input.read(any(), eq(0), eq(5))).thenReturn(5);
         IOChannelReadReply headerReply = mock(IOChannelReadReply.class);
@@ -241,6 +239,7 @@ public class JSchIOChannelTest {
         //given
         ioChannel.setInput(input);
         when(input.read()).thenReturn(JSchIOChannel.SUCCESS);
+        when(channel.isConnected()).thenReturn(true);
 
         //when
         int status = ioChannel.checkStatus();
@@ -263,6 +262,7 @@ public class JSchIOChannelTest {
         //given
         ioChannel.setInput(input);
         when(input.read()).thenReturn(JSchIOChannel.EOF);
+        when(channel.isConnected()).thenReturn(true);
 
         //when
         int status = ioChannel.checkStatus();
@@ -285,6 +285,7 @@ public class JSchIOChannelTest {
         //given
         ioChannel.setInput(input);
         when(input.read()).thenReturn(JSchIOChannel.CONTINUE);
+        when(channel.isConnected()).thenReturn(true);
 
         //when
         int status = ioChannel.checkStatus();
@@ -305,7 +306,7 @@ public class JSchIOChannelTest {
     public void testCheckStatusError() throws IOException, SshException {
         System.out.println("checkStatus ERROR");
         //given
-        ioChannel.setInput(input);
+        when(channel.isConnected()).thenReturn(true);
         when(input.read()).thenReturn(JSchIOChannel.ERROR).thenReturn((int) '\n');
 
         //when
@@ -326,7 +327,7 @@ public class JSchIOChannelTest {
     public void testCheckStatusFatal() throws IOException, SshException {
         System.out.println("checkStatus FATAL");
         //given
-        ioChannel.setInput(input);
+        when(channel.isConnected()).thenReturn(true);
         when(input.read())
                 .thenReturn(JSchIOChannel.FATAL)
                 .thenReturn((int) 'a')
@@ -350,7 +351,7 @@ public class JSchIOChannelTest {
     public void testCheckStatusIOEXception() throws IOException, SshException {
         System.out.println("checkStatus IOException");
         //given
-        ioChannel.setInput(input);
+        when(channel.isConnected()).thenReturn(true);
         when(input.read()).thenThrow(IOException.class);
 
         //when
@@ -370,6 +371,7 @@ public class JSchIOChannelTest {
         System.out.println("notifyReady");
         //given
         ioChannel.setOutput(output);
+        when(channel.isConnected()).thenReturn(true);
 
         //when
         ioChannel.notifyReady();
@@ -391,7 +393,7 @@ public class JSchIOChannelTest {
     public void testNotifyReadyIOException() throws SshException, IOException {
         System.out.println("notifyReady throws IOException");
         //given
-        ioChannel.setOutput(output);
+        when(channel.isConnected()).thenReturn(true);
         doThrow(IOException.class)
                 .when(output)
                 .flush();
@@ -414,7 +416,6 @@ public class JSchIOChannelTest {
     public void testSetRemoteFilename() throws IOException, SshException {
         System.out.println("setRemoteFilename");
         //given
-        ioChannel.setChannel(channel);
 
         //when
         ioChannel.setExecCommand(remoteFilename);
@@ -434,8 +435,6 @@ public class JSchIOChannelTest {
     public void testConnect() throws SshException, IOException, JSchException {
         System.out.println("connect");
         //given
-        ioChannel.setChannel(channel);
-        ioChannel.setConnected(false);
 
         //when
         ioChannel.connect();
@@ -457,8 +456,6 @@ public class JSchIOChannelTest {
     public void testConnectJSchException() throws SshException, IOException, JSchException {
         System.out.println("connect throws JSchException");
         //given
-        ioChannel.setChannel(channel);
-        ioChannel.setConnected(false);
         doThrow(JSchException.class)
                 .when(channel)
                 .connect();
@@ -527,7 +524,6 @@ public class JSchIOChannelTest {
     public void testSetGetRemoteFilename() throws IOException, SshException {
         System.out.println("set/getRemoteFilename");
         //given
-        ioChannel.setChannel(channel);
 
         //when
         ioChannel.setExecCommand(remoteFilename);
@@ -560,17 +556,16 @@ public class JSchIOChannelTest {
      * @throws java.io.IOException
      */
     @Test
-    public void testConnectNotConnected() throws SshException, IOException {
+    public void testConnectNotConnected() throws SshException, IOException, JSchException {
         System.out.println("connect not connected");
         //given
-        ioChannel.setConnected(false);
-        ioChannel.setChannel(channel);
+        when(channel.isConnected()).thenReturn(false);
 
         //when
         ioChannel.connect();
 
         //then
-        assertTrue(ioChannel.isConnected());
+        verify(channel, times(1)).connect();
     }
 
     /**
@@ -585,8 +580,6 @@ public class JSchIOChannelTest {
     public void testConnectConnected() throws SshException, IOException {
         System.out.println("connect connected");
         //given
-        ioChannel.setConnected(true);
-        ioChannel.setChannel(channel);
 
         //when
         ioChannel.connect();
@@ -603,15 +596,13 @@ public class JSchIOChannelTest {
     public void testDisconnect() throws IOException {
         System.out.println("disconnect");
         //given
-        ioChannel.setChannel(channel);
-        ioChannel.setConnected(true);
+        when(channel.isConnected()).thenReturn(true);
 
         //when
         ioChannel.disconnect();
 
         //then
         verify(channel, times(1)).disconnect();
-        assertFalse(ioChannel.isConnected());
     }
 
     /**
@@ -625,8 +616,6 @@ public class JSchIOChannelTest {
     public void testDisconnectNotConnected() throws IOException {
         System.out.println("disconnect");
         //given
-        ioChannel.setChannel(channel);
-        ioChannel.setConnected(false);
 
         //when
         ioChannel.disconnect();
@@ -648,8 +637,6 @@ public class JSchIOChannelTest {
     public void testRequireConnectionConnected() throws SshException, IOException {
         System.out.println("requireConnection connected");
         //given
-        ioChannel.setConnected(true);
-        ioChannel.setChannel(channel);
 
         //when
         ioChannel.setExecCommand(remoteFilename);
@@ -669,11 +656,74 @@ public class JSchIOChannelTest {
     public void testRequireNotConnectionConnected() throws SshException, IOException {
         System.out.println("requireConnection not connected");
         //given
-        ioChannel.setConnected(false);
 
         //when
         ioChannel.readToEol();
 
         //then
     }
+
+    /**
+     * Test for isConnected method, of class JSchIOChannel.
+     *
+     * Where channel is not set
+     *
+     * @throws java.io.IOException
+     */
+    @Test
+    public void testIsConnectedNoChannel() throws IOException {
+        System.out.println("isConnected w/no channel");
+        //given
+        ioChannel.setChannel(null);
+
+        //when
+        boolean result = ioChannel.isConnected();
+
+        //then
+        assertFalse(result);
+    }
+
+    /**
+     * Test for connect method, of class JSchIOChannel.
+     *
+     * Where already connected
+     *
+     * @throws java.io.IOException
+     * @throws net.kemitix.kxssh.SshException
+     * @throws com.jcraft.jsch.JSchException
+     */
+    @Test
+    public void testConnectIsConnected() throws IOException, SshException, JSchException {
+        System.out.println("connect is connected");
+        //given
+        ioChannel.setChannel(channel);
+        when(channel.isConnected()).thenReturn(true);
+
+        //when
+        ioChannel.connect();
+
+        //then
+        verify(channel, times(0)).connect();
+    }
+
+    /**
+     * Test for read method, of class JSchIOChannel.
+     *
+     * Where reading past the end of the stream
+     *
+     * @throws java.io.IOException
+     * @throws net.kemitix.kxssh.SshException
+     */
+    @Test(expected = SshException.class)
+    public void testReadEof() throws IOException, SshException {
+        System.out.println("read eof");
+        //given
+        when(channel.isConnected()).thenReturn(true);
+        int length = 1;
+        when(input.read(any(), eq(0), eq(length))).thenReturn(JSchIOChannel.EOF);
+
+        //when
+        ioChannel.read(length);
+    }
+
 }

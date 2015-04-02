@@ -7,7 +7,7 @@ import net.kemitix.kxssh.SshException;
 import net.kemitix.kxssh.SshOperationStatus;
 import net.kemitix.kxssh.SshPasswordAuthentication;
 import net.kemitix.kxssh.SshStatus;
-import net.kemitix.kxssh.StatusListener;
+import net.kemitix.kxssh.SshStatusListener;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,15 +23,15 @@ public class JSchSftpClientTest {
     private JSchSftpClient client;
     private SshConnectionProperties connectionProperties;
     private SshAuthentication authentication;
-    private StatusListener statusListener;
-    private JSchDownload download;
+    private SshStatusListener statusListener;
+    private JSchScpDownload download;
 
     @Before
     public void setUp() {
         connectionProperties = mock(SshConnectionProperties.class);
         authentication = mock(SshPasswordAuthentication.class);
-        statusListener = mock(StatusListener.class);
-        download = mock(JSchDownload.class);
+        statusListener = mock(SshStatusListener.class);
+        download = mock(JSchScpDownload.class);
         client = new JSchSftpClient(connectionProperties);
         client.setDownload(download);
         client.setStatusListener(statusListener);

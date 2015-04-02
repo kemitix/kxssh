@@ -10,6 +10,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import lombok.Getter;
 import lombok.Setter;
+import net.kemitix.kxssh.IOChannelReadReply;
+import net.kemitix.kxssh.IOChannelReadReplyFactory;
 import net.kemitix.kxssh.SshException;
 import net.kemitix.kxssh.scp.ScpCommand;
 
@@ -18,14 +20,12 @@ import net.kemitix.kxssh.scp.ScpCommand;
 public class JSchIOChannel {
 
     private Channel channel;
-    private boolean connected;
     private OutputStream output;
     private InputStream input;
     private File localFile;
 
     public JSchIOChannel() {
         readReplyFactory = new IOChannelReadReplyFactory();
-        connected = false;
     }
 
     public static JSchIOChannel createExecIOChannel(Session session) throws SshException {
@@ -40,21 +40,29 @@ public class JSchIOChannel {
         return ioChannel;
     }
 
-    protected void setChannel(Channel sessionChannel) throws IOException {
-        this.channel = sessionChannel;
-        setOutput(sessionChannel.getOutputStream());
-        setInput(sessionChannel.getInputStream());
+    protected void setChannel(Channel channel) throws IOException {
+        this.channel = channel;
+        if (channel == null) {
+            output = null;
+            input = null;
+        } else {
+            output = channel.getOutputStream();
+            input = channel.getInputStream();
+        }
     }
 
     public void setExecCommand(String remoteCommand) throws SshException {
         ((ChannelExec) channel).setCommand(remoteCommand);
     }
 
+    public boolean isConnected() {
+        return channel != null && channel.isConnected();
+    }
+
     public void connect() throws SshException {
-        if (!connected) {
+        if (!isConnected()) {
             try {
                 channel.connect();
-                connected = true;
             } catch (JSchException ex) {
                 throw new SshException("Error connecting channel", ex);
             }
@@ -62,14 +70,13 @@ public class JSchIOChannel {
     }
 
     public void disconnect() {
-        if (connected) {
+        if (isConnected()) {
             channel.disconnect();
-            connected = false;
         }
     }
 
     private void requireConnection() throws SshException {
-        if (!connected) {
+        if (!isConnected()) {
             throw new SshException("Not connected to channel");
         }
     }
@@ -86,7 +93,7 @@ public class JSchIOChannel {
         int bytesRead;
         try {
             bytesRead = input.read(buffer, 0, length);
-            if (bytesRead == -1) {
+            if (bytesRead == EOF) {
                 throw new SshException(ERROR_READ_EOF);
             }
             return readReplyFactory.createReply(length, bytesRead, buffer);

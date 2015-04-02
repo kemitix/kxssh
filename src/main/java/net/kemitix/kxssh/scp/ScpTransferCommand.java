@@ -8,16 +8,16 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public abstract class ScpCDCommand extends ScpCommand {
+public abstract class ScpTransferCommand extends ScpCommand {
 
     private final byte[] fileMode = new byte[4];
     private long length;
     private String name;
 
-    public ScpCDCommand() {
+    public ScpTransferCommand() {
     }
 
-    public ScpCDCommand(String commandLine) throws UnsupportedEncodingException {
+    public ScpTransferCommand(String commandLine) throws UnsupportedEncodingException {
         parseCommandLine(commandLine);
     }
 

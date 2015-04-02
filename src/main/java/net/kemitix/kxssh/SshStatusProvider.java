@@ -1,8 +1,8 @@
 package net.kemitix.kxssh;
 
-public interface StatusProvider {
+public interface SshStatusProvider {
 
-    void setStatusListener(StatusListener statusListener);
+    void setStatusListener(SshStatusListener statusListener);
 
     void updateProgress(long progress, long total);
 
