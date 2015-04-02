@@ -37,19 +37,8 @@ public class JSchScpDownload extends JSchScpOperation implements ScpDownload {
         ioChannel.notifyReady();
 
         do {
-            ScpCommand scpCommand;
-            try {
-                scpCommand = ioChannel.readScpCommand();
-            } catch (IOException ex) {
-                throw new SshException("Error reading SCP protocol command", ex);
-            }
-            if (!(scpCommand instanceof ScpCopyCommand)) {
-                throw new SshException("Unexpected SCP protocol command (only support single files)");
-            }
-            ScpCopyCommand scpCopyCommand = (ScpCopyCommand) scpCommand;
-
+            ScpCopyCommand scpCopyCommand = readScpCopyCommand(ioChannel);
             ioChannel.notifyReady();
-
             OutputStream stream = getOutputStream(localFile);
             ioChannel.writeToStream(stream, scpCopyCommand.getLength());
             if (ioChannel.checkStatus() != JSchIOChannel.SUCCESS) {
@@ -62,6 +51,18 @@ public class JSchScpDownload extends JSchScpOperation implements ScpDownload {
         updateStatus(SshOperationStatus.DISCONNECTING);
         disconnect();
         updateStatus(SshOperationStatus.DISCONNECTED);
+    }
+
+    private ScpCopyCommand readScpCopyCommand(JSchIOChannel ioChannel) throws SshException {
+        try {
+            ScpCommand scpCommand = ioChannel.readScpCommand();
+            if (!(scpCommand instanceof ScpCopyCommand)) {
+                throw new SshException("Unexpected SCP protocol command (only support single files)");
+            }
+            return (ScpCopyCommand) scpCommand;
+        } catch (IOException ex) {
+            throw new SshException("Error reading SCP protocol command", ex);
+        }
     }
 
     private FileOutputStream getOutputStream(File localFile) throws SshException {
