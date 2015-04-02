@@ -46,7 +46,6 @@ public class JSchIOChannel {
     }
 
     public void setExecCommand(String remoteCommand) throws SshException {
-        requireConnection();
         ((ChannelExec) channel).setCommand(remoteCommand);
     }
 

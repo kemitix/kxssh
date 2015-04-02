@@ -50,8 +50,6 @@ public abstract class JSchOperation implements StatusProvider {
         if (ioChannel == null) {
             initSession();
             ioChannel = JSchIOChannel.createExecIOChannel(session);
-            ioChannel.connect();
-            ioChannel.notifyReady();
         }
         return ioChannel;
     }
