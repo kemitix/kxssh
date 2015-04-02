@@ -40,9 +40,6 @@ public class JSchDownload extends JSchOperation implements SshDownload {
         ioChannel.notifyReady();
 
         while (true) {
-            if (ioChannel.checkStatus() != JSchIOChannel.CONTINUE) {
-                break;
-            }
             ScpCommand scpCommand;
             try {
                 scpCommand = ioChannel.readScpCommand();
@@ -63,6 +60,9 @@ public class JSchDownload extends JSchOperation implements SshDownload {
                 throw new SshException(ERROR_ACK);
             }
             ioChannel.notifyReady();
+            if (ioChannel.checkStatus() != JSchIOChannel.CONTINUE) {
+                break;
+            }
         }
 
         updateStatus(SshOperationStatus.DISCONNECTING);
