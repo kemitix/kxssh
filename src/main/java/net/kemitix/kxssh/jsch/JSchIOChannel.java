@@ -91,7 +91,7 @@ public class JSchIOChannel implements SshStatusProvider {
 
     private IOChannelReadReplyFactory readReplyFactory;
 
-    IOChannelReadReply read(int length) throws SshException {
+    public IOChannelReadReply read(int length) throws SshException {
         requireConnection();
         byte[] buffer = new byte[length];
         int bytesRead;
