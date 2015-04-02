@@ -3,12 +3,9 @@ package net.kemitix.kxssh.jsch;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Setter;
-import net.kemitix.kxssh.IOChannelReadReply;
 import net.kemitix.kxssh.SshAuthentication;
 import net.kemitix.kxssh.SshConnectionProperties;
 import net.kemitix.kxssh.SshErrorStatus;
@@ -51,6 +48,7 @@ public abstract class JSchScpOperation implements SshStatusProvider {
         if (ioChannel == null) {
             initSession();
             ioChannel = JSchIOChannel.createExecIOChannel(session);
+            ioChannel.setStatusListener(statusListener);
         }
         return ioChannel;
     }
@@ -105,34 +103,6 @@ public abstract class JSchScpOperation implements SshStatusProvider {
             session.disconnect();
             session = null;
         }
-    }
-
-    //STREAM TO FILE
-    private static final String ERROR_FILE_LOCAL_WRITE = "Error writing local file";
-
-    protected void writeIOChannelToOutputStream(
-            JSchIOChannel ioChannel,
-            OutputStream stream,
-            long filesize)
-            throws SshException {
-        int blockSize = 1024;
-        long remaining = filesize;
-        updateProgress(0, filesize);
-        do {
-            int bytesToRead = Integer.min(blockSize, (int) Long.min(remaining, (long) Integer.MAX_VALUE));
-            IOChannelReadReply reply = ioChannel.read(bytesToRead);
-            int bytesRead = reply.getBytesRead();
-            bytesRead = Integer.min(bytesRead, bytesToRead);
-            try {
-                stream.write(reply.getBuffer(), 0, bytesRead);
-            } catch (IOException ex) {
-                updateStatus(SshErrorStatus.FILE_WRITE_ERROR);
-                throw new SshException(ERROR_FILE_LOCAL_WRITE, ex);
-            }
-            remaining -= bytesRead;
-            updateProgress(filesize - remaining, filesize);
-        } while (remaining > 0);
-        updateProgress(filesize, filesize);
     }
 
     //STATUS LISTENER

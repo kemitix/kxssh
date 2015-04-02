@@ -12,12 +12,16 @@ import lombok.Getter;
 import lombok.Setter;
 import net.kemitix.kxssh.IOChannelReadReply;
 import net.kemitix.kxssh.IOChannelReadReplyFactory;
+import net.kemitix.kxssh.SshErrorStatus;
 import net.kemitix.kxssh.SshException;
+import net.kemitix.kxssh.SshStatus;
+import net.kemitix.kxssh.SshStatusListener;
+import net.kemitix.kxssh.SshStatusProvider;
 import net.kemitix.kxssh.scp.ScpCommand;
 
 @Setter
 @Getter
-public class JSchIOChannel {
+public class JSchIOChannel implements SshStatusProvider {
 
     private Channel channel;
     private OutputStream output;
@@ -178,6 +182,46 @@ public class JSchIOChannel {
         String commandLine = readToEol();
         ScpCommand scpCommand = ScpCommand.parse(commandLine);
         return scpCommand;
+    }
+
+    // WRITE STREAM
+    void writeToStream(OutputStream stream, long length) throws SshException {
+        int blockSize = 1024;
+        long remaining = length;
+        updateProgress(0, length);
+        do {
+            int bytesToRead = Integer.min(blockSize, (int) Long.min(remaining, (long) Integer.MAX_VALUE));
+            IOChannelReadReply reply = read(bytesToRead);
+            int bytesRead = reply.getBytesRead();
+            bytesRead = Integer.min(bytesRead, bytesToRead);
+            try {
+                stream.write(reply.getBuffer(), 0, bytesRead);
+            } catch (IOException ex) {
+                updateStatus(SshErrorStatus.FILE_WRITE_ERROR);
+                throw new SshException("Error writing local file", ex);
+            }
+            remaining -= bytesRead;
+            updateProgress(length - remaining, length);
+        } while (remaining > 0);
+        updateProgress(length, length);
+    }
+
+    // STATUS PROVIDER
+    private SshStatusListener statusListener;
+
+    @Override
+    public void setStatusListener(SshStatusListener statusListener) {
+        this.statusListener = statusListener;
+    }
+
+    @Override
+    public void updateProgress(long progress, long total) {
+        statusListener.onUpdateProgress(progress, total);
+    }
+
+    @Override
+    public void updateStatus(SshStatus status) {
+        statusListener.onUpdateStatus(status);
     }
 
 }

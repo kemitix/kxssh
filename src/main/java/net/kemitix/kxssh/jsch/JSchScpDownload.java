@@ -27,15 +27,12 @@ public class JSchScpDownload extends JSchScpOperation implements ScpDownload {
     @Override
     public void download(String remoteFilename, File localFile) throws SshException {
         updateStatus(SshOperationStatus.STARTING);
-
         JSchIOChannel ioChannel = getExecIOChannel();
-
         updateStatus(SshOperationStatus.DOWNLOADING);
 
         // scp "from"
         ioChannel.setExecCommand("scp -f " + remoteFilename);
         ioChannel.setLocalFile(localFile);
-
         ioChannel.connect();
         ioChannel.notifyReady();
 
@@ -54,7 +51,7 @@ public class JSchScpDownload extends JSchScpOperation implements ScpDownload {
             ioChannel.notifyReady();
 
             OutputStream stream = getOutputStream(localFile);
-            writeIOChannelToOutputStream(ioChannel, stream, scpCopyCommand.getLength());
+            ioChannel.writeToStream(stream, scpCopyCommand.getLength());
             if (ioChannel.checkStatus() != JSchIOChannel.SUCCESS) {
                 updateStatus(SshErrorStatus.ACK_ERROR);
                 throw new SshException(ERROR_ACK);
