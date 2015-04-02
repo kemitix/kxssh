@@ -10,10 +10,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import net.kemitix.kxssh.IOChannelReadReply;
 import net.kemitix.kxssh.IOChannelReadReplyFactory;
+import net.kemitix.kxssh.SshErrorStatus;
 import net.kemitix.kxssh.SshException;
+import net.kemitix.kxssh.SshOperationStatus;
+import net.kemitix.kxssh.SshStatusListener;
 import net.kemitix.kxssh.scp.ScpCopyCommand;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,6 +43,7 @@ public class JSchIOChannelTest {
     private InputStream input;
     private String remoteFilename;
     private File localFile;
+    private SshStatusListener listener;
 
     @Before
     public void setUp() throws IOException {
@@ -50,6 +55,7 @@ public class JSchIOChannelTest {
         input = mock(InputStream.class);
         remoteFilename = "remote.txt";
         localFile = mock(File.class);
+        listener = mock(SshStatusListener.class);
 
         when(channel.getInputStream()).thenReturn(input);
         when(channel.getOutputStream()).thenReturn(output);
@@ -499,6 +505,24 @@ public class JSchIOChannelTest {
     }
 
     /**
+     * Test for setChannel method, of class JSchIOChannel.
+     *
+     * @throws java.io.IOException
+     */
+    @Test
+    public void testSetChannel() throws IOException {
+        System.out.println("setChannel");
+        //given
+
+        //when
+        ioChannel.setChannel(channel);
+
+        //then
+        assertThat(ioChannel.getInput(), is(input));
+        assertThat(ioChannel.getOutput(), is(output));
+    }
+
+    /**
      * Test for set/getInput methods, of class JSchIOChannel.
      */
     @Test
@@ -726,4 +750,100 @@ public class JSchIOChannelTest {
         ioChannel.read(length);
     }
 
+    /**
+     * Test of writeToStream method, of class JSchScpOperation
+     *
+     * @throws java.io.IOException
+     * @throws net.kemitix.kxssh.SshException
+     */
+    @Test(timeout = 100L)
+    public void testWriteToStream() throws IOException, SshException {
+        System.out.println("writeToStream");
+        //given
+        int filesize = 100;
+        int chunk = 50;
+        IOChannelReadReply reply1 = mock(IOChannelReadReply.class);
+        when(reply1.getBytesRead()).thenReturn(chunk);
+        IOChannelReadReply reply2 = mock(IOChannelReadReply.class);
+        when(reply2.getBytesRead()).thenReturn(chunk);
+
+        ioChannel.setChannel(channel);
+        when(channel.isConnected()).thenReturn(true);
+
+        when(input.read(any(), eq(0), eq(filesize))).thenReturn(chunk);
+        when(input.read(any(), eq(0), eq(chunk))).thenReturn(chunk);
+        ioChannel.setStatusListener(listener);
+
+        //when
+        ioChannel.writeToStream(output, filesize);
+
+        //then
+        verify(listener, times(1)).onUpdateProgress(0, filesize);
+        verify(listener, times(1)).onUpdateProgress(chunk, filesize);
+        verify(listener, times(2)).onUpdateProgress(filesize, filesize);
+    }
+
+    /**
+     * Test of writeToStream method, of class JSchScpOperation
+     *
+     * When throws an IOException
+     *
+     * @throws java.io.IOException
+     * @throws net.kemitix.kxssh.SshException
+     */
+    @Test(expected = SshException.class, timeout = 100L)
+    public void testWriteToStreamThrowsException() throws IOException, SshException {
+        System.out.println("writeToStream when throws exception");
+        //given
+        int filesize = 123;
+        when(channel.isConnected()).thenReturn(true);
+        when(input.read(any(), eq(0), eq(filesize))).thenReturn(filesize);
+        doThrow(IOException.class).when(output).write(any(), eq(0), eq(filesize));
+        ioChannel.setStatusListener(listener);
+
+        //when
+        ioChannel.writeToStream(output, filesize);
+
+        //then
+        verify(listener, times(1)).onUpdateProgress(0, filesize);
+        verify(listener, times(1)).onUpdateStatus(SshErrorStatus.FILE_WRITE_ERROR);
+    }
+
+    /**
+     * Test of updateProgress method, of class JSchIOChannel.
+     *
+     * Where no StatusListener
+     */
+    @Test
+    public void testUpdateProgressNoListener() {
+        System.out.println("updateProgress missing StatusListener");
+        //given
+        ioChannel.setStatusListener(null);
+
+        //when
+        ioChannel.updateProgress(0, 1);
+
+        //then
+        assertNull(ioChannel.getStatusListener());
+        verify(listener, times(0)).onUpdateProgress(0, 1);
+    }
+
+    /**
+     * Test of updateStatus method, of class JSchIOChannel.
+     *
+     * Where no StatusListener
+     */
+    @Test
+    public void testUpdateStatusNoListener() {
+        System.out.println("updateStatus missing StatusListener");
+        //given
+        ioChannel.setStatusListener(null);
+
+        //when
+        ioChannel.updateStatus(SshOperationStatus.CONNECTED);
+
+        //then
+        assertNull(ioChannel.getStatusListener());
+        verify(listener, times(0)).onUpdateStatus(SshOperationStatus.CONNECTED);
+    }
 }

@@ -91,8 +91,6 @@ public class JSchDownloadTest {
         verify(ioChannel, times(1)).readScpCommand();
         verify(listener, times(1)).onUpdateStatus(SshOperationStatus.STARTING);
         verify(listener, times(1)).onUpdateStatus(SshOperationStatus.DOWNLOADING);
-        verify(listener, times(1)).onUpdateProgress(0, filesize);
-        verify(listener, times(2)).onUpdateProgress(filesize, filesize);
         verify(listener, times(1)).onUpdateStatus(SshOperationStatus.DISCONNECTING);
         verify(listener, times(1)).onUpdateStatus(SshOperationStatus.DISCONNECTED);
     }
@@ -259,8 +257,6 @@ public class JSchDownloadTest {
         verify(ioChannel, times(2)).readScpCommand();
         verify(listener, times(1)).onUpdateStatus(SshOperationStatus.STARTING);
         verify(listener, times(1)).onUpdateStatus(SshOperationStatus.DOWNLOADING);
-        verify(listener, times(2)).onUpdateProgress(0, filesize);
-        verify(listener, times(4)).onUpdateProgress(filesize, filesize);
         verify(listener, times(1)).onUpdateStatus(SshOperationStatus.DISCONNECTING);
         verify(listener, times(1)).onUpdateStatus(SshOperationStatus.DISCONNECTED);
     }
