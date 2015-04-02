@@ -216,12 +216,16 @@ public class JSchIOChannel implements SshStatusProvider {
 
     @Override
     public void updateProgress(long progress, long total) {
-        statusListener.onUpdateProgress(progress, total);
+        if (statusListener != null) {
+            statusListener.onUpdateProgress(progress, total);
+        }
     }
 
     @Override
     public void updateStatus(SshStatus status) {
-        statusListener.onUpdateStatus(status);
+        if (statusListener != null) {
+            statusListener.onUpdateStatus(status);
+        }
     }
 
 }
