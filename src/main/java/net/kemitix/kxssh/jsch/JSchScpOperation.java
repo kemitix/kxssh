@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Setter;
+import net.kemitix.kxssh.IOChannelReadReply;
 import net.kemitix.kxssh.SshAuthentication;
 import net.kemitix.kxssh.SshConnectionProperties;
 import net.kemitix.kxssh.SshErrorStatus;
@@ -15,11 +16,11 @@ import net.kemitix.kxssh.SshException;
 import net.kemitix.kxssh.SshIOFactory;
 import net.kemitix.kxssh.SshPasswordAuthentication;
 import net.kemitix.kxssh.SshStatus;
-import net.kemitix.kxssh.StatusListener;
-import net.kemitix.kxssh.StatusProvider;
+import net.kemitix.kxssh.SshStatusListener;
+import net.kemitix.kxssh.SshStatusProvider;
 
 @Setter
-public abstract class JSchOperation implements StatusProvider {
+public abstract class JSchScpOperation implements SshStatusProvider {
 
     private String knownHosts = "~/.ssh/known_hosts";
 
@@ -29,7 +30,7 @@ public abstract class JSchOperation implements StatusProvider {
 
     private JSchFactory jschFactory;
 
-    public JSchOperation(SshConnectionProperties connectionProperties) {
+    public JSchScpOperation(SshConnectionProperties connectionProperties) {
         this.connectionProperties = connectionProperties;
         jschFactory = new JSchFactory();
         ioFactory = new SshIOFactory();
@@ -117,15 +118,13 @@ public abstract class JSchOperation implements StatusProvider {
         int blockSize = 1024;
         long remaining = filesize;
         updateProgress(0, filesize);
-        // loop over buffer.length sized blocks of input
         do {
             int bytesToRead = Integer.min(blockSize, (int) Long.min(remaining, (long) Integer.MAX_VALUE));
-            IOChannelReadReply channelReadReply = ioChannel.read(bytesToRead);
-            int bytesRead = channelReadReply.getBytesRead();
-            // prevent overrun
+            IOChannelReadReply reply = ioChannel.read(bytesToRead);
+            int bytesRead = reply.getBytesRead();
             bytesRead = Integer.min(bytesRead, bytesToRead);
             try {
-                stream.write(channelReadReply.getBuffer(), 0, bytesRead);
+                stream.write(reply.getBuffer(), 0, bytesRead);
             } catch (IOException ex) {
                 updateStatus(SshErrorStatus.FILE_WRITE_ERROR);
                 throw new SshException(ERROR_FILE_LOCAL_WRITE, ex);
@@ -137,10 +136,10 @@ public abstract class JSchOperation implements StatusProvider {
     }
 
     //STATUS LISTENER
-    private StatusListener statusListener;
+    private SshStatusListener statusListener;
 
     @Override
-    public void setStatusListener(StatusListener statusListener) {
+    public void setStatusListener(SshStatusListener statusListener) {
         this.statusListener = statusListener;
     }
 

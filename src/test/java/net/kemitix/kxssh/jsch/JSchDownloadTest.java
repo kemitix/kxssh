@@ -1,5 +1,6 @@
 package net.kemitix.kxssh.jsch;
 
+import net.kemitix.kxssh.IOChannelReadReply;
 import com.jcraft.jsch.Session;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -9,7 +10,7 @@ import net.kemitix.kxssh.SshErrorStatus;
 import net.kemitix.kxssh.SshException;
 import net.kemitix.kxssh.SshIOFactory;
 import net.kemitix.kxssh.SshOperationStatus;
-import net.kemitix.kxssh.StatusListener;
+import net.kemitix.kxssh.SshStatusListener;
 import net.kemitix.kxssh.scp.ScpCopyCommand;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,12 +26,12 @@ import static org.mockito.Mockito.when;
 @RunWith(BlockJUnit4ClassRunner.class)
 public class JSchDownloadTest {
 
-    private JSchDownload download;
+    private JSchScpDownload download;
     private Session session;
     private JSchIOChannel ioChannel;
     private ScpCopyCommand scpCopyCommand;
     private long filesize;
-    private StatusListener listener;
+    private SshStatusListener listener;
     private SshIOFactory factory;
     private FileOutputStream outputStream;
 
@@ -40,10 +41,10 @@ public class JSchDownloadTest {
         session = mock(Session.class);
         ioChannel = mock(JSchIOChannel.class);
         scpCopyCommand = mock(ScpCopyCommand.class);
-        listener = mock(StatusListener.class);
+        listener = mock(SshStatusListener.class);
         factory = mock(SshIOFactory.class);
         outputStream = mock(FileOutputStream.class);
-        download = new JSchDownload(connectionProperties);
+        download = new JSchScpDownload(connectionProperties);
         download.setSession(session);
         download.setIoChannel(ioChannel);
         download.setStatusListener(listener);
@@ -51,7 +52,7 @@ public class JSchDownloadTest {
     }
 
     /**
-     * Test of download method, of class JSchDownload.
+     * Test of download method, of class JSchScpDownload.
      *
      * Simulates downloading a 231 byte file, which should be completed using a
      * single loop/read from the InputStream.
@@ -95,7 +96,7 @@ public class JSchDownloadTest {
     }
 
     /**
-     * Test of download method, of class JSchDownload.
+     * Test of download method, of class JSchScpDownload.
      *
      * With checkStatus not reporting Success at bottom of loop
      *
@@ -138,7 +139,7 @@ public class JSchDownloadTest {
     }
 
     /**
-     * Test of download method, of class JSchDownload.
+     * Test of download method, of class JSchScpDownload.
      *
      * With FileNotFoundException
      *

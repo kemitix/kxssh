@@ -1,5 +1,7 @@
 package net.kemitix.kxssh.jsch;
 
+import net.kemitix.kxssh.IOChannelReadReply;
+import net.kemitix.kxssh.IOChannelReadReplyFactory;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSchException;

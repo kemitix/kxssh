@@ -1,5 +1,6 @@
 package net.kemitix.kxssh.jsch;
 
+import net.kemitix.kxssh.IOChannelReadReply;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import org.junit.Before;

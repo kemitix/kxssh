@@ -2,7 +2,7 @@ package net.kemitix.kxssh;
 
 import net.kemitix.kxssh.jsch.JSchSftpClient;
 
-public class SshClient {
+public class KxSsh {
 
     public static SftpClient getSftpClient(String hostname, String username, String password) {
         SshPasswordAuthentication authentication

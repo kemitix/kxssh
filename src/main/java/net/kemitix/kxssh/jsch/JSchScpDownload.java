@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import lombok.Setter;
 import net.kemitix.kxssh.SshConnectionProperties;
-import net.kemitix.kxssh.SshDownload;
+import net.kemitix.kxssh.ScpDownload;
 import net.kemitix.kxssh.SshErrorStatus;
 import net.kemitix.kxssh.SshException;
 import net.kemitix.kxssh.SshOperationStatus;
@@ -15,9 +15,9 @@ import net.kemitix.kxssh.scp.ScpCommand;
 import net.kemitix.kxssh.scp.ScpCopyCommand;
 
 @Setter
-public class JSchDownload extends JSchOperation implements SshDownload {
+public class JSchScpDownload extends JSchScpOperation implements ScpDownload {
 
-    public JSchDownload(SshConnectionProperties connectionProperties) {
+    public JSchScpDownload(SshConnectionProperties connectionProperties) {
         super(connectionProperties);
     }
 

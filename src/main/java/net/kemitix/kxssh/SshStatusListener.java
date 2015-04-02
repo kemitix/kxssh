@@ -1,6 +1,6 @@
 package net.kemitix.kxssh;
 
-public interface StatusListener {
+public interface SshStatusListener {
 
     void onUpdateProgress(long remaining, long filesize);
 

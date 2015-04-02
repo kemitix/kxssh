@@ -1,5 +1,6 @@
 package net.kemitix.kxssh.jsch;
 
+import net.kemitix.kxssh.IOChannelReadReply;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
@@ -13,7 +14,7 @@ import net.kemitix.kxssh.SshException;
 import net.kemitix.kxssh.SshIOFactory;
 import net.kemitix.kxssh.SshOperationStatus;
 import net.kemitix.kxssh.SshPasswordAuthentication;
-import net.kemitix.kxssh.StatusListener;
+import net.kemitix.kxssh.SshStatusListener;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,9 +28,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(BlockJUnit4ClassRunner.class)
-public class JSchOperationTest {
+public class JSchScpOperationTest {
 
-    private JSchOperation operation;
+    private JSchScpOperation operation;
     private SshConnectionProperties connectionProperties;
     private SshPasswordAuthentication authentication;
     private String knownHosts;
@@ -40,7 +41,7 @@ public class JSchOperationTest {
     private SshIOFactory ioFactory;
     private JSchFactory jschFactory;
     private JSch jsch;
-    private StatusListener listener;
+    private SshStatusListener listener;
     private Channel channel;
     private OutputStream outputStream;
     private InputStream inputStream;
@@ -54,13 +55,13 @@ public class JSchOperationTest {
         ioFactory = mock(SshIOFactory.class);
         jschFactory = mock(JSchFactory.class);
         jsch = mock(JSch.class);
-        listener = mock(StatusListener.class);
+        listener = mock(SshStatusListener.class);
         channel = mock(Channel.class);
         outputStream = mock(OutputStream.class);
         inputStream = mock(InputStream.class);
         ioChannel = mock(JSchIOChannel.class);
 
-        operation = new JSchOperation(connectionProperties) {
+        operation = new JSchScpOperation(connectionProperties) {
         };
 
         knownHosts = "src/test/resources/known_hosts";
@@ -84,7 +85,7 @@ public class JSchOperationTest {
     }
 
     /**
-     * Test of initSession method, of class JSchOperation
+     * Test of initSession method, of class JSchScpOperation
      *
      * @throws net.kemitix.kxssh.SshException
      * @throws com.jcraft.jsch.JSchException
@@ -104,9 +105,9 @@ public class JSchOperationTest {
     }
 
     /**
-     * Test of initSession method, of class JSchOperation
-     *
-     * When session already exists
+     * Test of initSession method, of class JSchScpOperation
+
+ When session already exists
      *
      * @throws net.kemitix.kxssh.SshException
      */
@@ -123,9 +124,9 @@ public class JSchOperationTest {
     }
 
     /**
-     * Test of initSession method, of class JSchOperation
-     *
-     * When hostname is blank.
+     * Test of initSession method, of class JSchScpOperation
+
+ When hostname is blank.
      *
      * @throws net.kemitix.kxssh.SshException
      */
@@ -143,9 +144,9 @@ public class JSchOperationTest {
     }
 
     /**
-     * Test of initSession method, of class JSchOperation
-     *
-     * When hostname is null.
+     * Test of initSession method, of class JSchScpOperation
+
+ When hostname is null.
      *
      * @throws net.kemitix.kxssh.SshException
      */
@@ -163,9 +164,9 @@ public class JSchOperationTest {
     }
 
     /**
-     * Test of initSession method, of class JSchOperation
-     *
-     * When username is blank.
+     * Test of initSession method, of class JSchScpOperation
+
+ When username is blank.
      *
      * @throws net.kemitix.kxssh.SshException
      * @throws com.jcraft.jsch.JSchException
@@ -187,9 +188,9 @@ public class JSchOperationTest {
     }
 
     /**
-     * Test of initSession method, of class JSchOperation
-     *
-     * When username is null.
+     * Test of initSession method, of class JSchScpOperation
+
+ When username is null.
      *
      * @throws net.kemitix.kxssh.SshException
      * @throws com.jcraft.jsch.JSchException
@@ -211,9 +212,9 @@ public class JSchOperationTest {
     }
 
     /**
-     * Test of initSession method, of class JSchOperation
-     *
-     * Throw JSchException for an Unknown Host Key on session.connect()
+     * Test of initSession method, of class JSchScpOperation
+
+ Throw JSchException for an Unknown Host Key on session.connect()
      *
      * @throws com.jcraft.jsch.JSchException
      * @throws net.kemitix.kxssh.SshException
@@ -235,9 +236,9 @@ public class JSchOperationTest {
     }
 
     /**
-     * Test of initSession method, of class JSchOperation
-     *
-     * Throw JSchException on session.connect()
+     * Test of initSession method, of class JSchScpOperation
+
+ Throw JSchException on session.connect()
      *
      * @throws com.jcraft.jsch.JSchException
      * @throws net.kemitix.kxssh.SshException
@@ -259,7 +260,7 @@ public class JSchOperationTest {
     }
 
     /**
-     * Test of releaseIOChannel method, of class JSchOperation
+     * Test of releaseIOChannel method, of class JSchScpOperation
      */
     @Test
     public void testReleaseIOChannel() {
@@ -274,7 +275,7 @@ public class JSchOperationTest {
     }
 
     /**
-     * Test of disconnect method, of class JSchOperation
+     * Test of disconnect method, of class JSchScpOperation
      */
     @Test
     public void testDisconnect() {
@@ -289,7 +290,7 @@ public class JSchOperationTest {
     }
 
     /**
-     * Test of updateProgress method, of class JSchOperation
+     * Test of updateProgress method, of class JSchScpOperation
      */
     @Test
     public void testUpdateProgress() {
@@ -304,7 +305,7 @@ public class JSchOperationTest {
     }
 
     /**
-     * Test of getExecIOChannel method, of class JSchOperation
+     * Test of getExecIOChannel method, of class JSchScpOperation
      *
      * @throws net.kemitix.kxssh.SshException
      * @throws com.jcraft.jsch.JSchException
@@ -329,7 +330,7 @@ public class JSchOperationTest {
     }
 
     /**
-     * Test of getJSch method, of class JSchOperation
+     * Test of getJSch method, of class JSchScpOperation
      *
      * @throws com.jcraft.jsch.JSchException
      * @throws net.kemitix.kxssh.SshException
@@ -347,7 +348,7 @@ public class JSchOperationTest {
     }
 
     /**
-     * Test of writeIOChannelToOutputStream method, of class JSchOperation
+     * Test of writeIOChannelToOutputStream method, of class JSchScpOperation
      *
      * @throws java.io.IOException
      * @throws net.kemitix.kxssh.SshException
@@ -374,9 +375,9 @@ public class JSchOperationTest {
     }
 
     /**
-     * Test of writeIOChannelToOutputStream method, of class JSchOperation
-     *
-     * When throws an IOException
+     * Test of writeIOChannelToOutputStream method, of class JSchScpOperation
+
+ When throws an IOException
      *
      * @throws java.io.IOException
      * @throws net.kemitix.kxssh.SshException
@@ -399,9 +400,9 @@ public class JSchOperationTest {
     }
 
     /**
-     * Test of updateStatus method, of class JSchOperation
-     *
-     * Where status listener not set
+     * Test of updateStatus method, of class JSchScpOperation
+
+ Where status listener not set
      */
     @Test
     public void testUpdateStatus() {

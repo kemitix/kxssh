@@ -10,6 +10,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import lombok.Getter;
 import lombok.Setter;
+import net.kemitix.kxssh.IOChannelReadReply;
+import net.kemitix.kxssh.IOChannelReadReplyFactory;
 import net.kemitix.kxssh.SshException;
 import net.kemitix.kxssh.scp.ScpCommand;
 
@@ -40,10 +42,10 @@ public class JSchIOChannel {
         return ioChannel;
     }
 
-    protected void setChannel(Channel sessionChannel) throws IOException {
-        this.channel = sessionChannel;
-        setOutput(sessionChannel.getOutputStream());
-        setInput(sessionChannel.getInputStream());
+    protected void setChannel(Channel channel) throws IOException {
+        this.channel = channel;
+        output = channel.getOutputStream();
+        input = channel.getInputStream();
     }
 
     public void setExecCommand(String remoteCommand) throws SshException {
