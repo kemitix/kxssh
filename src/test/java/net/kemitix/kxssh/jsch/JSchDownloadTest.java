@@ -66,7 +66,6 @@ public class JSchDownloadTest {
         filesize = 231L;
         File localFile = new File("local.txt");
         when(ioChannel.checkStatus())
-                .thenReturn(JSchIOChannel.CONTINUE)
                 .thenReturn(JSchIOChannel.SUCCESS)
                 .thenReturn(JSchIOChannel.EOF);
         when(ioChannel.readScpCommand()).thenReturn(scpCopyCommand);
@@ -84,8 +83,8 @@ public class JSchDownloadTest {
         //then
         verify(ioChannel, times(1)).setExecCommand(contains(remote));
         verify(ioChannel, times(1)).setLocalFile(localFile);
-        verify(ioChannel, times(2)).notifyReady();// top loop 1, bottom loop 1
-        verify(ioChannel, times(3)).checkStatus();// start of loop 1, bottom of loop 1, top of loop 2
+        verify(ioChannel, times(3)).notifyReady();// pre-loop 1, middle loop 1, bottom loop 1
+        verify(ioChannel, times(2)).checkStatus();// near bottom of loop 1, bottom of loop 1
         verify(ioChannel, times(1)).readScpCommand();
         verify(listener, times(1)).onUpdateStatus(SshOperationStatus.STARTING);
         verify(listener, times(1)).onUpdateStatus(SshOperationStatus.DOWNLOADING);
