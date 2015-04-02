@@ -60,10 +60,7 @@ public class JSchScpDownload extends JSchScpOperation implements ScpDownload {
         } while (ioChannel.checkStatus() == JSchIOChannel.CONTINUE);
 
         updateStatus(SshOperationStatus.DISCONNECTING);
-
-        releaseIOChannel();
         disconnect();
-
         updateStatus(SshOperationStatus.DISCONNECTED);
     }
 

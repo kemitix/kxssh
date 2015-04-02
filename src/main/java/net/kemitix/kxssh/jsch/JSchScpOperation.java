@@ -53,10 +53,14 @@ public abstract class JSchScpOperation implements SshStatusProvider {
         return ioChannel;
     }
 
-    protected void releaseIOChannel() {
+    protected void disconnect() {
         if (ioChannel != null) {
             ioChannel.disconnect();
             ioChannel = null;
+        }
+        if (session != null) {
+            session.disconnect();
+            session = null;
         }
     }
 
@@ -95,13 +99,6 @@ public abstract class JSchScpOperation implements SshStatusProvider {
             }
             updateStatus(SshErrorStatus.SESSION_ERROR);
             throw new SshException(ERROR_SESSION, ex);
-        }
-    }
-
-    protected void disconnect() {
-        if (session != null) {
-            session.disconnect();
-            session = null;
         }
     }
 
