@@ -20,14 +20,12 @@ import net.kemitix.kxssh.scp.ScpCommand;
 public class JSchIOChannel {
 
     private Channel channel;
-    private boolean connected;
     private OutputStream output;
     private InputStream input;
     private File localFile;
 
     public JSchIOChannel() {
         readReplyFactory = new IOChannelReadReplyFactory();
-        connected = false;
     }
 
     public static JSchIOChannel createExecIOChannel(Session session) throws SshException {
@@ -52,11 +50,14 @@ public class JSchIOChannel {
         ((ChannelExec) channel).setCommand(remoteCommand);
     }
 
+    public boolean isConnected() {
+        return channel != null && channel.isConnected();
+    }
+
     public void connect() throws SshException {
-        if (!connected) {
+        if (!isConnected()) {
             try {
                 channel.connect();
-                connected = true;
             } catch (JSchException ex) {
                 throw new SshException("Error connecting channel", ex);
             }
@@ -64,14 +65,13 @@ public class JSchIOChannel {
     }
 
     public void disconnect() {
-        if (connected) {
+        if (isConnected()) {
             channel.disconnect();
-            connected = false;
         }
     }
 
     private void requireConnection() throws SshException {
-        if (!connected) {
+        if (!isConnected()) {
             throw new SshException("Not connected to channel");
         }
     }
