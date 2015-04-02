@@ -6,8 +6,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import lombok.Setter;
-import net.kemitix.kxssh.SshConnectionProperties;
 import net.kemitix.kxssh.ScpDownload;
+import net.kemitix.kxssh.SshConnectionProperties;
 import net.kemitix.kxssh.SshErrorStatus;
 import net.kemitix.kxssh.SshException;
 import net.kemitix.kxssh.SshOperationStatus;
@@ -39,7 +39,7 @@ public class JSchScpDownload extends JSchScpOperation implements ScpDownload {
         ioChannel.connect();
         ioChannel.notifyReady();
 
-        while (true) {
+        do {
             ScpCommand scpCommand;
             try {
                 scpCommand = ioChannel.readScpCommand();
@@ -60,10 +60,7 @@ public class JSchScpDownload extends JSchScpOperation implements ScpDownload {
                 throw new SshException(ERROR_ACK);
             }
             ioChannel.notifyReady();
-            if (ioChannel.checkStatus() != JSchIOChannel.CONTINUE) {
-                break;
-            }
-        }
+        } while (ioChannel.checkStatus() == JSchIOChannel.CONTINUE);
 
         updateStatus(SshOperationStatus.DISCONNECTING);
 
