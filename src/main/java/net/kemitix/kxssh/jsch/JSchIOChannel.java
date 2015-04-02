@@ -133,7 +133,7 @@ public class JSchIOChannel {
         }
     }
 
-    private String readToEol() throws IOException, SshException {
+    public String readToEol() throws IOException, SshException {
         requireConnection();
         StringBuilder sb = new StringBuilder();
         int c;

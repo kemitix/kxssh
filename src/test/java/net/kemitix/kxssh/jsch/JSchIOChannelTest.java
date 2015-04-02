@@ -663,15 +663,16 @@ public class JSchIOChannelTest {
      * When not connected
      *
      * @throws net.kemitix.kxssh.SshException
+     * @throws java.io.IOException
      */
     @Test(expected = SshException.class)
-    public void testRequireNotConnectionConnected() throws SshException {
+    public void testRequireNotConnectionConnected() throws SshException, IOException {
         System.out.println("requireConnection not connected");
         //given
         ioChannel.setConnected(false);
 
         //when
-        ioChannel.setExecCommand(remoteFilename);
+        ioChannel.readToEol();
 
         //then
     }
