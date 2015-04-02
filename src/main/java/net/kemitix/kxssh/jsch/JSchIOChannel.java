@@ -42,8 +42,13 @@ public class JSchIOChannel {
 
     protected void setChannel(Channel channel) throws IOException {
         this.channel = channel;
-        output = channel.getOutputStream();
-        input = channel.getInputStream();
+        if (channel == null) {
+            output = null;
+            input = null;
+        } else {
+            output = channel.getOutputStream();
+            input = channel.getInputStream();
+        }
     }
 
     public void setExecCommand(String remoteCommand) throws SshException {
@@ -88,7 +93,7 @@ public class JSchIOChannel {
         int bytesRead;
         try {
             bytesRead = input.read(buffer, 0, length);
-            if (bytesRead == -1) {
+            if (bytesRead == EOF) {
                 throw new SshException(ERROR_READ_EOF);
             }
             return readReplyFactory.createReply(length, bytesRead, buffer);
