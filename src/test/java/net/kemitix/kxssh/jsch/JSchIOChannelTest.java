@@ -792,9 +792,10 @@ public class JSchIOChannelTest {
         ioChannel.writeToStream(output, filesize);
 
         //then
+        verify(output, times(2)).write(any(), eq(0), eq(chunk));
         verify(listener, times(1)).onUpdateProgress(0, filesize);
         verify(listener, times(1)).onUpdateProgress(chunk, filesize);
-        verify(listener, times(2)).onUpdateProgress(filesize, filesize);
+        verify(listener, times(1)).onUpdateProgress(filesize, filesize);
     }
 
     /**
@@ -806,7 +807,7 @@ public class JSchIOChannelTest {
      * @throws net.kemitix.kxssh.SshException
      */
     @Test(expected = SshException.class, timeout = 100L)
-    public void testWriteToStreamThrowsException() throws IOException, SshException {
+    public void testWriteToStreamIOException() throws IOException, SshException {
         System.out.println("writeToStream when throws exception");
         //given
         int filesize = 123;
