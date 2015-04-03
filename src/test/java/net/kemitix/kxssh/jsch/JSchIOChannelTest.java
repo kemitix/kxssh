@@ -777,14 +777,8 @@ public class JSchIOChannelTest {
         //given
         int filesize = 100;
         int chunk = 50;
-        IOChannelReadReply reply1 = mock(IOChannelReadReply.class);
-        when(reply1.getBytesRead()).thenReturn(chunk);
-        IOChannelReadReply reply2 = mock(IOChannelReadReply.class);
-        when(reply2.getBytesRead()).thenReturn(chunk);
-
         ioChannel.setChannel(channel);
         when(channel.isConnected()).thenReturn(true);
-
         when(input.read(any(), eq(0), eq(filesize))).thenReturn(chunk);
         when(input.read(any(), eq(0), eq(chunk))).thenReturn(chunk);
         ioChannel.setStatusListener(listener);
