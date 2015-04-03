@@ -202,7 +202,6 @@ public class JSchIOChannel implements SshStatusProvider {
             remaining -= bytesRead;
             updateProgress(length - remaining, length);
         } while (remaining > 0);
-        updateProgress(length, length);
     }
 
     // STATUS PROVIDER
