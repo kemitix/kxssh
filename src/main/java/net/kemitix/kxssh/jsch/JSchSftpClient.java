@@ -2,9 +2,10 @@ package net.kemitix.kxssh.jsch;
 
 import java.io.File;
 import lombok.Setter;
+import net.kemitix.kxssh.ScpDownload;
+import net.kemitix.kxssh.ScpUpload;
 import net.kemitix.kxssh.SftpClient;
 import net.kemitix.kxssh.SshConnectionProperties;
-import net.kemitix.kxssh.ScpDownload;
 import net.kemitix.kxssh.SshException;
 import net.kemitix.kxssh.SshStatus;
 import net.kemitix.kxssh.SshStatusListener;
@@ -14,8 +15,7 @@ public class JSchSftpClient implements SftpClient {
 
     private final SshConnectionProperties connectionProperties;
     private ScpDownload download;
-
-    private SshStatusListener statusListener;
+    private ScpUpload upload;
 
     public JSchSftpClient(SshConnectionProperties connectionProperties) {
         this.connectionProperties = connectionProperties;
@@ -33,6 +33,22 @@ public class JSchSftpClient implements SftpClient {
             download.setStatusListener(statusListener);
         }
     }
+
+    @Override
+    public void upload(File localFile, String remoteFilename) throws SshException {
+        requireUpload();
+        upload.upload(localFile, remoteFilename);
+    }
+
+    protected void requireUpload() {
+        if (upload == null) {
+            upload = new JSchScpUpload(connectionProperties);
+            upload.setStatusListener(statusListener);
+        }
+    }
+
+    //STATUS LISTENER
+    private SshStatusListener statusListener;
 
     @Override
     public void setStatusListener(SshStatusListener statusListener) {
