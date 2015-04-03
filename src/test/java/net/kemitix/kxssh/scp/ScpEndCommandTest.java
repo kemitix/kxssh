@@ -29,7 +29,7 @@ public class ScpEndCommandTest {
         System.out.println("getBytes");
         //given
 
-        String command = "E\n";
+        String command = "E\r";
         byte[] expected = command.getBytes("UTF-8");
 
         //when
@@ -48,7 +48,7 @@ public class ScpEndCommandTest {
     public void testParseCommand() throws UnsupportedEncodingException {
         System.out.println("parseCommand");
         //given
-        String command = "E\n";
+        String command = "E\r";
 
         //when
         ScpCommand result = ScpCommand.parse(command);

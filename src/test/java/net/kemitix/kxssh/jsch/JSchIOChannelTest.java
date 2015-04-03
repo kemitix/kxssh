@@ -221,7 +221,7 @@ public class JSchIOChannelTest {
         when(headerReply.getBuffer()).thenReturn(headerBuffer);
 
         when(input.read())
-                .thenReturn((int) 'C', (int) '0', (int) '7', (int) '6', (int) '4', (int) ' ', (int) '7', (int) ' ', (int) 'f', (int) '\n');
+                .thenReturn((int) 'C', (int) '0', (int) '7', (int) '6', (int) '4', (int) ' ', (int) '7', (int) ' ', (int) 'f', (int) '\r');
 
         //when
         ScpCopyCommand scpCopyCommand = (ScpCopyCommand) ioChannel.readScpCommand();
