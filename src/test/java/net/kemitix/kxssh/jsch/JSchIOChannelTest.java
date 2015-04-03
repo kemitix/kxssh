@@ -211,7 +211,6 @@ public class JSchIOChannelTest {
         ioChannel.setReadReplyFactory(readReplyFactory);
         when(channel.isConnected()).thenReturn(true);
 
-        when(input.read(any(), eq(0), eq(5))).thenReturn(5);
         IOChannelReadReply headerReply = mock(IOChannelReadReply.class);
         byte[] headerBuffer = new byte[4];
         headerBuffer[0] = '0';
