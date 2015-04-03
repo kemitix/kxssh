@@ -4,6 +4,8 @@ import java.io.UnsupportedEncodingException;
 
 public abstract class ScpCommand {
 
+    public static final char TERMINATOR = '\r';
+
     public abstract byte[] getBytes() throws UnsupportedEncodingException;
 
     public static ScpCommand parse(String commandLine) throws UnsupportedEncodingException {

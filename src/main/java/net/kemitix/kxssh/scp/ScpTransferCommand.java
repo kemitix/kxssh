@@ -66,7 +66,7 @@ public abstract class ScpTransferCommand extends ScpCommand {
         buffer[6 + lengthString.length()] = ' ';
         System.arraycopy(getName().getBytes("UTF-8"), 0, buffer, 7 + lengthString.length(), getName().length());
 
-        buffer[bufferSize - 1] = '\n';
+        buffer[bufferSize - 1] = TERMINATOR;
 
         return buffer;
     }

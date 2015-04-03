@@ -15,7 +15,13 @@ class ScpDirectoryCommand extends ScpTransferCommand {
 
     @Override
     protected String getCommandPattern() {
-        return "^[CD](?<mode>\\d\\d\\d\\d)\\s(?<length>\\d)\\s(?<name>.+)\n$";
+        return "^"
+                + "D"
+                + "(?<mode>\\d\\d\\d\\d)\\s"
+                + "(?<length>\\d)\\s"
+                + "(?<name>.+)"
+                + TERMINATOR
+                + "$";
     }
 
 }

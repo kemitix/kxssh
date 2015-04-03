@@ -24,13 +24,24 @@ class ScpTimeCommand extends ScpCommand {
         // parse "mtime 0 atime 0"
         Matcher matcher
                 = Pattern
-                .compile("^T(?<mtime>\\d+)\\s0\\s(?<atime>\\d+)\\s0\n$")
+                .compile(getCommandPattern())
                 .matcher(commandLine);
         if (!matcher.matches()) {
             throw new IllegalArgumentException("Illegal command format: " + commandLine);
         }
         mtime = Long.parseLong(matcher.group("mtime"));
         atime = Long.parseLong(matcher.group("atime"));
+    }
+
+    private static String getCommandPattern() {
+        return "^"
+                + "T"
+                + "(?<mtime>\\d+)\\s"
+                + "0\\s"
+                + "(?<atime>\\d+)\\s"
+                + "0"
+                + TERMINATOR
+                + "$";
     }
 
     @Override
@@ -54,7 +65,7 @@ class ScpTimeCommand extends ScpCommand {
         buffer[mTimeString.length() + aTimeString.length() + 4] = ' ';
         buffer[mTimeString.length() + aTimeString.length() + 5] = '0';
 
-        buffer[bufferSize - 1] = '\n';
+        buffer[bufferSize - 1] = TERMINATOR;
 
         return buffer;
     }
