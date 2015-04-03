@@ -127,7 +127,6 @@ public class JSchIOChannel implements SshStatusProvider {
     public static final int CONTINUE = 'C';
 
     protected int checkStatus() throws SshException {
-        requireConnection();
         try {
             int status = input.read();
             switch (status) {
@@ -203,7 +202,22 @@ public class JSchIOChannel implements SshStatusProvider {
             remaining -= bytesRead;
             updateProgress(length - remaining, length);
         } while (remaining > 0);
-        updateProgress(length, length);
+    }
+
+    // READ STREAM
+    void readFromStream(InputStream stream, long length) throws IOException, SshException {
+        int blockSize = 1024;
+        byte[] buffer = new byte[blockSize];
+        long remaining = length;
+        updateProgress(0, length);
+        do {
+            int bytesToRead = Integer.min(blockSize, (int) Long.min(Integer.MAX_VALUE, remaining));
+            int bytesRead = stream.read(buffer, 0, bytesToRead);
+            output.write(buffer, 0, bytesRead);
+            output.flush();
+            remaining -= bytesRead;
+            updateProgress(length - remaining, length);
+        } while (remaining > 0);
     }
 
     // STATUS PROVIDER

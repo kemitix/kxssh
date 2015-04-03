@@ -1,5 +1,5 @@
 package net.kemitix.kxssh;
 
-public interface SftpClient extends ScpDownload {
+public interface SftpClient extends ScpDownload, ScpUpload {
 
 }

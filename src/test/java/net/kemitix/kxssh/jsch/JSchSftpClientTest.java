@@ -1,6 +1,10 @@
 package net.kemitix.kxssh.jsch;
 
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
 import java.io.File;
+import java.io.IOException;
 import net.kemitix.kxssh.SshAuthentication;
 import net.kemitix.kxssh.SshConnectionProperties;
 import net.kemitix.kxssh.SshException;
@@ -8,10 +12,12 @@ import net.kemitix.kxssh.SshOperationStatus;
 import net.kemitix.kxssh.SshPasswordAuthentication;
 import net.kemitix.kxssh.SshStatus;
 import net.kemitix.kxssh.SshStatusListener;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.BlockJUnit4ClassRunner;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -21,33 +27,67 @@ import static org.mockito.Mockito.when;
 public class JSchSftpClientTest {
 
     private JSchSftpClient client;
+    private Session session;
+    private JSchFactory jSchFactory;
+    private JSch jsch;
     private SshConnectionProperties connectionProperties;
     private SshAuthentication authentication;
+    private final String username = "username";
+    private final String hostname = "hostname";
     private SshStatusListener statusListener;
     private JSchScpDownload download;
+    private JSchScpUpload upload;
+    private String remote;
+    private File local;
 
     @Before
-    public void setUp() {
+    public void setUp() throws IOException, JSchException {
         connectionProperties = mock(SshConnectionProperties.class);
         authentication = mock(SshPasswordAuthentication.class);
         statusListener = mock(SshStatusListener.class);
         download = mock(JSchScpDownload.class);
+        upload = mock(JSchScpUpload.class);
+        session = mock(Session.class);
+        jSchFactory = mock(JSchFactory.class);
+        jsch = mock(JSch.class);
+
+        when(connectionProperties.getAuthentication()).thenReturn(authentication);
+        when(connectionProperties.getHostname()).thenReturn(hostname);
+        when(authentication.getUsername()).thenReturn(username);
+
+        when(download.getJSch()).thenReturn(jsch);
+        when(upload.getJSch()).thenReturn(jsch);
+
+        when(jSchFactory.build()).thenReturn(jsch);
+        when(jSchFactory.build(any())).thenReturn(jsch);
+        when(jsch.getSession(username, hostname)).thenReturn(session);
+
+        download.setJschFactory(jSchFactory);
+        upload.setJschFactory(jSchFactory);
+
         client = new JSchSftpClient(connectionProperties);
         client.setDownload(download);
+        client.setUpload(upload);
         client.setStatusListener(statusListener);
+
+        remote = "remote.txt";
+        local = File.createTempFile("local", ".txt");
+    }
+
+    @After
+    public void tearDown() {
+        local.delete();
     }
 
     /**
      * Test of download method, of class JSchSftpClient.
      *
-     * @throws java.lang.Exception
+     * @throws net.kemitix.kxssh.SshException
      */
     @Test
-    public void testDownload() throws Exception {
+    public void testDownload() throws SshException {
         System.out.println("download");
         //given
-        String remote = "remote.txt";
-        File local = new File("local.txt");
 
         //when
         client.download(remote, local);
@@ -68,10 +108,6 @@ public class JSchSftpClientTest {
         System.out.println("download download not set");
         //given
         client.setDownload(null);
-
-        when(connectionProperties.getAuthentication()).thenReturn(authentication);
-        when(connectionProperties.getHostname()).thenReturn("hostname");
-        when(authentication.getUsername()).thenReturn("username");
 
         //when
         client.requireDownload();
@@ -112,4 +148,39 @@ public class JSchSftpClientTest {
         verify(statusListener, times(1)).onUpdateStatus(status);
     }
 
+    /**
+     * Test of upload method, of class JSchSftpClient.
+     *
+     * @throws net.kemitix.kxssh.SshException
+     */
+    @Test
+    public void testUpload() throws SshException {
+        System.out.println("upload");
+        //given
+
+        //when
+        client.upload(local, remote);
+
+        //then
+        verify(upload, times(1)).upload(local, remote);
+    }
+
+    /**
+     * Test of upload method, of class JSchSftpclient.
+     *
+     * When upload not already set
+     *
+     * @throws net.kemitix.kxssh.SshException
+     */
+    @Test
+    public void testUploadUploadNotSet() throws SshException {
+        System.out.println("upload upload not set");
+        //given
+        client.setUpload(null);
+
+        //when
+        client.requireUpload();
+
+        //then
+    }
 }

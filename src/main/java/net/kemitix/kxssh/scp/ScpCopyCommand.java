@@ -13,7 +13,12 @@ public class ScpCopyCommand extends ScpTransferCommand {
 
     @Override
     protected String getCommandPattern() {
-        return "^[CD](?<mode>\\d\\d\\d\\d)\\s(?<length>\\d+)\\s(?<name>.+)\n$";
+        return "^"
+                + "C"
+                + "(?<mode>\\d\\d\\d\\d)\\s"
+                + "(?<length>\\d+)\\s"
+                + "(?<name>.+)"
+                + TERMINATOR + "$";
     }
 
 }
