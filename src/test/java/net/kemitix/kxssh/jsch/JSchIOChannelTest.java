@@ -314,7 +314,9 @@ public class JSchIOChannelTest {
         //given
         ioChannel.setChannel(channel);
         when(channel.isConnected()).thenReturn(true);
-        when(input.read()).thenReturn(JSchIOChannel.ERROR).thenReturn((int) '\n');
+        when(input.read())
+                .thenReturn(JSchIOChannel.ERROR)
+                .thenReturn((int) '\n');
 
         //when
         ioChannel.checkStatus();
@@ -694,7 +696,7 @@ public class JSchIOChannelTest {
         //given
 
         //when
-        ioChannel.readToEol();
+        ioChannel.readToEol('\n');
 
         //then
     }

@@ -144,13 +144,17 @@ public class JSchIOChannel implements SshStatusProvider {
     }
 
     public String readToEol() throws IOException, SshException {
+        return readToEol('\n');
+    }
+
+    public String readToEol(char terminator) throws IOException, SshException {
         requireConnection();
         StringBuilder sb = new StringBuilder();
         int c;
         do {
             c = input.read();
             sb.append((char) c);
-        } while (c != '\n');
+        } while (c != terminator);
         return sb.toString();
     }
 
@@ -178,7 +182,7 @@ public class JSchIOChannel implements SshStatusProvider {
      * @throws SshException
      */
     protected ScpCommand readScpCommand() throws IOException, SshException {
-        String commandLine = readToEol();
+        String commandLine = readToEol(ScpCommand.TERMINATOR);
         ScpCommand scpCommand = ScpCommand.parse(commandLine);
         return scpCommand;
     }
