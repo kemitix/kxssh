@@ -127,7 +127,6 @@ public class JSchIOChannel implements SshStatusProvider {
     public static final int CONTINUE = 'C';
 
     protected int checkStatus() throws SshException {
-        requireConnection();
         try {
             int status = input.read();
             switch (status) {
