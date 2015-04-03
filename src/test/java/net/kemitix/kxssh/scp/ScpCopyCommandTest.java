@@ -90,7 +90,7 @@ public class ScpCopyCommandTest {
         scpCopyCommand.setLength(length);
         scpCopyCommand.setName(name);
 
-        String command = "C0764 1234 file name\n";
+        String command = "C0764 1234 file name\r";
         byte[] expected = command.getBytes("UTF-8");
 
         //when
@@ -129,7 +129,7 @@ public class ScpCopyCommandTest {
     public void testParseCommand() throws UnsupportedEncodingException {
         System.out.println("parseCommand");
         //given
-        String command = "C0764 1234 file name\n";
+        String command = "C0764 1234 file name\r";
 
         //when
         ScpCommand result = ScpCommand.parse(command);
@@ -152,7 +152,7 @@ public class ScpCopyCommandTest {
     public void testParseCommandBadFormat() throws UnsupportedEncodingException {
         System.out.println("parseCommand bad format");
         //given
-        String command = "C0764 1234file name\n";
+        String command = "C0764 1234file name\r";
 
         //when
         ScpCommand.parse(command);

@@ -36,7 +36,7 @@ public class ScpDirectoryCommandTest {
     public void testConstructorString() throws UnsupportedEncodingException {
         System.out.println("new ScpDirectoryCommand(String)");
         //given
-        String commandLine = "D0764 0 directory name\n";
+        String commandLine = "D0764 0 directory name\r";
 
         //when
         ScpDirectoryCommand command = new ScpDirectoryCommand(commandLine);
@@ -91,7 +91,7 @@ public class ScpDirectoryCommandTest {
         scpDirectoryCommand.setFileMode(fileMode);
         scpDirectoryCommand.setName(name);
 
-        String command = "D0764 0 directory name\n";
+        String command = "D0764 0 directory name\r";
         byte[] expected = command.getBytes("UTF-8");
 
         //when
@@ -129,7 +129,7 @@ public class ScpDirectoryCommandTest {
     public void testParseCommand() throws UnsupportedEncodingException {
         System.out.println("parseCommand");
         //given
-        String command = "D0764 0 directory name\n";
+        String command = "D0764 0 directory name\r";
 
         //when
         ScpCommand result = ScpCommand.parse(command);
@@ -151,7 +151,7 @@ public class ScpDirectoryCommandTest {
     public void testParseCommandBadFormat() throws UnsupportedEncodingException {
         System.out.println("parseCommand bad format");
         //given
-        String command = "D0764 1234 directory name\n";
+        String command = "D0764 1234 directory name\r";
 
         //when
         ScpCommand.parse(command);

@@ -147,7 +147,6 @@ public class JSchScpUploadTest {
         upload.setStatusListener(listener);
         upload.setIoChannel(ioChannel);
         when(ioChannel.checkStatus())
-                .thenReturn(JSchIOChannel.CONTINUE)
                 .thenReturn(JSchIOChannel.SUCCESS);
 
         //when
