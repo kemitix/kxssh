@@ -148,4 +148,39 @@ public class JSchSftpClientTest {
         verify(statusListener, times(1)).onUpdateStatus(status);
     }
 
+    /**
+     * Test of upload method, of class JSchSftpClient.
+     *
+     * @throws net.kemitix.kxssh.SshException
+     */
+    @Test
+    public void testUpload() throws SshException {
+        System.out.println("upload");
+        //given
+
+        //when
+        client.upload(local, remote);
+
+        //then
+        verify(upload, times(1)).upload(local, remote);
+    }
+
+    /**
+     * Test of upload method, of class JSchSftpclient.
+     *
+     * When upload not already set
+     *
+     * @throws net.kemitix.kxssh.SshException
+     */
+    @Test
+    public void testUploadUploadNotSet() throws SshException {
+        System.out.println("upload upload not set");
+        //given
+        client.setUpload(null);
+
+        //when
+        client.requireUpload();
+
+        //then
+    }
 }

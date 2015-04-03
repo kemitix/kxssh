@@ -862,4 +862,34 @@ public class JSchIOChannelTest {
         assertNull(ioChannel.getStatusListener());
         verify(listener, times(0)).onUpdateStatus(SshOperationStatus.CONNECTED);
     }
+
+    /**
+     * Test of readFromStream method, of class JSchScpOperation
+     *
+     * @throws java.io.IOException
+     * @throws net.kemitix.kxssh.SshException
+     */
+    @Test(timeout = 100L)
+    public void testReadFromStream() throws IOException, SshException {
+        System.out.println("readFromStream");
+        //given
+        int filesize = 100;
+        int chunk = 50;
+        ioChannel.setChannel(channel);
+        ioChannel.setStatusListener(listener);
+        when(channel.isConnected()).thenReturn(true);
+        when(input.read(any(), eq(0), eq(filesize))).thenReturn(chunk);
+        when(input.read(any(), eq(0), eq(filesize - chunk))).thenReturn(chunk);
+
+        //when
+        ioChannel.readFromStream(input, filesize);
+
+        //then
+        verify(input, times(1)).read(any(), eq(0), eq(filesize));
+        verify(input, times(1)).read(any(), eq(0), eq(filesize - chunk));
+        verify(output, times(2)).write(any(), eq(0), eq(chunk));
+        verify(listener, times(1)).onUpdateProgress(0, filesize);
+        verify(listener, times(1)).onUpdateProgress(chunk, filesize);
+        verify(listener, times(1)).onUpdateProgress(filesize, filesize);
+    }
 }

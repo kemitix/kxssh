@@ -37,6 +37,22 @@ public class SshIOFactoryTest {
         //then
     }
 
+    /**
+     * Test of createFileInpputStream method, of class SshIOFactory.
+     *
+     * @throws java.io.FileNotFoundException
+     */
+    @Test
+    public void testCreateFileInputStream() throws FileNotFoundException {
+        System.out.println("createFileInputStream");
+        //given
+
+        //when
+        factory.createFileInputStream(tempFile);
+
+        //then
+    }
+
     @After
     public void tearDown() {
         tempFile.delete();
