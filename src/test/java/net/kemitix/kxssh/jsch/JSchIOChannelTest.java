@@ -129,7 +129,7 @@ public class JSchIOChannelTest {
      * @throws net.kemitix.kxssh.SshException
      * @throws java.io.IOException
      */
-    @Test
+    @Test(timeout = 100L)
     public void testRead() throws SshException, IOException {
         System.out.println("read(int)");
         //given
@@ -160,7 +160,7 @@ public class JSchIOChannelTest {
      * @throws java.io.IOException
      * @throws net.kemitix.kxssh.SshException
      */
-    @Test(expected = SshException.class)
+    @Test(expected = SshException.class, timeout = 100L)
     public void testReadIOException() throws IOException, SshException {
         System.out.println("read IOException");
         //given
@@ -181,7 +181,7 @@ public class JSchIOChannelTest {
      * @throws net.kemitix.kxssh.SshException
      * @throws java.io.IOException
      */
-    @Test(expected = SshException.class)
+    @Test(expected = SshException.class, timeout = 100L)
     public void testReadEndOfStream() throws SshException, IOException {
         System.out.println("read(int) reach end of stream");
         //given
@@ -240,7 +240,7 @@ public class JSchIOChannelTest {
      * @throws java.io.IOException
      * @throws net.kemitix.kxssh.SshException
      */
-    @Test
+    @Test(timeout = 100L)
     public void testCheckStatusSuccess() throws IOException, SshException {
         System.out.println("checkStatus SUCCESS");
         //given
@@ -263,7 +263,7 @@ public class JSchIOChannelTest {
      * @throws java.io.IOException
      * @throws net.kemitix.kxssh.SshException
      */
-    @Test
+    @Test(timeout = 100L)
     public void testCheckStatusEOF() throws IOException, SshException {
         System.out.println("checkStatus EOF");
         //given
@@ -286,7 +286,7 @@ public class JSchIOChannelTest {
      * @throws java.io.IOException
      * @throws net.kemitix.kxssh.SshException
      */
-    @Test
+    @Test(timeout = 100L)
     public void testCheckStatusContinue() throws IOException, SshException {
         System.out.println("checkStatus CONTINUE");
         //given
@@ -309,7 +309,7 @@ public class JSchIOChannelTest {
      * @throws java.io.IOException
      * @throws net.kemitix.kxssh.SshException
      */
-    @Test(expected = SshException.class)
+    @Test(expected = SshException.class, timeout = 100L)
     public void testCheckStatusError() throws IOException, SshException {
         System.out.println("checkStatus ERROR");
         //given
@@ -331,7 +331,7 @@ public class JSchIOChannelTest {
      * @throws java.io.IOException
      * @throws net.kemitix.kxssh.SshException
      */
-    @Test(expected = SshException.class)
+    @Test(expected = SshException.class, timeout = 100L)
     public void testCheckStatusFatal() throws IOException, SshException {
         System.out.println("checkStatus FATAL");
         //given
@@ -356,7 +356,7 @@ public class JSchIOChannelTest {
      * @throws java.io.IOException
      * @throws net.kemitix.kxssh.SshException
      */
-    @Test(expected = SshException.class)
+    @Test(expected = SshException.class, timeout = 100L)
     public void testCheckStatusIOEXception() throws IOException, SshException {
         System.out.println("checkStatus IOException");
         //given
@@ -376,7 +376,7 @@ public class JSchIOChannelTest {
      * @throws net.kemitix.kxssh.SshException
      * @throws java.io.IOException
      */
-    @Test
+    @Test(timeout = 100L)
     public void testNotifyReady() throws SshException, IOException {
         System.out.println("notifyReady");
         //given
@@ -399,7 +399,7 @@ public class JSchIOChannelTest {
      * @throws net.kemitix.kxssh.SshException
      * @throws java.io.IOException
      */
-    @Test(expected = SshException.class)
+    @Test(expected = SshException.class, timeout = 100L)
     public void testNotifyReadyIOException() throws SshException, IOException {
         System.out.println("notifyReady throws IOException");
         //given
@@ -689,7 +689,7 @@ public class JSchIOChannelTest {
      * @throws net.kemitix.kxssh.SshException
      * @throws java.io.IOException
      */
-    @Test(expected = SshException.class)
+    @Test(expected = SshException.class, timeout = 100L)
     public void testRequireNotConnectionConnected() throws SshException, IOException {
         System.out.println("requireConnection not connected");
         //given
@@ -751,7 +751,7 @@ public class JSchIOChannelTest {
      * @throws java.io.IOException
      * @throws net.kemitix.kxssh.SshException
      */
-    @Test(expected = SshException.class)
+    @Test(expected = SshException.class, timeout = 100L)
     public void testReadEof() throws IOException, SshException {
         System.out.println("read eof");
         //given
