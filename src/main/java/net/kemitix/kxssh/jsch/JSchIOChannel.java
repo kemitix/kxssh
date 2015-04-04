@@ -10,16 +10,22 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import lombok.Getter;
 import lombok.Setter;
+import net.kemitix.kxssh.IOChannelReadReply;
+import net.kemitix.kxssh.IOChannelReadReplyFactory;
+import net.kemitix.kxssh.SshErrorStatus;
 import net.kemitix.kxssh.SshException;
+import net.kemitix.kxssh.SshStatus;
+import net.kemitix.kxssh.SshStatusListener;
+import net.kemitix.kxssh.SshStatusProvider;
+import net.kemitix.kxssh.scp.ScpCommand;
 
 @Setter
 @Getter
-public class JSchIOChannel {
+public class JSchIOChannel implements SshStatusProvider {
 
     private Channel channel;
     private OutputStream output;
     private InputStream input;
-    private String remoteFilename;
     private File localFile;
 
     public JSchIOChannel() {
@@ -38,26 +44,44 @@ public class JSchIOChannel {
         return ioChannel;
     }
 
-    public void setRemoteFilename(String remoteFilename) {
-        this.remoteFilename = remoteFilename;
-        setExecCommand("scp -f " + remoteFilename);
+    protected void setChannel(Channel channel) throws IOException {
+        this.channel = channel;
+        if (channel == null) {
+            output = null;
+            input = null;
+        } else {
+            output = channel.getOutputStream();
+            input = channel.getInputStream();
+        }
     }
 
-    protected void setChannel(Channel sessionChannel) throws IOException {
-        this.channel = sessionChannel;
-        setOutput(sessionChannel.getOutputStream());
-        setInput(sessionChannel.getInputStream());
-    }
-
-    private void setExecCommand(String remoteCommand) {
+    public void setExecCommand(String remoteCommand) throws SshException {
         ((ChannelExec) channel).setCommand(remoteCommand);
     }
 
+    public boolean isConnected() {
+        return channel != null && channel.isConnected();
+    }
+
     public void connect() throws SshException {
-        try {
-            channel.connect();
-        } catch (JSchException ex) {
-            throw new SshException("Error connecting channel", ex);
+        if (!isConnected()) {
+            try {
+                channel.connect();
+            } catch (JSchException ex) {
+                throw new SshException("Error connecting channel", ex);
+            }
+        }
+    }
+
+    public void disconnect() {
+        if (isConnected()) {
+            channel.disconnect();
+        }
+    }
+
+    private void requireConnection() throws SshException {
+        if (!isConnected()) {
+            throw new SshException("Not connected to channel");
         }
     }
 
@@ -67,12 +91,13 @@ public class JSchIOChannel {
 
     private IOChannelReadReplyFactory readReplyFactory;
 
-    IOChannelReadReply read(int length) throws SshException {
+    public IOChannelReadReply read(int length) throws SshException {
+        requireConnection();
         byte[] buffer = new byte[length];
         int bytesRead;
         try {
             bytesRead = input.read(buffer, 0, length);
-            if (bytesRead == -1) {
+            if (bytesRead == EOF) {
                 throw new SshException(ERROR_READ_EOF);
             }
             return readReplyFactory.createReply(length, bytesRead, buffer);
@@ -81,11 +106,13 @@ public class JSchIOChannel {
         }
     }
 
-    void write(byte[] buffer, int offset, int length) throws IOException {
+    void write(byte[] buffer, int offset, int length) throws IOException, SshException {
+        requireConnection();
         output.write(buffer, offset, length);
     }
 
-    void flush() throws IOException {
+    void flush() throws IOException, SshException {
+        requireConnection();
         output.flush();
     }
 
@@ -116,13 +143,18 @@ public class JSchIOChannel {
         }
     }
 
-    private String readToEol() throws IOException {
+    public String readToEol() throws IOException, SshException {
+        return readToEol('\n');
+    }
+
+    public String readToEol(char terminator) throws IOException, SshException {
+        requireConnection();
         StringBuilder sb = new StringBuilder();
         int c;
         do {
             c = input.read();
             sb.append((char) c);
-        } while (c != '\n');
+        } while (c != terminator);
         return sb.toString();
     }
 
@@ -130,6 +162,7 @@ public class JSchIOChannel {
     private static final String ERROR_REMOTE_NOTIFY = "Error writing/flushing null on output stream";
 
     protected void notifyReady() throws SshException {
+        requireConnection();
         byte[] buf = new byte[1];
         buf[0] = 0; // send '\0' - null
         try {
@@ -144,44 +177,73 @@ public class JSchIOChannel {
     /**
      * Read metadata, which consists of the file size followed by the filename.
      *
-     * @return the file size
+     * @return the scp protocol command
+     * @throws java.io.IOException
      * @throws SshException
      */
-    protected IOChannelMetadata readMetaData() throws SshException {
-        IOChannelMetadata metadata = new IOChannelMetadata();
-        // read 5-byte permissions '0644 '
-        IOChannelReadReply permissionsReply = read(5);
-        metadata.setHeader(permissionsReply.getBuffer());
+    protected ScpCommand readScpCommand() throws IOException, SshException {
+        String commandLine = readToEol(ScpCommand.TERMINATOR);
+        ScpCommand scpCommand = ScpCommand.parse(commandLine);
+        return scpCommand;
+    }
 
-        // read filesize, as a string, terminated by a space
-        StringBuilder sb = new StringBuilder();
-        while (true) {
-            IOChannelReadReply filesizeCharReply = read(1);
-            byte c = filesizeCharReply.getBuffer()[0];
-            if (c == ' ') {
-                break;
+    // WRITE STREAM
+    void writeToStream(OutputStream stream, long length) throws SshException {
+        int blockSize = 1024;
+        long remaining = length;
+        updateProgress(0, length);
+        do {
+            int bytesToRead = Integer.min(blockSize, (int) Long.min(remaining, (long) Integer.MAX_VALUE));
+            IOChannelReadReply reply = read(bytesToRead);
+            int bytesRead = reply.getBytesRead();
+            bytesRead = Integer.min(bytesRead, bytesToRead);
+            try {
+                stream.write(reply.getBuffer(), 0, bytesRead);
+            } catch (IOException ex) {
+                updateStatus(SshErrorStatus.FILE_WRITE_ERROR);
+                throw new SshException("Error writing local file", ex);
             }
-            sb.append(c - '0');
-        }
-        metadata.setFilesize(Integer.parseInt(sb.toString()));
+            remaining -= bytesRead;
+            updateProgress(length - remaining, length);
+        } while (remaining > 0);
+    }
 
-        /**
-         * Continue reading to remove the filename from the channel, terminated
-         * by a line feed (ascii hex 0a). Although we don't do anything file the
-         * filename, we still needed to remove it from the channel.
-         */
-        StringBuilder filename = new StringBuilder();
-        for (int i = 0;; i++) {
-            IOChannelReadReply filenameCharReply = read(1);
-            byte c = filenameCharReply.getBuffer()[0];
-            if (c == (byte) 0x0a) {
-                metadata.setFilename(filename.toString());
-                break;
-            }
-            filename.append((char) c);
-        }
+    // READ STREAM
+    void readFromStream(InputStream stream, long length) throws IOException, SshException {
+        int blockSize = 1024;
+        byte[] buffer = new byte[blockSize];
+        long remaining = length;
+        updateProgress(0, length);
+        do {
+            int bytesToRead = Integer.min(blockSize, (int) Long.min(Integer.MAX_VALUE, remaining));
+            int bytesRead = stream.read(buffer, 0, bytesToRead);
+            output.write(buffer, 0, bytesRead);
+            output.flush();
+            remaining -= bytesRead;
+            updateProgress(length - remaining, length);
+        } while (remaining > 0);
+    }
 
-        return metadata;
+    // STATUS PROVIDER
+    private SshStatusListener statusListener;
+
+    @Override
+    public void setStatusListener(SshStatusListener statusListener) {
+        this.statusListener = statusListener;
+    }
+
+    @Override
+    public void updateProgress(long progress, long total) {
+        if (statusListener != null) {
+            statusListener.onUpdateProgress(progress, total);
+        }
+    }
+
+    @Override
+    public void updateStatus(SshStatus status) {
+        if (statusListener != null) {
+            statusListener.onUpdateStatus(status);
+        }
     }
 
 }

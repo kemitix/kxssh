@@ -3,8 +3,6 @@ package net.kemitix.kxssh.jsch;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Setter;
@@ -15,11 +13,11 @@ import net.kemitix.kxssh.SshException;
 import net.kemitix.kxssh.SshIOFactory;
 import net.kemitix.kxssh.SshPasswordAuthentication;
 import net.kemitix.kxssh.SshStatus;
-import net.kemitix.kxssh.StatusListener;
-import net.kemitix.kxssh.StatusProvider;
+import net.kemitix.kxssh.SshStatusListener;
+import net.kemitix.kxssh.SshStatusProvider;
 
 @Setter
-public abstract class JSchOperation implements StatusProvider {
+public abstract class JSchScpOperation implements SshStatusProvider {
 
     private String knownHosts = "~/.ssh/known_hosts";
 
@@ -29,7 +27,7 @@ public abstract class JSchOperation implements StatusProvider {
 
     private JSchFactory jschFactory;
 
-    public JSchOperation(SshConnectionProperties connectionProperties) {
+    public JSchScpOperation(SshConnectionProperties connectionProperties) {
         this.connectionProperties = connectionProperties;
         jschFactory = new JSchFactory();
         ioFactory = new SshIOFactory();
@@ -50,13 +48,19 @@ public abstract class JSchOperation implements StatusProvider {
         if (ioChannel == null) {
             initSession();
             ioChannel = JSchIOChannel.createExecIOChannel(session);
+            ioChannel.setStatusListener(statusListener);
         }
         return ioChannel;
     }
 
-    protected void releaseIOChannel() {
+    protected void disconnect() {
         if (ioChannel != null) {
+            ioChannel.disconnect();
             ioChannel = null;
+        }
+        if (session != null) {
+            session.disconnect();
+            session = null;
         }
     }
 
@@ -98,53 +102,16 @@ public abstract class JSchOperation implements StatusProvider {
         }
     }
 
-    protected void disconnect() {
-        if (session != null) {
-            session.disconnect();
-            session = null;
-        }
-    }
-
-    //STREAM TO FILE
-    private static final String ERROR_FILE_LOCAL_WRITE = "Error writing local file";
-
-    protected void writeIOChannelToOutputStream(
-            JSchIOChannel ioChannel,
-            OutputStream stream,
-            int filesize)
-            throws SshException {
-        int blockSize = 1024;
-        int remaining = filesize;
-        updateProgress(0, filesize);
-        // loop over buffer.length sized blocks of input
-        do {
-            int bytesToRead = Integer.min(blockSize, remaining);
-            IOChannelReadReply channelReadReply = ioChannel.read(bytesToRead);
-            int bytesRead = channelReadReply.getBytesRead();
-            // prevent overrun
-            bytesRead = Integer.min(bytesRead, bytesToRead);
-            try {
-                stream.write(channelReadReply.getBuffer(), 0, bytesRead);
-            } catch (IOException ex) {
-                updateStatus(SshErrorStatus.FILE_WRITE_ERROR);
-                throw new SshException(ERROR_FILE_LOCAL_WRITE, ex);
-            }
-            remaining -= bytesRead;
-            updateProgress(filesize - remaining, filesize);
-        } while (remaining > 0);
-        updateProgress(filesize, filesize);
-    }
-
     //STATUS LISTENER
-    private StatusListener statusListener;
+    private SshStatusListener statusListener;
 
     @Override
-    public void setStatusListener(StatusListener statusListener) {
+    public void setStatusListener(SshStatusListener statusListener) {
         this.statusListener = statusListener;
     }
 
     @Override
-    public void updateProgress(int progress, int total) {
+    public void updateProgress(long progress, long total) {
         if (statusListener != null) {
             statusListener.onUpdateProgress(progress, total);
         }

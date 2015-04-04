@@ -3,18 +3,21 @@ package net.kemitix.kxssh.jsch;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import lombok.Setter;
+import net.kemitix.kxssh.ScpDownload;
 import net.kemitix.kxssh.SshConnectionProperties;
-import net.kemitix.kxssh.SshDownload;
 import net.kemitix.kxssh.SshErrorStatus;
 import net.kemitix.kxssh.SshException;
 import net.kemitix.kxssh.SshOperationStatus;
+import net.kemitix.kxssh.scp.ScpCommand;
+import net.kemitix.kxssh.scp.ScpCopyCommand;
 
 @Setter
-public class JSchDownload extends JSchOperation implements SshDownload {
+public class JSchScpDownload extends JSchScpOperation implements ScpDownload {
 
-    public JSchDownload(SshConnectionProperties connectionProperties) {
+    public JSchScpDownload(SshConnectionProperties connectionProperties) {
         super(connectionProperties);
     }
 
@@ -24,43 +27,42 @@ public class JSchDownload extends JSchOperation implements SshDownload {
     @Override
     public void download(String remoteFilename, File localFile) throws SshException {
         updateStatus(SshOperationStatus.STARTING);
-
         JSchIOChannel ioChannel = getExecIOChannel();
-        ioChannel.setRemoteFilename(remoteFilename);
-        ioChannel.setLocalFile(localFile);
-
-        updateStatus(SshOperationStatus.CONNECTING);
-
-        ioChannel.connect();
-
-        updateStatus(SshOperationStatus.CONNECTED);
-
-        ioChannel.notifyReady();
-
         updateStatus(SshOperationStatus.DOWNLOADING);
 
-        while (true) {
-            if (ioChannel.checkStatus() != JSchIOChannel.CONTINUE) {
-                break;
-            }
-            IOChannelMetadata metadata = ioChannel.readMetaData();
-            ioChannel.notifyReady();
+        // scp "from"
+        ioChannel.setExecCommand("scp -f " + remoteFilename);
+        ioChannel.setLocalFile(localFile);
+        ioChannel.connect();
+        ioChannel.notifyReady();
 
+        do {
+            ScpCopyCommand scpCopyCommand = readScpCopyCommand(ioChannel);
+            ioChannel.notifyReady();
             OutputStream stream = getOutputStream(localFile);
-            writeIOChannelToOutputStream(ioChannel, stream, metadata.getFilesize());
+            ioChannel.writeToStream(stream, scpCopyCommand.getLength());
             if (ioChannel.checkStatus() != JSchIOChannel.SUCCESS) {
                 updateStatus(SshErrorStatus.ACK_ERROR);
                 throw new SshException(ERROR_ACK);
             }
             ioChannel.notifyReady();
-        }
+        } while (ioChannel.checkStatus() == JSchIOChannel.CONTINUE);
 
         updateStatus(SshOperationStatus.DISCONNECTING);
-
-        releaseIOChannel();
         disconnect();
-
         updateStatus(SshOperationStatus.DISCONNECTED);
+    }
+
+    private ScpCopyCommand readScpCopyCommand(JSchIOChannel ioChannel) throws SshException {
+        try {
+            ScpCommand scpCommand = ioChannel.readScpCommand();
+            if (!(scpCommand instanceof ScpCopyCommand)) {
+                throw new SshException("Unexpected SCP protocol command (only support single files)");
+            }
+            return (ScpCopyCommand) scpCommand;
+        } catch (IOException ex) {
+            throw new SshException("Error reading SCP protocol command", ex);
+        }
     }
 
     private FileOutputStream getOutputStream(File localFile) throws SshException {

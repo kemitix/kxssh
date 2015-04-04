@@ -5,6 +5,7 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import net.kemitix.kxssh.SshConnectionProperties;
 import net.kemitix.kxssh.SshErrorStatus;
@@ -12,7 +13,7 @@ import net.kemitix.kxssh.SshException;
 import net.kemitix.kxssh.SshIOFactory;
 import net.kemitix.kxssh.SshOperationStatus;
 import net.kemitix.kxssh.SshPasswordAuthentication;
-import net.kemitix.kxssh.StatusListener;
+import net.kemitix.kxssh.SshStatusListener;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,9 +27,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(BlockJUnit4ClassRunner.class)
-public class JSchOperationTest {
+public class JSchScpOperationTest {
 
-    private JSchOperation operation;
+    private JSchScpOperation operation;
     private SshConnectionProperties connectionProperties;
     private SshPasswordAuthentication authentication;
     private String knownHosts;
@@ -39,9 +40,10 @@ public class JSchOperationTest {
     private SshIOFactory ioFactory;
     private JSchFactory jschFactory;
     private JSch jsch;
-    private StatusListener listener;
+    private SshStatusListener listener;
     private Channel channel;
     private OutputStream outputStream;
+    private InputStream inputStream;
     private JSchIOChannel ioChannel;
 
     @Before
@@ -52,12 +54,13 @@ public class JSchOperationTest {
         ioFactory = mock(SshIOFactory.class);
         jschFactory = mock(JSchFactory.class);
         jsch = mock(JSch.class);
-        listener = mock(StatusListener.class);
+        listener = mock(SshStatusListener.class);
         channel = mock(Channel.class);
         outputStream = mock(OutputStream.class);
+        inputStream = mock(InputStream.class);
         ioChannel = mock(JSchIOChannel.class);
 
-        operation = new JSchOperation(connectionProperties) {
+        operation = new JSchScpOperation(connectionProperties) {
         };
 
         knownHosts = "src/test/resources/known_hosts";
@@ -81,7 +84,7 @@ public class JSchOperationTest {
     }
 
     /**
-     * Test of initSession method, of class JSchOperation
+     * Test of initSession method, of class JSchScpOperation
      *
      * @throws net.kemitix.kxssh.SshException
      * @throws com.jcraft.jsch.JSchException
@@ -101,7 +104,7 @@ public class JSchOperationTest {
     }
 
     /**
-     * Test of initSession method, of class JSchOperation
+     * Test of initSession method, of class JSchScpOperation
      *
      * When session already exists
      *
@@ -120,7 +123,7 @@ public class JSchOperationTest {
     }
 
     /**
-     * Test of initSession method, of class JSchOperation
+     * Test of initSession method, of class JSchScpOperation
      *
      * When hostname is blank.
      *
@@ -140,7 +143,7 @@ public class JSchOperationTest {
     }
 
     /**
-     * Test of initSession method, of class JSchOperation
+     * Test of initSession method, of class JSchScpOperation
      *
      * When hostname is null.
      *
@@ -160,7 +163,7 @@ public class JSchOperationTest {
     }
 
     /**
-     * Test of initSession method, of class JSchOperation
+     * Test of initSession method, of class JSchScpOperation
      *
      * When username is blank.
      *
@@ -184,7 +187,7 @@ public class JSchOperationTest {
     }
 
     /**
-     * Test of initSession method, of class JSchOperation
+     * Test of initSession method, of class JSchScpOperation
      *
      * When username is null.
      *
@@ -208,7 +211,7 @@ public class JSchOperationTest {
     }
 
     /**
-     * Test of initSession method, of class JSchOperation
+     * Test of initSession method, of class JSchScpOperation
      *
      * Throw JSchException for an Unknown Host Key on session.connect()
      *
@@ -232,7 +235,7 @@ public class JSchOperationTest {
     }
 
     /**
-     * Test of initSession method, of class JSchOperation
+     * Test of initSession method, of class JSchScpOperation
      *
      * Throw JSchException on session.connect()
      *
@@ -256,22 +259,7 @@ public class JSchOperationTest {
     }
 
     /**
-     * Test of releaseIOChannel method, of class JSchOperation
-     */
-    @Test
-    public void testReleaseIOChannel() {
-        System.out.println("releaseIOChannel");
-        //given
-        operation.setIoChannel(null);
-
-        //when
-        operation.releaseIOChannel();
-
-        //then
-    }
-
-    /**
-     * Test of disconnect method, of class JSchOperation
+     * Test of disconnect method, of class JSchScpOperation
      */
     @Test
     public void testDisconnect() {
@@ -286,31 +274,20 @@ public class JSchOperationTest {
     }
 
     /**
-     * Test of updateProgress method, of class JSchOperation
-     */
-    @Test
-    public void testUpdateProgress() {
-        System.out.println("updateProgress without listener");
-        //given
-        operation.setStatusListener(null);
-
-        //when
-        operation.updateProgress(1, 2);
-
-        //then
-    }
-
-    /**
-     * Test of getExecIOChannel method, of class JSchOperation
+     * Test of getExecIOChannel method, of class JSchScpOperation
      *
      * @throws net.kemitix.kxssh.SshException
      * @throws com.jcraft.jsch.JSchException
+     * @throws java.io.IOException
      */
     @Test
-    public void testGetExecIOChannel() throws SshException, JSchException {
+    public void testGetExecIOChannel() throws SshException, JSchException, IOException {
         System.out.println("getExecIOChannel");
         //given
         operation.setIoChannel(null);
+        when(session.openChannel("exec")).thenReturn(channel);
+        when(channel.getOutputStream()).thenReturn(outputStream);
+        when(channel.getInputStream()).thenReturn(inputStream);
 
         //when
         operation.getExecIOChannel();
@@ -322,7 +299,7 @@ public class JSchOperationTest {
     }
 
     /**
-     * Test of getJSch method, of class JSchOperation
+     * Test of getJSch method, of class JSchScpOperation
      *
      * @throws com.jcraft.jsch.JSchException
      * @throws net.kemitix.kxssh.SshException
@@ -340,65 +317,63 @@ public class JSchOperationTest {
     }
 
     /**
-     * Test of writeIOChannelToOutputStream method, of class JSchOperation
-     *
-     * @throws java.io.IOException
-     * @throws net.kemitix.kxssh.SshException
+     * Test of updateProgress method, of class JSchIOChannel.
      */
-    @Test(timeout = 1000L)
-    public void testWriteIOChannelToOutputStream() throws IOException, SshException {
-        System.out.println("writeIOChannelToOutputStream");
+    @Test
+    public void testUpdateProgress() {
+        System.out.println("updateProgress");
         //given
-        int filesize = 100;
-        int chunk = 50;
-        IOChannelReadReply reply1 = mock(IOChannelReadReply.class);
-        when(reply1.getBytesRead()).thenReturn(chunk);
-        IOChannelReadReply reply2 = mock(IOChannelReadReply.class);
-        when(reply2.getBytesRead()).thenReturn(chunk);
-        when(ioChannel.read(eq(filesize))).thenReturn(reply1);
-        when(ioChannel.read(eq(filesize - chunk))).thenReturn(reply2);
+        operation.setStatusListener(listener);
 
         //when
-        operation.writeIOChannelToOutputStream(ioChannel, outputStream, filesize);
+        operation.updateProgress(0, 1);
 
         //then
-        verify(listener, times(1)).onUpdateProgress(chunk, filesize);
-        verify(listener, times(2)).onUpdateProgress(filesize, filesize);
+        verify(listener, times(1)).onUpdateProgress(0, 1);
     }
 
     /**
-     * Test of writeIOChannelToOutputStream method, of class JSchOperation
-     *
-     * When throws an IOException
-     *
-     * @throws java.io.IOException
-     * @throws net.kemitix.kxssh.SshException
-     */
-    @Test(expected = SshException.class, timeout = 100L)
-    public void testWriteIOChannelToOutputStreamThrowsException() throws IOException, SshException {
-        System.out.println("writeIOChannelToOutputStream when throws exception");
-        //given
-        int filesize = 123;
-        IOChannelReadReply reply = mock(IOChannelReadReply.class);
-        when(reply.getBytesRead()).thenReturn(filesize);
-        when(ioChannel.read(eq(filesize))).thenReturn(reply);
-        doThrow(IOException.class).when(outputStream).write(any(), eq(0), eq(filesize));
-
-        //when
-        operation.writeIOChannelToOutputStream(ioChannel, outputStream, filesize);
-
-        //then
-        verify(listener, times(1)).onUpdateStatus(SshErrorStatus.FILE_WRITE_ERROR);
-    }
-
-    /**
-     * Test of updateStatus method, of class JSchOperation
-     *
-     * Where status listener not set
+     * Test of updateStatus method, of class JSchIOChannel.
      */
     @Test
     public void testUpdateStatus() {
-        System.out.println("updateStatus with no listener set");
+        System.out.println("updateStatus");
+        //given
+        operation.setStatusListener(listener);
+
+        //when
+        operation.updateStatus(SshOperationStatus.CONNECTED);
+
+        //then
+        verify(listener, times(1)).onUpdateStatus(SshOperationStatus.CONNECTED);
+    }
+
+    /**
+     * Test of updateProgress method, of class JSchIOChannel.
+     *
+     * Where no StatusListener
+     */
+    @Test
+    public void testUpdateProgressNoListener() {
+        System.out.println("updateProgress missing StatusListener");
+        //given
+        operation.setStatusListener(null);
+
+        //when
+        operation.updateProgress(0, 1);
+
+        //then
+        verify(listener, times(0)).onUpdateProgress(0, 1);
+    }
+
+    /**
+     * Test of updateStatus method, of class JSchIOChannel.
+     *
+     * Where no StatusListener
+     */
+    @Test
+    public void testUpdateStatusNoListener() {
+        System.out.println("updateStatus missing StatusListener");
         //given
         operation.setStatusListener(null);
 
@@ -406,6 +381,6 @@ public class JSchOperationTest {
         operation.updateStatus(SshOperationStatus.CONNECTED);
 
         //then
-        verify(listener, times(0)).onUpdateStatus(any());
+        verify(listener, times(0)).onUpdateStatus(SshOperationStatus.CONNECTED);
     }
 }

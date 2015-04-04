@@ -6,6 +6,7 @@ public enum SshOperationStatus implements SshStatus {
     CONNECTING,
     CONNECTED,
     DOWNLOADING,
+    UPLOADING,
     DISCONNECTING,
     DISCONNECTED;
 
