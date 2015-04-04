@@ -5,6 +5,57 @@
     <artifactId>kxssh</artifactId>
     <version>0.1.1-RELEASE</version>
     <packaging>jar</packaging>
+
+    <name>KxSsh</name>
+    <description>Java SSH client (wrapper for jsch)</description>
+
+    <url>https://github.com/kemitix/kxssh</url>
+
+    <developers>
+        <developer>
+            <name>Paul Campbell</name>
+            <email>pcampbell@kemitix.net</email>
+            <organization>Kemitix</organization>
+            <organizationUrl>https://github.com/kemitix/</organizationUrl>
+        </developer>
+    </developers>
+
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>http://www.opensource.org/licenses/mit-license.php</url>
+        </license>
+    </licenses>
+
+    <inceptionYear>2015</inceptionYear>
+
+    <prerequisites>
+        <maven>3.0.4</maven>
+    </prerequisites>
+
+    <issueManagement>
+        <url>https://github.com/kemitix/kxssh/issues</url>
+        <system>GitHub Issues</system>
+    </issueManagement>
+
+    <scm>
+        <connection>scm:git:git@github.com:kemitix/kxssh.git</connection>
+        <developerConnection>scm:git:git@github.com:kemitix/kxssh.git</developerConnection>
+        <url>git@github.com:kemitix/kxssh.git</url>
+    </scm>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>9</version>
+    </parent>
+
     <dependencies>
         <dependency>
             <groupId>com.jcraft</groupId>
@@ -42,11 +93,39 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-    </properties>
+
+    <profiles>
+        <profile>
+            <id>release-sign-artifacts</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.6</version>
+                        <configuration>
+                            <passphrase>${gpg.passphrase}</passphrase>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
     <build>
         <plugins>
