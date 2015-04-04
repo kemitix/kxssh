@@ -11,7 +11,6 @@ import net.kemitix.kxssh.SshConnectionProperties;
 import net.kemitix.kxssh.SshErrorStatus;
 import net.kemitix.kxssh.SshException;
 import net.kemitix.kxssh.SshIOFactory;
-import net.kemitix.kxssh.SshPasswordAuthentication;
 import net.kemitix.kxssh.SshStatus;
 import net.kemitix.kxssh.SshStatusListener;
 import net.kemitix.kxssh.SshStatusProvider;
@@ -88,7 +87,7 @@ public abstract class JSchScpOperation implements SshStatusProvider {
 
         try {
             session = getJSch().getSession(username, hostname);
-            session.setPassword(((SshPasswordAuthentication) authentication).getPassword());
+            authentication.authenticateSession(session);
             session.connect();
         } catch (JSchException ex) {
             if (ex.getMessage().contains("UnknownHostKey")) {

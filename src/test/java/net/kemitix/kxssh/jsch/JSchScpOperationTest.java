@@ -99,7 +99,7 @@ public class JSchScpOperationTest {
 
         //then
         verify(jsch, times(1)).getSession(username, hostname);
-        verify(session, times(1)).setPassword(password);
+        verify(authentication, times(1)).authenticateSession(session);
         verify(session, times(1)).connect();
     }
 
@@ -182,7 +182,7 @@ public class JSchScpOperationTest {
 
         //then
         verify(jsch, times(1)).getSession(any(), eq(hostname));
-        verify(session, times(1)).setPassword(password);
+        verify(authentication, times(1)).authenticateSession(session);
         verify(session, times(1)).connect();
     }
 
@@ -206,7 +206,7 @@ public class JSchScpOperationTest {
 
         //then
         verify(jsch, times(1)).getSession(any(), eq(hostname));
-        verify(session, times(1)).setPassword(password);
+        verify(authentication, times(1)).authenticateSession(session);
         verify(session, times(1)).connect();
     }
 
@@ -294,7 +294,7 @@ public class JSchScpOperationTest {
 
         //then
         verify(jsch, times(1)).getSession(username, hostname);
-        verify(session, times(1)).setPassword(password);
+        verify(authentication, times(1)).authenticateSession(session);
         verify(session, times(1)).connect();
     }
 
