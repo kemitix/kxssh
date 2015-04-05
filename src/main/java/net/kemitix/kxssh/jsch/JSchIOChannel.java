@@ -28,7 +28,7 @@ public class JSchIOChannel implements SshStatusProvider {
     private InputStream input;
     private File localFile;
 
-    private static final int BLOCK_SIZE = 1024;
+    private static final int BLOCK_SIZE = 4096;
 
     public JSchIOChannel() {
         readReplyFactory = new IOChannelReadReplyFactory();
