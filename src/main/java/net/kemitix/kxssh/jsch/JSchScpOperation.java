@@ -45,8 +45,7 @@ public abstract class JSchScpOperation implements SshStatusProvider {
 
     protected JSchIOChannel getExecIOChannel() throws SshException {
         if (ioChannel == null) {
-            initSession();
-            ioChannel = JSchIOChannel.createExecIOChannel(session);
+            ioChannel = JSchIOChannel.createExecIOChannel(getSession());
             ioChannel.setStatusListener(statusListener);
         }
         return ioChannel;
@@ -69,9 +68,9 @@ public abstract class JSchScpOperation implements SshStatusProvider {
 
     private Session session;
 
-    protected void initSession() throws SshException {
+    protected Session getSession() throws SshException {
         if (session != null) {
-            return;
+            return session;
         }
         SshAuthentication authentication = connectionProperties.getAuthentication();
         String hostname = connectionProperties.getHostname();
@@ -99,6 +98,7 @@ public abstract class JSchScpOperation implements SshStatusProvider {
             updateStatus(SshErrorStatus.SESSION_ERROR);
             throw new SshException(ERROR_SESSION, ex);
         }
+        return session;
     }
 
     //STATUS LISTENER
