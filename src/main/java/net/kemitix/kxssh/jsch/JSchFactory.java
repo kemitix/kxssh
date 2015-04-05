@@ -9,10 +9,21 @@ public class JSchFactory {
         return new JSch();
     }
 
-    public JSch build(String knownHosts) throws JSchException {
+    public JSch build(String knownHosts) throws SshException, JSchException {
         JSch jsch = new JSch();
         jsch.setKnownHosts(knownHosts);
+        if (authentication == null) {
+            throw new SshException("Error: authentication not set");
+        }
+        authentication.prepare(jsch);
         return jsch;
+    }
+
+    private SshAuthentication authentication;
+
+    public JSchFactory authenticate(SshAuthentication authentication) {
+        this.authentication = authentication;
+        return this;
     }
 
 }
