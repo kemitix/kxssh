@@ -47,7 +47,7 @@ public class JSchScpOperationTest {
     private JSchIOChannel ioChannel;
 
     @Before
-    public void setUp() throws JSchException {
+    public void setUp() throws JSchException, SshException {
         connectionProperties = mock(SshConnectionProperties.class);
         authentication = mock(SshPasswordAuthentication.class);
         session = mock(Session.class);
@@ -78,13 +78,15 @@ public class JSchScpOperationTest {
         when(authentication.getPassword()).thenReturn(password);
         when(connectionProperties.getHostname()).thenReturn(hostname);
         when(session.openChannel("exec")).thenReturn(channel);
-        when(jschFactory.build(any())).thenReturn(jsch);
+        when(jschFactory.authenticate(any())).thenReturn(jschFactory);
+        when(jschFactory.knownHosts(any())).thenReturn(jschFactory);
+        when(jschFactory.build()).thenReturn(jsch);
         when(jsch.getSession(username, hostname)).thenReturn(session);
 
     }
 
     /**
-     * Test of initSession method, of class JSchScpOperation
+     * Test of getSession method, of class JSchScpOperation
      *
      * @throws net.kemitix.kxssh.SshException
      * @throws com.jcraft.jsch.JSchException
@@ -95,16 +97,16 @@ public class JSchScpOperationTest {
         //given
 
         //when
-        operation.initSession();
+        operation.getSession();
 
         //then
         verify(jsch, times(1)).getSession(username, hostname);
-        verify(session, times(1)).setPassword(password);
+        verify(authentication, times(1)).authenticateSession(session);
         verify(session, times(1)).connect();
     }
 
     /**
-     * Test of initSession method, of class JSchScpOperation
+     * Test of getSession method, of class JSchScpOperation
      *
      * When session already exists
      *
@@ -117,13 +119,13 @@ public class JSchScpOperationTest {
         operation.setSession(session);
 
         //when
-        operation.initSession();
+        operation.getSession();
 
         //then
     }
 
     /**
-     * Test of initSession method, of class JSchScpOperation
+     * Test of getSession method, of class JSchScpOperation
      *
      * When hostname is blank.
      *
@@ -136,14 +138,14 @@ public class JSchScpOperationTest {
         when(connectionProperties.getHostname()).thenReturn("");
 
         //when
-        operation.initSession();
+        operation.getSession();
 
         //then
         verify(listener, times(1)).onUpdateStatus(SshErrorStatus.HOSTNAME_ERROR);
     }
 
     /**
-     * Test of initSession method, of class JSchScpOperation
+     * Test of getSession method, of class JSchScpOperation
      *
      * When hostname is null.
      *
@@ -156,14 +158,14 @@ public class JSchScpOperationTest {
         when(connectionProperties.getHostname()).thenReturn(null);
 
         //when
-        operation.initSession();
+        operation.getSession();
 
         //then
         verify(listener, times(1)).onUpdateStatus(SshErrorStatus.HOSTNAME_ERROR);
     }
 
     /**
-     * Test of initSession method, of class JSchScpOperation
+     * Test of getSession method, of class JSchScpOperation
      *
      * When username is blank.
      *
@@ -178,16 +180,16 @@ public class JSchScpOperationTest {
         when(authentication.getUsername()).thenReturn("");
 
         //when
-        operation.initSession();
+        operation.getSession();
 
         //then
         verify(jsch, times(1)).getSession(any(), eq(hostname));
-        verify(session, times(1)).setPassword(password);
+        verify(authentication, times(1)).authenticateSession(session);
         verify(session, times(1)).connect();
     }
 
     /**
-     * Test of initSession method, of class JSchScpOperation
+     * Test of getSession method, of class JSchScpOperation
      *
      * When username is null.
      *
@@ -202,16 +204,16 @@ public class JSchScpOperationTest {
         when(authentication.getUsername()).thenReturn(null);
 
         //when
-        operation.initSession();
+        operation.getSession();
 
         //then
         verify(jsch, times(1)).getSession(any(), eq(hostname));
-        verify(session, times(1)).setPassword(password);
+        verify(authentication, times(1)).authenticateSession(session);
         verify(session, times(1)).connect();
     }
 
     /**
-     * Test of initSession method, of class JSchScpOperation
+     * Test of getSession method, of class JSchScpOperation
      *
      * Throw JSchException for an Unknown Host Key on session.connect()
      *
@@ -225,7 +227,7 @@ public class JSchScpOperationTest {
         doThrow(new JSchException("UnknownHostKey")).when(session).connect();
 
         //when
-        operation.initSession();
+        operation.getSession();
 
         //then
         verify(jsch, times(1)).getSession(username, hostname);
@@ -235,7 +237,7 @@ public class JSchScpOperationTest {
     }
 
     /**
-     * Test of initSession method, of class JSchScpOperation
+     * Test of getSession method, of class JSchScpOperation
      *
      * Throw JSchException on session.connect()
      *
@@ -249,7 +251,7 @@ public class JSchScpOperationTest {
         doThrow(new JSchException("another message")).when(session).connect();
 
         //when
-        operation.initSession();
+        operation.getSession();
 
         //then
         verify(jsch, times(1)).getSession(username, hostname);
@@ -294,7 +296,7 @@ public class JSchScpOperationTest {
 
         //then
         verify(jsch, times(1)).getSession(username, hostname);
-        verify(session, times(1)).setPassword(password);
+        verify(authentication, times(1)).authenticateSession(session);
         verify(session, times(1)).connect();
     }
 
@@ -308,7 +310,7 @@ public class JSchScpOperationTest {
     public void testGetJSchThrowsException() throws JSchException, SshException {
         System.out.println("getJSch when throws exception");
         //given
-        when(jschFactory.build(knownHosts)).thenThrow(JSchException.class);
+        when(jschFactory.build()).thenThrow(JSchException.class);
 
         //when
         operation.getExecIOChannel();

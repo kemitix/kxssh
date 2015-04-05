@@ -11,7 +11,6 @@ import net.kemitix.kxssh.SshConnectionProperties;
 import net.kemitix.kxssh.SshErrorStatus;
 import net.kemitix.kxssh.SshException;
 import net.kemitix.kxssh.SshIOFactory;
-import net.kemitix.kxssh.SshPasswordAuthentication;
 import net.kemitix.kxssh.SshStatus;
 import net.kemitix.kxssh.SshStatusListener;
 import net.kemitix.kxssh.SshStatusProvider;
@@ -33,9 +32,12 @@ public abstract class JSchScpOperation implements SshStatusProvider {
         ioFactory = new SshIOFactory();
     }
 
-    protected JSch getJSch() {
+    protected JSch getJSch(SshAuthentication authentication) throws SshException {
         try {
-            return jschFactory.build(knownHosts);
+            return jschFactory
+                    .knownHosts(knownHosts)
+                    .authenticate(authentication)
+                    .build();
         } catch (JSchException ex) {
             throw new RuntimeException(knownHosts, ex);
         }
@@ -46,8 +48,7 @@ public abstract class JSchScpOperation implements SshStatusProvider {
 
     protected JSchIOChannel getExecIOChannel() throws SshException {
         if (ioChannel == null) {
-            initSession();
-            ioChannel = JSchIOChannel.createExecIOChannel(session);
+            ioChannel = JSchIOChannel.createExecIOChannel(getSession());
             ioChannel.setStatusListener(statusListener);
         }
         return ioChannel;
@@ -70,9 +71,9 @@ public abstract class JSchScpOperation implements SshStatusProvider {
 
     private Session session;
 
-    protected void initSession() throws SshException {
+    protected Session getSession() throws SshException {
         if (session != null) {
-            return;
+            return session;
         }
         SshAuthentication authentication = connectionProperties.getAuthentication();
         String hostname = connectionProperties.getHostname();
@@ -87,8 +88,8 @@ public abstract class JSchScpOperation implements SshStatusProvider {
         }
 
         try {
-            session = getJSch().getSession(username, hostname);
-            session.setPassword(((SshPasswordAuthentication) authentication).getPassword());
+            session = getJSch(authentication).getSession(username, hostname);
+            authentication.authenticateSession(session);
             session.connect();
         } catch (JSchException ex) {
             if (ex.getMessage().contains("UnknownHostKey")) {
@@ -100,6 +101,7 @@ public abstract class JSchScpOperation implements SshStatusProvider {
             updateStatus(SshErrorStatus.SESSION_ERROR);
             throw new SshException(ERROR_SESSION, ex);
         }
+        return session;
     }
 
     //STATUS LISTENER
