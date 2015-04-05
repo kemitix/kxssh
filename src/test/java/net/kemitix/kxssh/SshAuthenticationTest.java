@@ -1,5 +1,6 @@
 package net.kemitix.kxssh;
 
+import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -23,8 +24,13 @@ public class SshAuthenticationTest {
         authentication = new SshAuthentication(username) {
 
             @Override
+            public void prepare(JSch jsch) throws SshException {
+                jsch.getClass();
+            }
+
+            @Override
             public void authenticateSession(Session session) {
-                session.getUserName();
+                session.getClass();
             }
         };
     }
