@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.kemitix</groupId>
     <artifactId>kxssh</artifactId>
-    <version>0.1.1-RELEASE</version>
+    <version>0.2.0-RELEASE</version>
     <packaging>jar</packaging>
 
     <name>KxSsh</name>

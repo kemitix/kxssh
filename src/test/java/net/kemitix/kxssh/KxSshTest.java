@@ -23,9 +23,11 @@ public class KxSshTest {
 
     /**
      * Test of getSftpClient method, of class KxSsh.
+     *
+     * Password Authentication
      */
     @Test
-    public void testGetSftpClient() {
+    public void testGetSftpClientPassword() {
         System.out.println("getSftpClient");
         //given
         String hostname = "hostname";
@@ -34,6 +36,26 @@ public class KxSshTest {
 
         //when
         KxSsh.getSftpClient(hostname, username, password);
+
+        //then
+    }
+
+    /**
+     * Test of getSftpClient method, of class KxSsh.
+     *
+     * Private Key Authentication
+     */
+    @Test
+    public void testGetSftpClientPrivateKey() {
+        System.out.println("getSftpClient");
+        //given
+        String hostname = "hostname";
+        String username = "username";
+        String privateKey = "private key";
+        String passPhrase = "pass phrase";
+
+        //when
+        KxSsh.getSftpClient(hostname, username, privateKey, passPhrase);
 
         //then
     }

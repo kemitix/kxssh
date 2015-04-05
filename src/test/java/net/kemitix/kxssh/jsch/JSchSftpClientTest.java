@@ -41,7 +41,7 @@ public class JSchSftpClientTest {
     private File local;
 
     @Before
-    public void setUp() throws IOException, JSchException {
+    public void setUp() throws IOException, JSchException, SshException {
         connectionProperties = mock(SshConnectionProperties.class);
         authentication = mock(SshPasswordAuthentication.class);
         statusListener = mock(SshStatusListener.class);
@@ -55,11 +55,12 @@ public class JSchSftpClientTest {
         when(connectionProperties.getHostname()).thenReturn(hostname);
         when(authentication.getUsername()).thenReturn(username);
 
-        when(download.getJSch()).thenReturn(jsch);
-        when(upload.getJSch()).thenReturn(jsch);
+        when(download.getJSch(authentication)).thenReturn(jsch);
+        when(upload.getJSch(authentication)).thenReturn(jsch);
 
+        when(jSchFactory.authenticate(any())).thenReturn(jSchFactory);
+        when(jSchFactory.knownHosts(any())).thenReturn(jSchFactory);
         when(jSchFactory.build()).thenReturn(jsch);
-        when(jSchFactory.build(any())).thenReturn(jsch);
         when(jsch.getSession(username, hostname)).thenReturn(session);
 
         download.setJschFactory(jSchFactory);
