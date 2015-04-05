@@ -29,7 +29,7 @@ public class ScpEndCommandTest {
         System.out.println("getBytes");
         //given
 
-        String command = "E\r";
+        String command = "E" + ScpCommand.TERMINATOR;
         byte[] expected = command.getBytes("UTF-8");
 
         //when

@@ -65,7 +65,7 @@ public class ScpTimeCommandTest {
         scpTimeCommand.setMtime(mTime);
         scpTimeCommand.setAtime(aTime);
 
-        String command = "T1183828267 0 1183008267 0\r";
+        String command = "T1183828267 0 1183008267 0" + ScpCommand.TERMINATOR;
         byte[] expected = command.getBytes("UTF-8");
 
         //when
@@ -84,7 +84,7 @@ public class ScpTimeCommandTest {
     public void testParseCommand() throws UnsupportedEncodingException {
         System.out.println("parseCommand");
         //given
-        String command = "T1183828267 0 1183008267 0\r";
+        String command = "T1183828267 0 1183008267 0" + ScpCommand.TERMINATOR;
 
         //when
         ScpCommand result = ScpCommand.parse(command);
@@ -106,7 +106,7 @@ public class ScpTimeCommandTest {
     public void testParseCommandBadFormat() throws UnsupportedEncodingException {
         System.out.println("parseCommand bad format");
         //given
-        String command = "T1183828267  1183008267 0\n";
+        String command = "T1183828267  1183008267 0" + ScpCommand.TERMINATOR;
 
         //when
         ScpCommand.parse(command);

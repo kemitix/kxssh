@@ -14,6 +14,7 @@ import net.kemitix.kxssh.SshErrorStatus;
 import net.kemitix.kxssh.SshException;
 import net.kemitix.kxssh.SshOperationStatus;
 import net.kemitix.kxssh.SshStatusListener;
+import net.kemitix.kxssh.scp.ScpCommand;
 import net.kemitix.kxssh.scp.ScpCopyCommand;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertFalse;
@@ -220,7 +221,10 @@ public class JSchIOChannelTest {
         when(headerReply.getBuffer()).thenReturn(headerBuffer);
 
         when(input.read())
-                .thenReturn((int) 'C', (int) '0', (int) '7', (int) '6', (int) '4', (int) ' ', (int) '7', (int) ' ', (int) 'f', (int) '\r');
+                .thenReturn((int) 'C')
+                .thenReturn((int) '0', (int) '7', (int) '6', (int) '4', (int) ' ')
+                .thenReturn((int) '7', (int) ' ')
+                .thenReturn((int) 'f', (int) ScpCommand.TERMINATOR);
 
         //when
         ScpCopyCommand scpCopyCommand = (ScpCopyCommand) ioChannel.readScpCommand();
