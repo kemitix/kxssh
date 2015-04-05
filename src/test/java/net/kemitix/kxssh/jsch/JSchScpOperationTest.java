@@ -47,7 +47,7 @@ public class JSchScpOperationTest {
     private JSchIOChannel ioChannel;
 
     @Before
-    public void setUp() throws JSchException {
+    public void setUp() throws JSchException, SshException {
         connectionProperties = mock(SshConnectionProperties.class);
         authentication = mock(SshPasswordAuthentication.class);
         session = mock(Session.class);
@@ -78,7 +78,9 @@ public class JSchScpOperationTest {
         when(authentication.getPassword()).thenReturn(password);
         when(connectionProperties.getHostname()).thenReturn(hostname);
         when(session.openChannel("exec")).thenReturn(channel);
-        when(jschFactory.build(any())).thenReturn(jsch);
+        when(jschFactory.authenticate(any())).thenReturn(jschFactory);
+        when(jschFactory.knownHosts(any())).thenReturn(jschFactory);
+        when(jschFactory.build()).thenReturn(jsch);
         when(jsch.getSession(username, hostname)).thenReturn(session);
 
     }
@@ -308,7 +310,7 @@ public class JSchScpOperationTest {
     public void testGetJSchThrowsException() throws JSchException, SshException {
         System.out.println("getJSch when throws exception");
         //given
-        when(jschFactory.build(knownHosts)).thenThrow(JSchException.class);
+        when(jschFactory.build()).thenThrow(JSchException.class);
 
         //when
         operation.getExecIOChannel();

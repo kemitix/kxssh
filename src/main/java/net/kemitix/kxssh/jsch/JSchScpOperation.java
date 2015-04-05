@@ -32,9 +32,12 @@ public abstract class JSchScpOperation implements SshStatusProvider {
         ioFactory = new SshIOFactory();
     }
 
-    protected JSch getJSch() {
+    protected JSch getJSch(SshAuthentication authentication) throws SshException {
         try {
-            return jschFactory.build(knownHosts);
+            return jschFactory
+                    .knownHosts(knownHosts)
+                    .authenticate(authentication)
+                    .build();
         } catch (JSchException ex) {
             throw new RuntimeException(knownHosts, ex);
         }
@@ -85,7 +88,7 @@ public abstract class JSchScpOperation implements SshStatusProvider {
         }
 
         try {
-            session = getJSch().getSession(username, hostname);
+            session = getJSch(authentication).getSession(username, hostname);
             authentication.authenticateSession(session);
             session.connect();
         } catch (JSchException ex) {
