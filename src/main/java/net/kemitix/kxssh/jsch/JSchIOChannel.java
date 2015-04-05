@@ -28,6 +28,8 @@ public class JSchIOChannel implements SshStatusProvider {
     private InputStream input;
     private File localFile;
 
+    private static final int BLOCK_SIZE = 1024;
+
     public JSchIOChannel() {
         readReplyFactory = new IOChannelReadReplyFactory();
     }
@@ -189,11 +191,10 @@ public class JSchIOChannel implements SshStatusProvider {
 
     // WRITE STREAM
     void writeToStream(OutputStream stream, long length) throws SshException {
-        int blockSize = 1024;
         long remaining = length;
         updateProgress(0, length);
         do {
-            int bytesToRead = Integer.min(blockSize, (int) Long.min(remaining, (long) Integer.MAX_VALUE));
+            int bytesToRead = Integer.min(BLOCK_SIZE, (int) Long.min(remaining, (long) Integer.MAX_VALUE));
             IOChannelReadReply reply = read(bytesToRead);
             int bytesRead = reply.getBytesRead();
             bytesRead = Integer.min(bytesRead, bytesToRead);
@@ -210,12 +211,11 @@ public class JSchIOChannel implements SshStatusProvider {
 
     // READ STREAM
     void readFromStream(InputStream stream, long length) throws IOException, SshException {
-        int blockSize = 1024;
-        byte[] buffer = new byte[blockSize];
+        byte[] buffer = new byte[BLOCK_SIZE];
         long remaining = length;
         updateProgress(0, length);
         do {
-            int bytesToRead = Integer.min(blockSize, (int) Long.min(Integer.MAX_VALUE, remaining));
+            int bytesToRead = Integer.min(BLOCK_SIZE, (int) Long.min(Integer.MAX_VALUE, remaining));
             int bytesRead = stream.read(buffer, 0, bytesToRead);
             output.write(buffer, 0, bytesRead);
             output.flush();
