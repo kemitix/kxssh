@@ -9,13 +9,13 @@ develop: [![Build Status](https://travis-ci.org/kemitix/kxssh.svg?branch=develop
 ### Password Authenticated Client
 
     SftpClient client
-            = SshClient.getSftpClient(hostname, username, password);
+            = KxSsh.getSftpClient(hostname, username, password);
 
 ### Private Key Authenticated Client
 
     String privatekey = "~/.ssh/id_rsa";
     SftpClient client
-            = SshClient.getSftpClient(hostname, username, privatekey, passphrase);
+            = KxSsh.getSftpClient(hostname, username, privatekey, passphrase);
 
 ### Download a file
 
