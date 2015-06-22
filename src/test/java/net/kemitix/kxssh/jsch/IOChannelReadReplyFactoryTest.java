@@ -24,7 +24,6 @@ public class IOChannelReadReplyFactoryTest {
      */
     @Test
     public void testCreateReply() {
-        System.out.println("createReply");
         //given
         int bytesRequested = 5;
         int bytesRead = 4;
