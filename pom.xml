@@ -42,9 +42,9 @@
     </issueManagement>
 
     <scm>
-        <connection>scm:git:git@github.com:kemitix/kxssh.git</connection>
+        <connection>scm:git:https://github.com/kemitix/kxssh.git</connection>
         <developerConnection>scm:git:git@github.com:kemitix/kxssh.git</developerConnection>
-        <url>git@github.com:kemitix/kxssh.git</url>
+        <url>https://github.com/kemitix/kxssh</url>
     </scm>
 
     <properties>
