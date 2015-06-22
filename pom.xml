@@ -15,10 +15,13 @@
         <developer>
             <name>Paul Campbell</name>
             <email>pcampbell@kemitix.net</email>
-            <organization>Kemitix</organization>
-            <organizationUrl>https://github.com/kemitix/</organizationUrl>
         </developer>
     </developers>
+
+    <organization>
+        <name>Kemitix</name>
+        <url>https://github.com/kemitix/</url>
+    </organization>
 
     <licenses>
         <license>
