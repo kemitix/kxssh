@@ -32,7 +32,6 @@ public class SshPasswordAuthenticationTest {
      */
     @Test
     public void testGetPassword() {
-        System.out.println("getPassword");
         //given
 
         //when
@@ -47,7 +46,6 @@ public class SshPasswordAuthenticationTest {
      */
     @Test
     public void testGetUsername() {
-        System.out.println("getUsername");
         //given
 
         //when
@@ -62,7 +60,6 @@ public class SshPasswordAuthenticationTest {
      */
     @Test
     public void testAuthenticateSession() {
-        System.out.println("authenticationSession");
         //given
 
         //when

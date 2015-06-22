@@ -12,7 +12,6 @@ public class KxSshTest {
      */
     @Test
     public void testConstructor() {
-        System.out.println("constructor");
         //given
 
         //when
@@ -28,7 +27,6 @@ public class KxSshTest {
      */
     @Test
     public void testGetSftpClientPassword() {
-        System.out.println("getSftpClient");
         //given
         String hostname = "hostname";
         String username = "username";
@@ -47,7 +45,6 @@ public class KxSshTest {
      */
     @Test
     public void testGetSftpClientPrivateKey() {
-        System.out.println("getSftpClient");
         //given
         String hostname = "hostname";
         String username = "username";

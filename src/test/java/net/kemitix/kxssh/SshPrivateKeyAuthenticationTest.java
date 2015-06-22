@@ -42,7 +42,6 @@ public class SshPrivateKeyAuthenticationTest {
      */
     @Test
     public void testPrepare() throws SshException, JSchException {
-        System.out.println("prepare");
         //given
 
         //when
@@ -62,7 +61,6 @@ public class SshPrivateKeyAuthenticationTest {
      */
     @Test(expected = SshException.class)
     public void testPrepareJSchException() throws SshException, JSchException {
-        System.out.println("prepare with JSchException");
         //given
         Mockito.doThrow(JSchException.class)
                 .when(jsch)
@@ -79,7 +77,6 @@ public class SshPrivateKeyAuthenticationTest {
      */
     @Test
     public void testAuthenticateSession() {
-        System.out.println("authenticateSession");
         //given
 
         //when
@@ -93,7 +90,6 @@ public class SshPrivateKeyAuthenticationTest {
      */
     @Test
     public void testGetPrivateKey() {
-        System.out.println("getPrivateKey");
         //given
 
         //when
@@ -108,7 +104,6 @@ public class SshPrivateKeyAuthenticationTest {
      */
     @Test
     public void testGetPassPhrase() {
-        System.out.println("getPassPhrase");
         //given
 
         //when

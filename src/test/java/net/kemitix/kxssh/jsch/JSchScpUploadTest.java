@@ -84,7 +84,6 @@ public class JSchScpUploadTest {
 
     @Test
     public void testUpdateProgress() {
-        System.out.println("updateProgress");
         //given
         long position = 50;
         long total = 100;
@@ -99,7 +98,6 @@ public class JSchScpUploadTest {
 
     @Test
     public void testUpdateStatus() {
-        System.out.println("updateStatus");
         //given
         SshStatus status = SshOperationStatus.CONNECTED;
         upload.setStatusListener(listener);
@@ -113,7 +111,6 @@ public class JSchScpUploadTest {
 
     @Test
     public void testUpdateProgressNoListener() {
-        System.out.println("updateProgress no listener");
         //given
         long position = 50;
         long total = 100;
@@ -128,7 +125,6 @@ public class JSchScpUploadTest {
 
     @Test
     public void testUpdateStatusNoListener() {
-        System.out.println("updateStatus no listener");
         //given
         SshStatus status = SshOperationStatus.CONNECTED;
         upload.setStatusListener(null);
@@ -142,7 +138,6 @@ public class JSchScpUploadTest {
 
     @Test
     public void testUpload() throws SshException {
-        System.out.println("upload(File, String)");
         //given
         upload.setStatusListener(listener);
         upload.setIoChannel(ioChannel);
@@ -161,7 +156,6 @@ public class JSchScpUploadTest {
 
     @Test(expected = SshException.class)
     public void testGetInputStreamFileNotFoundException() throws FileNotFoundException, SshException {
-        System.out.println("getInputStream FileNotFoundException");
         //given
         upload.setStatusListener(listener);
         upload.setIoChannel(ioChannel);
@@ -177,7 +171,6 @@ public class JSchScpUploadTest {
 
     @Test(expected = SshException.class)
     public void testUploadIOException() throws SshException, FileNotFoundException, IOException {
-        System.out.println("upload(File, String)");
         //given
         upload.setStatusListener(listener);
         upload.setIoChannel(ioChannel);

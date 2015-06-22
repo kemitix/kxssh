@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.kemitix</groupId>
     <artifactId>kxssh</artifactId>
-    <version>0.2.1</version>
+    <version>0.2.2</version>
     <packaging>jar</packaging>
 
     <name>KxSsh</name>
@@ -15,10 +15,13 @@
         <developer>
             <name>Paul Campbell</name>
             <email>pcampbell@kemitix.net</email>
-            <organization>Kemitix</organization>
-            <organizationUrl>https://github.com/kemitix/</organizationUrl>
         </developer>
     </developers>
+
+    <organization>
+        <name>Kemitix</name>
+        <url>https://github.com/kemitix/</url>
+    </organization>
 
     <licenses>
         <license>
@@ -39,9 +42,9 @@
     </issueManagement>
 
     <scm>
-        <connection>scm:git:git@github.com:kemitix/kxssh.git</connection>
+        <connection>scm:git:https://github.com/kemitix/kxssh.git</connection>
         <developerConnection>scm:git:git@github.com:kemitix/kxssh.git</developerConnection>
-        <url>git@github.com:kemitix/kxssh.git</url>
+        <url>https://github.com/kemitix/kxssh</url>
     </scm>
 
     <properties>
@@ -50,22 +53,16 @@
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
 
-    <parent>
-        <groupId>org.sonatype.oss</groupId>
-        <artifactId>oss-parent</artifactId>
-        <version>9</version>
-    </parent>
-
     <dependencies>
         <dependency>
             <groupId>com.jcraft</groupId>
             <artifactId>jsch</artifactId>
-            <version>0.1.52</version>
+            <version>0.1.53</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.16.2</version>
+            <version>1.16.4</version>
         </dependency>
 
         <dependency>
@@ -176,7 +173,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.7.4.201502262128</version>
+                <version>0.7.5.201505241946</version>
                 <executions>
                     <execution>
                         <goals>
@@ -233,6 +230,36 @@
                     </rules>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.4</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.10.3</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>2.8.2</version>
+            </plugin>
         </plugins>
     </build>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>sonatype-nexus-snapshots</id>
+            <name>Sonatype Nexus Snapshots</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+        </snapshotRepository>
+        <repository>
+            <id>sonatype-nexus-staging</id>
+            <name>Nexus Release Repository</name>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+
 </project>

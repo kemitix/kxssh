@@ -15,7 +15,6 @@ public class ScpCommandTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void testParse() throws UnsupportedEncodingException {
-        System.out.println("parse");
         //given
 
         //when

@@ -23,7 +23,6 @@ public class IOChannelReadReplyTest {
      */
     @Test
     public void testSetGetBytesRequested() {
-        System.out.println("set/getBytesRequested");
         //given
         int bytes = 1000;
 
@@ -39,7 +38,6 @@ public class IOChannelReadReplyTest {
      */
     @Test
     public void testSetGetBytesRead() {
-        System.out.println("set/getBytesRead");
         //given
         int bytes = 1000;
 
@@ -55,7 +53,6 @@ public class IOChannelReadReplyTest {
      */
     @Test
     public void testSetGetBuffer() {
-        System.out.println("set/getBuffer");
         //given
         byte[] buffer = new byte[1000];
 

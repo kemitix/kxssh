@@ -28,7 +28,6 @@ public class ScpTimeCommandTest {
      */
     @Test
     public void testGetSetMTime() {
-        System.out.println("get/setMTime");
         //given
 
         //when
@@ -43,7 +42,6 @@ public class ScpTimeCommandTest {
      */
     @Test
     public void testGetSetATime() {
-        System.out.println("get/setATime");
         //given
 
         //when
@@ -60,7 +58,6 @@ public class ScpTimeCommandTest {
      */
     @Test
     public void testGetBytes() throws UnsupportedEncodingException {
-        System.out.println("getBytes");
         //given
         scpTimeCommand.setMtime(mTime);
         scpTimeCommand.setAtime(aTime);
@@ -82,7 +79,6 @@ public class ScpTimeCommandTest {
      */
     @Test
     public void testParseCommand() throws UnsupportedEncodingException {
-        System.out.println("parseCommand");
         //given
         String command = "T1183828267 0 1183008267 0" + ScpCommand.TERMINATOR;
 
@@ -104,7 +100,6 @@ public class ScpTimeCommandTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void testParseCommandBadFormat() throws UnsupportedEncodingException {
-        System.out.println("parseCommand bad format");
         //given
         String command = "T1183828267  1183008267 0" + ScpCommand.TERMINATOR;
 

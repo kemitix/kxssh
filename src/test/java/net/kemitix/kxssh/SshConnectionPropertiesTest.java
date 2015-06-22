@@ -30,7 +30,6 @@ public class SshConnectionPropertiesTest {
      */
     @Test
     public void testGetHostname() {
-        System.out.println("getHostname");
         //given
 
         //when
@@ -45,7 +44,6 @@ public class SshConnectionPropertiesTest {
      */
     @Test
     public void testGetAuthentication() {
-        System.out.println("getAuthentication");
         //given
 
         //when

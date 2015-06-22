@@ -34,7 +34,6 @@ public class ScpCopyCommandTest {
      */
     @Test
     public void testGetSetFileMode() {
-        System.out.println("get/setFileMode");
         //given
 
         //when
@@ -52,7 +51,6 @@ public class ScpCopyCommandTest {
      */
     @Test
     public void testGetSetLength() {
-        System.out.println("get/setLength");
         //given
 
         //when
@@ -67,7 +65,6 @@ public class ScpCopyCommandTest {
      */
     @Test
     public void testGetSetName() {
-        System.out.println("get/setName");
         //given
 
         //when
@@ -84,7 +81,6 @@ public class ScpCopyCommandTest {
      */
     @Test
     public void testGetBytes() throws UnsupportedEncodingException {
-        System.out.println("getBytes");
         //given
         scpCopyCommand.setFileMode(fileMode);
         scpCopyCommand.setLength(length);
@@ -109,7 +105,6 @@ public class ScpCopyCommandTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void testGetBytesBadFileModeArray() throws UnsupportedEncodingException {
-        System.out.println("getBytes with bad file mode array length");
         //given
         byte[] shortFileMode = new byte[3];
         scpCopyCommand.setFileMode(shortFileMode);
@@ -127,7 +122,6 @@ public class ScpCopyCommandTest {
      */
     @Test
     public void testParseCommand() throws UnsupportedEncodingException {
-        System.out.println("parseCommand");
         //given
         String command = "C0764 1234 file name" + ScpCommand.TERMINATOR;
 
@@ -150,7 +144,6 @@ public class ScpCopyCommandTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void testParseCommandBadFormat() throws UnsupportedEncodingException {
-        System.out.println("parseCommand bad format");
         //given
         String command = "C0764 1234file name" + ScpCommand.TERMINATOR;
 

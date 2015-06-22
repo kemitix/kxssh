@@ -28,7 +28,6 @@ public class SshIOFactoryTest {
      */
     @Test
     public void testCreateFileOutputStream() throws FileNotFoundException {
-        System.out.println("createFileOutputStream");
         //given
 
         //when
@@ -44,7 +43,6 @@ public class SshIOFactoryTest {
      */
     @Test
     public void testCreateFileInputStream() throws FileNotFoundException {
-        System.out.println("createFileInputStream");
         //given
 
         //when

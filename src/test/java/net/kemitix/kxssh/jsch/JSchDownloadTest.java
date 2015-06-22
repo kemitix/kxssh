@@ -63,7 +63,6 @@ public class JSchDownloadTest {
      */
     @Test(timeout = 100L)
     public void testDownload() throws Exception {
-        System.out.println("download");
         //given
         String remote = "remote.txt";
         filesize = 231L;
@@ -104,7 +103,6 @@ public class JSchDownloadTest {
      */
     @Test(expected = SshException.class, timeout = 100L)
     public void testDownloadFailure() throws Exception {
-        System.out.println("download w/failure");
         //given
         String remote = "remote.txt";
         filesize = 231;
@@ -147,7 +145,6 @@ public class JSchDownloadTest {
      */
     @Test(expected = SshException.class, timeout = 100L)
     public void testDownloadLocalFileNotFound() throws Exception {
-        System.out.println("download w/local file not found");
         //given
         String remote = "remote.txt";
         File localFile = new File("local.txt");
@@ -183,7 +180,6 @@ public class JSchDownloadTest {
      */
     @Test(expected = SshException.class)
     public void testDownloadThrowIOException() throws IOException, SshException {
-        System.out.println("download w/thrown IOException");
         //given
         String remote = "remote.txt";
         File localFile = new File("local.txt");
@@ -205,7 +201,6 @@ public class JSchDownloadTest {
      */
     @Test(expected = SshException.class)
     public void testDownloadScpOtherCommand() throws IOException, SshException {
-        System.out.println("download w/other ScpCommand");
         //given
         String remote = "remote.txt";
         File localFile = new File("local.txt");
@@ -227,7 +222,6 @@ public class JSchDownloadTest {
      */
     @Test(timeout = 100L)
     public void testDownloadContinue() throws Exception {
-        System.out.println("download w/continue");
         //given
         String remote = "remote.txt";
         filesize = 231L;

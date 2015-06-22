@@ -87,7 +87,6 @@ public class JSchSftpClientTest {
      */
     @Test
     public void testDownload() throws SshException {
-        System.out.println("download");
         //given
 
         //when
@@ -106,7 +105,6 @@ public class JSchSftpClientTest {
      */
     @Test
     public void testDownloadDownloadNotSet() throws SshException {
-        System.out.println("download download not set");
         //given
         client.setDownload(null);
 
@@ -121,7 +119,6 @@ public class JSchSftpClientTest {
      */
     @Test
     public void testUpdateProgress() {
-        System.out.println("updateProgress");
         //given
         int progress = 50;
         int total = 100;
@@ -138,7 +135,6 @@ public class JSchSftpClientTest {
      */
     @Test
     public void testUpdateStatus() {
-        System.out.println("updateStatus");
         //given
         SshStatus status = SshOperationStatus.CONNECTED;
 
@@ -156,7 +152,6 @@ public class JSchSftpClientTest {
      */
     @Test
     public void testUpload() throws SshException {
-        System.out.println("upload");
         //given
 
         //when
@@ -175,7 +170,6 @@ public class JSchSftpClientTest {
      */
     @Test
     public void testUploadUploadNotSet() throws SshException {
-        System.out.println("upload upload not set");
         //given
         client.setUpload(null);
 

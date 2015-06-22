@@ -34,7 +34,6 @@ public class ScpDirectoryCommandTest {
      */
     @Test
     public void testConstructorString() throws UnsupportedEncodingException {
-        System.out.println("new ScpDirectoryCommand(String)");
         //given
         String commandLine = "D0764 0 directory name" + ScpCommand.TERMINATOR;
 
@@ -51,7 +50,6 @@ public class ScpDirectoryCommandTest {
      */
     @Test
     public void testGetSetFileMode() {
-        System.out.println("get/setFileMode");
         //given
 
         //when
@@ -69,7 +67,6 @@ public class ScpDirectoryCommandTest {
      */
     @Test
     public void testGetSetName() {
-        System.out.println("get/setName");
         //given
 
         //when
@@ -86,7 +83,6 @@ public class ScpDirectoryCommandTest {
      */
     @Test
     public void testGetBytes() throws UnsupportedEncodingException {
-        System.out.println("getBytes");
         //given
         scpDirectoryCommand.setFileMode(fileMode);
         scpDirectoryCommand.setName(name);
@@ -110,7 +106,6 @@ public class ScpDirectoryCommandTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void testGetBytesBadFileModeArray() throws UnsupportedEncodingException {
-        System.out.println("getBytes with bad file mode array length");
         //given
         byte[] shortFileMode = new byte[3];
         scpDirectoryCommand.setFileMode(shortFileMode);
@@ -127,7 +122,6 @@ public class ScpDirectoryCommandTest {
      */
     @Test
     public void testParseCommand() throws UnsupportedEncodingException {
-        System.out.println("parseCommand");
         //given
         String command = "D0764 0 directory name" + ScpCommand.TERMINATOR;
 
@@ -149,7 +143,6 @@ public class ScpDirectoryCommandTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void testParseCommandBadFormat() throws UnsupportedEncodingException {
-        System.out.println("parseCommand bad format");
         //given
         String command = "D0764 1234 directory name" + ScpCommand.TERMINATOR;
 

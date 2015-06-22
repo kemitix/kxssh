@@ -31,7 +31,6 @@ public class JSchFactoryTest {
      */
     @Test(expected = SshException.class)
     public void testBuild() throws SshException, JSchException {
-        System.out.println("build no config");
         //given
 
         //when
@@ -50,7 +49,6 @@ public class JSchFactoryTest {
      */
     @Test(expected = SshException.class)
     public void testBuildKnownHosts() throws SshException, JSchException {
-        System.out.println("build known hosts, no authentication");
         //given
         String knownHosts = "~/.ssh/known_hosts";
 
@@ -72,7 +70,6 @@ public class JSchFactoryTest {
      */
     @Test
     public void testBuildAuthentication() throws SshException, JSchException {
-        System.out.println("build() with authentication");
         //given
         SshAuthentication authentication = mock(SshAuthentication.class);
 

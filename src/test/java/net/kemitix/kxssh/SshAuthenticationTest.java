@@ -40,7 +40,6 @@ public class SshAuthenticationTest {
      */
     @Test
     public void testGetUsername() {
-        System.out.println("getUsername");
         //given
 
         //when

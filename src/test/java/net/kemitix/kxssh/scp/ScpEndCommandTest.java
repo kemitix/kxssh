@@ -26,7 +26,6 @@ public class ScpEndCommandTest {
      */
     @Test
     public void testGetBytes() throws UnsupportedEncodingException {
-        System.out.println("getBytes");
         //given
 
         String command = "E" + ScpCommand.TERMINATOR;
@@ -46,7 +45,6 @@ public class ScpEndCommandTest {
      */
     @Test
     public void testParseCommand() throws UnsupportedEncodingException {
-        System.out.println("parseCommand");
         //given
         String command = "E\r";
 

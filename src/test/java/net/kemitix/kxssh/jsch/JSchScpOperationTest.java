@@ -93,7 +93,6 @@ public class JSchScpOperationTest {
      */
     @Test
     public void testInitSession() throws SshException, JSchException {
-        System.out.println("initSession");
         //given
 
         //when
@@ -114,7 +113,6 @@ public class JSchScpOperationTest {
      */
     @Test
     public void testInitSessionSessionExists() throws SshException {
-        System.out.println("initSession when session exists");
         //given
         operation.setSession(session);
 
@@ -133,7 +131,6 @@ public class JSchScpOperationTest {
      */
     @Test(expected = SshException.class)
     public void testInitSessionBlankHostname() throws SshException {
-        System.out.println("initSession with blank hostname");
         //given
         when(connectionProperties.getHostname()).thenReturn("");
 
@@ -153,7 +150,6 @@ public class JSchScpOperationTest {
      */
     @Test(expected = SshException.class)
     public void testInitSessionNullHostname() throws SshException {
-        System.out.println("initSession with null hostname");
         //given
         when(connectionProperties.getHostname()).thenReturn(null);
 
@@ -174,7 +170,6 @@ public class JSchScpOperationTest {
      */
     @Test
     public void testInitSessionBlankUsername() throws SshException, JSchException {
-        System.out.println("initSession with blank username");
         //given
         when(jsch.getSession(any(), eq(hostname))).thenReturn(session);
         when(authentication.getUsername()).thenReturn("");
@@ -198,7 +193,6 @@ public class JSchScpOperationTest {
      */
     @Test
     public void testInitSessionNullUsername() throws SshException, JSchException {
-        System.out.println("initSession with null username");
         //given
         when(jsch.getSession(any(), eq(hostname))).thenReturn(session);
         when(authentication.getUsername()).thenReturn(null);
@@ -222,7 +216,6 @@ public class JSchScpOperationTest {
      */
     @Test(expected = SshException.class)
     public void testInitSessionJSchExceptionUnknownHostKey() throws JSchException, SshException {
-        System.out.println("initSession w/JSchException for unknown host key on session.connect()");
         //given
         doThrow(new JSchException("UnknownHostKey")).when(session).connect();
 
@@ -246,7 +239,6 @@ public class JSchScpOperationTest {
      */
     @Test(expected = SshException.class)
     public void testInitSessionJSchException() throws JSchException, SshException {
-        System.out.println("initSession w/JSchException on session.connect()");
         //given
         doThrow(new JSchException("another message")).when(session).connect();
 
@@ -265,7 +257,6 @@ public class JSchScpOperationTest {
      */
     @Test
     public void testDisconnect() {
-        System.out.println("disconnect");
         //given
         operation.setSession(null);
 
@@ -284,7 +275,6 @@ public class JSchScpOperationTest {
      */
     @Test
     public void testGetExecIOChannel() throws SshException, JSchException, IOException {
-        System.out.println("getExecIOChannel");
         //given
         operation.setIoChannel(null);
         when(session.openChannel("exec")).thenReturn(channel);
@@ -308,7 +298,6 @@ public class JSchScpOperationTest {
      */
     @Test(expected = RuntimeException.class)
     public void testGetJSchThrowsException() throws JSchException, SshException {
-        System.out.println("getJSch when throws exception");
         //given
         when(jschFactory.build()).thenThrow(JSchException.class);
 
@@ -323,7 +312,6 @@ public class JSchScpOperationTest {
      */
     @Test
     public void testUpdateProgress() {
-        System.out.println("updateProgress");
         //given
         operation.setStatusListener(listener);
 
@@ -339,7 +327,6 @@ public class JSchScpOperationTest {
      */
     @Test
     public void testUpdateStatus() {
-        System.out.println("updateStatus");
         //given
         operation.setStatusListener(listener);
 
@@ -357,7 +344,6 @@ public class JSchScpOperationTest {
      */
     @Test
     public void testUpdateProgressNoListener() {
-        System.out.println("updateProgress missing StatusListener");
         //given
         operation.setStatusListener(null);
 
@@ -375,7 +361,6 @@ public class JSchScpOperationTest {
      */
     @Test
     public void testUpdateStatusNoListener() {
-        System.out.println("updateStatus missing StatusListener");
         //given
         operation.setStatusListener(null);
 
