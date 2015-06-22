@@ -16,7 +16,6 @@ public class SshErrorStatusTest {
      */
     @Test
     public void testValues() {
-        System.out.println("values");
         //given
 
         //when
@@ -31,7 +30,6 @@ public class SshErrorStatusTest {
      */
     @Test
     public void testValueOf() {
-        System.out.println("valueOf");
         //given
 
         //when
