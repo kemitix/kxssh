@@ -1,7 +1,5 @@
 package net.kemitix.kxssh.jsch;
 
-import java.io.File;
-import lombok.Setter;
 import net.kemitix.kxssh.ScpDownload;
 import net.kemitix.kxssh.ScpUpload;
 import net.kemitix.kxssh.SftpClient;
@@ -10,6 +8,15 @@ import net.kemitix.kxssh.SshException;
 import net.kemitix.kxssh.SshStatus;
 import net.kemitix.kxssh.SshStatusListener;
 
+import lombok.Setter;
+
+import java.io.File;
+
+/**
+ * Implementation of an SFTP client using JSCH.
+ *
+ * @author pcampbell
+ */
 @Setter
 public class JSchSftpClient implements SftpClient {
 

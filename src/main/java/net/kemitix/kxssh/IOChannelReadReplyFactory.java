@@ -1,5 +1,10 @@
 package net.kemitix.kxssh;
 
+/**
+ * Factory class for creating instances of {@link IOChannelReadReply}.
+ *
+ * @author pcampbell
+ */
 public class IOChannelReadReplyFactory {
 
     public IOChannelReadReply createReply(

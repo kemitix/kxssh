@@ -1,11 +1,18 @@
 package net.kemitix.kxssh.scp;
 
-import java.io.UnsupportedEncodingException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.UnsupportedEncodingException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+/**
+ * Represent the SCP Time command for getting the modify and access times of a
+ * file.
+ *
+ * @author pcampbell
+ */
 @Setter
 @Getter
 class ScpTimeCommand extends ScpCommand {

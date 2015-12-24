@@ -1,11 +1,5 @@
 package net.kemitix.kxssh.jsch;
 
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.Session;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import lombok.Setter;
 import net.kemitix.kxssh.SshAuthentication;
 import net.kemitix.kxssh.SshConnectionProperties;
 import net.kemitix.kxssh.SshErrorStatus;
@@ -15,6 +9,19 @@ import net.kemitix.kxssh.SshStatus;
 import net.kemitix.kxssh.SshStatusListener;
 import net.kemitix.kxssh.SshStatusProvider;
 
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
+import lombok.Setter;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+/**
+ * Abstract class representing an SCP operation using JSCH.
+ *
+ * @author pcampbell
+ */
 @Setter
 public abstract class JSchScpOperation implements SshStatusProvider {
 
@@ -95,8 +102,8 @@ public abstract class JSchScpOperation implements SshStatusProvider {
             if (ex.getMessage().contains("UnknownHostKey")) {
                 Logger.getLogger(this.getClass().getName())
                         .log(Level.SEVERE, "Try adding key with: ssh-keyscan -t rsa {0} >> {1}", new Object[]{
-                            hostname, knownHosts
-                        });
+                    hostname, knownHosts
+                });
             }
             updateStatus(SshErrorStatus.SESSION_ERROR);
             throw new SshException(ERROR_SESSION, ex);

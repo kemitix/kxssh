@@ -1,10 +1,16 @@
 package net.kemitix.kxssh.jsch;
 
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.JSchException;
 import net.kemitix.kxssh.SshAuthentication;
 import net.kemitix.kxssh.SshException;
 
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+
+/**
+ * Factory class to create an authenticated {@link JSch} connection.
+ *
+ * @author pcampbell
+ */
 public class JSchFactory {
 
     public JSch build() throws SshException, JSchException {

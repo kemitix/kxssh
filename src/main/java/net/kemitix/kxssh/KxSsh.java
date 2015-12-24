@@ -2,6 +2,11 @@ package net.kemitix.kxssh;
 
 import net.kemitix.kxssh.jsch.JSchSftpClient;
 
+/**
+ * Helper class for constructing {@link SftpClient} instances.
+ *
+ * @author pcampbell
+ */
 public class KxSsh {
 
     public static SftpClient getSftpClient(String hostname, String username, String password) {

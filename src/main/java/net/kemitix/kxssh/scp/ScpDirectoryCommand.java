@@ -2,6 +2,11 @@ package net.kemitix.kxssh.scp;
 
 import java.io.UnsupportedEncodingException;
 
+/**
+ * Represents the SCP Directory command for a recursive directory copy.
+ *
+ * @author pcampbell
+ */
 class ScpDirectoryCommand extends ScpTransferCommand {
 
     public ScpDirectoryCommand() {

@@ -4,6 +4,12 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 import lombok.Getter;
 
+/**
+ * An abstract bundle representing a method of authenticating with a remote
+ * server.
+ *
+ * @author pcampbell
+ */
 @Getter
 public abstract class SshAuthentication {
 

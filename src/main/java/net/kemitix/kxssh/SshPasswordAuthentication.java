@@ -4,6 +4,11 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 import lombok.Getter;
 
+/**
+ * Represents authentication using a password.
+ *
+ * @author pcampbell
+ */
 @Getter
 public class SshPasswordAuthentication extends SshAuthentication {
 

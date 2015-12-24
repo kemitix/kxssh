@@ -2,6 +2,11 @@ package net.kemitix.kxssh.scp;
 
 import java.io.UnsupportedEncodingException;
 
+/**
+ * Abstract class representing an SCP command.
+ *
+ * @author pcampbell
+ */
 public abstract class ScpCommand {
 
     public static final char TERMINATOR = '\n';

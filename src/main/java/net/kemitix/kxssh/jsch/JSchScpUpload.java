@@ -1,9 +1,5 @@
 package net.kemitix.kxssh.jsch;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import net.kemitix.kxssh.ScpUpload;
 import net.kemitix.kxssh.SshConnectionProperties;
 import net.kemitix.kxssh.SshErrorStatus;
@@ -11,6 +7,16 @@ import net.kemitix.kxssh.SshException;
 import net.kemitix.kxssh.SshOperationStatus;
 import net.kemitix.kxssh.scp.ScpCopyCommand;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+
+/**
+ * Implementation of the SCP Upload operation using JCSH.
+ *
+ * @author pcampbell
+ */
 class JSchScpUpload extends JSchScpOperation implements ScpUpload {
 
     private static final String ERROR_FILE_LOCAL_OPEN = "Error opening local file for writing";

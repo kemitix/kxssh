@@ -1,5 +1,10 @@
 package net.kemitix.kxssh;
 
+/**
+ * Interface for dispatching SSH Status updates.
+ *
+ * @author pcampbell
+ */
 public interface SshStatusProvider {
 
     void setStatusListener(SshStatusListener statusListener);

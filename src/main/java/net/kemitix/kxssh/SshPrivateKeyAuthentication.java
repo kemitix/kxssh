@@ -5,6 +5,11 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import lombok.Getter;
 
+/**
+ * Represents authentication using a Private Key.
+ *
+ * @author pcampbell
+ */
 @Getter
 public class SshPrivateKeyAuthentication extends SshAuthentication {
 

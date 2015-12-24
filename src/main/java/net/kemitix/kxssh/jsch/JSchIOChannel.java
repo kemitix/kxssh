@@ -1,15 +1,5 @@
 package net.kemitix.kxssh.jsch;
 
-import com.jcraft.jsch.Channel;
-import com.jcraft.jsch.ChannelExec;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.Session;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import lombok.Getter;
-import lombok.Setter;
 import net.kemitix.kxssh.IOChannelReadReply;
 import net.kemitix.kxssh.IOChannelReadReplyFactory;
 import net.kemitix.kxssh.SshErrorStatus;
@@ -19,6 +9,23 @@ import net.kemitix.kxssh.SshStatusListener;
 import net.kemitix.kxssh.SshStatusProvider;
 import net.kemitix.kxssh.scp.ScpCommand;
 
+import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.ChannelExec;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+/**
+ * Implements an IO channel over SSH using JSCH.
+ *
+ * @author pcampbell
+ */
 @Setter
 @Getter
 public class JSchIOChannel implements SshStatusProvider {
@@ -180,6 +187,7 @@ public class JSchIOChannel implements SshStatusProvider {
      * Read metadata, which consists of the file size followed by the filename.
      *
      * @return the scp protocol command
+     *
      * @throws java.io.IOException
      * @throws SshException
      */

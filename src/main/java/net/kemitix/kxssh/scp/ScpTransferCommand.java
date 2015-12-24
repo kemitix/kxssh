@@ -1,11 +1,17 @@
 package net.kemitix.kxssh.scp;
 
-import java.io.UnsupportedEncodingException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.UnsupportedEncodingException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+/**
+ * Abstract class representing an SCP file transfer command.
+ *
+ * @author pcampbell
+ */
 @Setter
 @Getter
 public abstract class ScpTransferCommand extends ScpCommand {

@@ -1,11 +1,5 @@
 package net.kemitix.kxssh.jsch;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import lombok.Setter;
 import net.kemitix.kxssh.ScpDownload;
 import net.kemitix.kxssh.SshConnectionProperties;
 import net.kemitix.kxssh.SshErrorStatus;
@@ -14,6 +8,19 @@ import net.kemitix.kxssh.SshOperationStatus;
 import net.kemitix.kxssh.scp.ScpCommand;
 import net.kemitix.kxssh.scp.ScpCopyCommand;
 
+import lombok.Setter;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+
+/**
+ * Implementation of the SCP Download operation using JCSH.
+ *
+ * @author pcampbell
+ */
 @Setter
 public class JSchScpDownload extends JSchScpOperation implements ScpDownload {
 
