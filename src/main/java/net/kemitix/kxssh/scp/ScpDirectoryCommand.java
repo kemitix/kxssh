@@ -9,10 +9,20 @@ import java.io.UnsupportedEncodingException;
  */
 class ScpDirectoryCommand extends ScpTransferCommand {
 
+    /**
+     * Default constructor.
+     */
     public ScpDirectoryCommand() {
         setLength(0);
     }
 
+    /**
+     * Constructor.
+     *
+     * @param commandLine the command to parse
+     *
+     * @throws UnsupportedEncodingException not thrown
+     */
     public ScpDirectoryCommand(String commandLine) throws UnsupportedEncodingException {
         super(commandLine);
         setLength(0);

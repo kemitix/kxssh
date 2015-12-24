@@ -20,13 +20,30 @@ class ScpTimeCommand extends ScpCommand {
     private long mtime;
     private long atime;
 
+    /**
+     * Default constructor.
+     */
     public ScpTimeCommand() {
     }
 
+    /**
+     * Constructor.
+     *
+     * @param commandLine the command to parse
+     *
+     * @throws UnsupportedEncodingException not thrown
+     */
     public ScpTimeCommand(String commandLine) throws UnsupportedEncodingException {
         parseCommandLine(commandLine);
     }
 
+    /**
+     * Parse a command line for the last modified and last accessed times.
+     *
+     * @param commandLine the command to parse
+     *
+     * @throws UnsupportedEncodingException not thrown
+     */
     private void parseCommandLine(String commandLine) throws UnsupportedEncodingException {
         // parse "mtime 0 atime 0"
         Matcher matcher
@@ -40,6 +57,11 @@ class ScpTimeCommand extends ScpCommand {
         atime = Long.parseLong(matcher.group("atime"));
     }
 
+    /**
+     * Returns the regular expression defining the time command.
+     *
+     * @return the time command as a regular expression
+     */
     private static String getCommandPattern() {
         return "^"
                 + "T"

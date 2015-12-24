@@ -13,6 +13,15 @@ import com.jcraft.jsch.JSchException;
  */
 public class JSchFactory {
 
+    /**
+     * Creates the {@link JSch} object.
+     *
+     * @return the created {@link JSch}
+     *
+     * @throws SshException  if authentication not set or there is in error in
+     *                       the authentication
+     * @throws JSchException if error setting the known_hosts filename
+     */
     public JSch build() throws SshException, JSchException {
         JSch jsch = new JSch();
         if (knownHosts != null) {
@@ -27,6 +36,13 @@ public class JSchFactory {
 
     private SshAuthentication authentication;
 
+    /**
+     * Sets the authentication method.
+     *
+     * @param authentication the authentication method
+     *
+     * @return the factory to allow chained methods
+     */
     public JSchFactory authenticate(SshAuthentication authentication) {
         this.authentication = authentication;
         return this;
@@ -34,6 +50,13 @@ public class JSchFactory {
 
     private String knownHosts;
 
+    /**
+     * Sets the name of the known_hosts file.
+     *
+     * @param knownHosts the filename of the known_hosts file
+     *
+     * @return the factory to allow chained methods
+     */
     public JSchFactory knownHosts(String knownHosts) {
         this.knownHosts = knownHosts;
         return this;

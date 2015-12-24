@@ -14,6 +14,12 @@ public class SshPasswordAuthentication extends SshAuthentication {
 
     private final String password;
 
+    /**
+     * Constructor.
+     *
+     * @param username the username to authenticate as
+     * @param password the password the authenticate with
+     */
     SshPasswordAuthentication(String username, String password) {
         super(username);
         this.password = password;

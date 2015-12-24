@@ -20,13 +20,29 @@ public abstract class ScpTransferCommand extends ScpCommand {
     private long length;
     private String name;
 
+    /**
+     * Default constructor.
+     */
     public ScpTransferCommand() {
     }
 
+    /**
+     * Constructor.
+     *
+     * @param commandLine the command to parse
+     *
+     * @throws UnsupportedEncodingException if there is an error decoding the
+     *                                      command
+     */
     public ScpTransferCommand(String commandLine) throws UnsupportedEncodingException {
         parseCommandLine(commandLine);
     }
 
+    /**
+     * Sets the file's Unix file permissions mode.
+     *
+     * @param fileMode the file mode
+     */
     public void setFileMode(byte[] fileMode) {
         if (fileMode.length != 4) {
             throw new IllegalArgumentException("File mode must be 4-byte array");
@@ -34,8 +50,21 @@ public abstract class ScpTransferCommand extends ScpCommand {
         System.arraycopy(fileMode, 0, this.fileMode, 0, 4);
     }
 
+    /**
+     * Returns the regular expression the match the command against.
+     *
+     * @return the regular expression
+     */
     protected abstract String getCommandPattern();
 
+    /**
+     * Parses the command for the transfer length and name.
+     *
+     * @param commandLine the command to parse.
+     *
+     * @throws UnsupportedEncodingException if there is an error decoding the
+     *                                      command
+     */
     private void parseCommandLine(String commandLine) throws UnsupportedEncodingException {
         // parse "mmmm length filename"
         Matcher matcher

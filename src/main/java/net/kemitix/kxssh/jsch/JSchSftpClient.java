@@ -24,6 +24,11 @@ public class JSchSftpClient implements SftpClient {
     private ScpDownload download;
     private ScpUpload upload;
 
+    /**
+     * Constructor.
+     *
+     * @param connectionProperties the remote host and authentication details
+     */
     public JSchSftpClient(SshConnectionProperties connectionProperties) {
         this.connectionProperties = connectionProperties;
     }
@@ -34,6 +39,9 @@ public class JSchSftpClient implements SftpClient {
         download.download(remoteFilename, localFile);
     }
 
+    /**
+     * Creates the {@link ScpDownload} implementation.
+     */
     protected void requireDownload() {
         if (download == null) {
             download = new JSchScpDownload(connectionProperties);
@@ -47,6 +55,9 @@ public class JSchSftpClient implements SftpClient {
         upload.upload(localFile, remoteFilename);
     }
 
+    /**
+     * Creates the {@link ScpUpload} implementation.
+     */
     protected void requireUpload() {
         if (upload == null) {
             upload = new JSchScpUpload(connectionProperties);

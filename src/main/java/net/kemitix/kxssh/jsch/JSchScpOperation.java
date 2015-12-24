@@ -33,12 +33,26 @@ public abstract class JSchScpOperation implements SshStatusProvider {
 
     private JSchFactory jschFactory;
 
+    /**
+     * Constructor.
+     *
+     * @param connectionProperties the remote host and authentication details
+     */
     public JSchScpOperation(SshConnectionProperties connectionProperties) {
         this.connectionProperties = connectionProperties;
         jschFactory = new JSchFactory();
         ioFactory = new SshIOFactory();
     }
 
+    /**
+     * Create a {@link JSch} instance using the provided authentication.
+     *
+     * @param authentication the authentication details
+     *
+     * @return the JSCH object
+     *
+     * @throws SshException if there is an error creating the JSCH object
+     */
     protected JSch getJSch(SshAuthentication authentication) throws SshException {
         try {
             return jschFactory
@@ -53,6 +67,14 @@ public abstract class JSchScpOperation implements SshStatusProvider {
     // IOCHANNEL
     private JSchIOChannel ioChannel;
 
+    /**
+     * Creates, as needed, the IO Channel for sending and receiving execution
+     * commands.
+     *
+     * @return the JSCH IO Channel
+     *
+     * @throws SshException if there is and error creating the IO channel
+     */
     protected JSchIOChannel getExecIOChannel() throws SshException {
         if (ioChannel == null) {
             ioChannel = JSchIOChannel.createExecIOChannel(getSession());
@@ -61,6 +83,9 @@ public abstract class JSchScpOperation implements SshStatusProvider {
         return ioChannel;
     }
 
+    /**
+     * Disconnects the IO Channel and session.
+     */
     protected void disconnect() {
         if (ioChannel != null) {
             ioChannel.disconnect();
@@ -78,6 +103,14 @@ public abstract class JSchScpOperation implements SshStatusProvider {
 
     private Session session;
 
+    /**
+     * Creates, as needed, the session.
+     *
+     * @return the JSCH session
+     *
+     * @throws SshException if there is an error with the remote hostname,
+     *                      authentication or the host is not known
+     */
     protected Session getSession() throws SshException {
         if (session != null) {
             return session;

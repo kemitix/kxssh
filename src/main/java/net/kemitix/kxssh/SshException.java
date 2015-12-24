@@ -7,10 +7,21 @@ package net.kemitix.kxssh;
  */
 public class SshException extends Exception {
 
+    /**
+     * Constructor.
+     *
+     * @param message the message
+     */
     public SshException(String message) {
         super(message);
     }
 
+    /**
+     * Constructor.
+     *
+     * @param message the message
+     * @param cause   the original cause
+     */
     public SshException(String message, Throwable cause) {
         super(message, cause);
     }

@@ -16,6 +16,13 @@ public class SshPrivateKeyAuthentication extends SshAuthentication {
     private final String privateKey;
     private final String passPhrase;
 
+    /**
+     * Constructor.
+     *
+     * @param username   the username to authenticate as
+     * @param privateKey the private key to authenticate with
+     * @param passPhrase the pass-phrase to open the private key
+     */
     public SshPrivateKeyAuthentication(String username, String privateKey, String passPhrase) {
         super(username);
         this.privateKey = privateKey;

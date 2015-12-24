@@ -24,6 +24,11 @@ import java.io.OutputStream;
 @Setter
 public class JSchScpDownload extends JSchScpOperation implements ScpDownload {
 
+    /**
+     * Constructor.
+     *
+     * @param connectionProperties the remote host and authentication details
+     */
     public JSchScpDownload(SshConnectionProperties connectionProperties) {
         super(connectionProperties);
     }
@@ -60,6 +65,16 @@ public class JSchScpDownload extends JSchScpOperation implements ScpDownload {
         updateStatus(SshOperationStatus.DISCONNECTED);
     }
 
+    /**
+     * Read an SCP Copy command header from the remote server.
+     *
+     * @param ioChannel the channel to read the command from
+     *
+     * @return the SCP Copy command
+     *
+     * @throws SshException if there is an error reading from the channel or in
+     *                      parsing the command
+     */
     private ScpCopyCommand readScpCopyCommand(JSchIOChannel ioChannel) throws SshException {
         try {
             ScpCommand scpCommand = ioChannel.readScpCommand();
@@ -72,6 +87,15 @@ public class JSchScpDownload extends JSchScpOperation implements ScpDownload {
         }
     }
 
+    /**
+     * Creates a {@link FileOutputStream} for the local file.
+     *
+     * @param localFile the file the stream should write to
+     *
+     * @return the output stream
+     *
+     * @throws SshException if there is an error opening the file
+     */
     private FileOutputStream getOutputStream(File localFile) throws SshException {
         try {
             return ioFactory.createFileOutputStream(localFile);

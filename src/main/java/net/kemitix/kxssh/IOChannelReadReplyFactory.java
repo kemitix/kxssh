@@ -7,6 +7,15 @@ package net.kemitix.kxssh;
  */
 public class IOChannelReadReplyFactory {
 
+    /**
+     * Creates an {@link IOChannelReadReply}.
+     *
+     * @param bytesRequested the number of bytes that were to be read
+     * @param bytesRead      the number of bytes that were read
+     * @param buffer         the buffer containing what was read
+     *
+     * @return an {@link IOChannelReadReply}
+     */
     public IOChannelReadReply createReply(
             int bytesRequested,
             int bytesRead,

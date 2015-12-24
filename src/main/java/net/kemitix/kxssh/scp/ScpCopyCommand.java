@@ -9,9 +9,20 @@ import java.io.UnsupportedEncodingException;
  */
 public class ScpCopyCommand extends ScpTransferCommand {
 
+    /**
+     * Default constructor.
+     */
     public ScpCopyCommand() {
     }
 
+    /**
+     * Constructor.
+     *
+     * @param commandLine the command to parse
+     *
+     * @throws UnsupportedEncodingException if there is an error decoding the
+     *                                      command
+     */
     public ScpCopyCommand(String commandLine) throws UnsupportedEncodingException {
         super(commandLine);
     }

@@ -21,6 +21,11 @@ class JSchScpUpload extends JSchScpOperation implements ScpUpload {
 
     private static final String ERROR_FILE_LOCAL_OPEN = "Error opening local file for writing";
 
+    /**
+     * Constructor.
+     *
+     * @param connectionProperties the remote host and authentication details
+     */
     public JSchScpUpload(SshConnectionProperties connectionProperties) {
         super(connectionProperties);
     }
@@ -35,6 +40,18 @@ class JSchScpUpload extends JSchScpOperation implements ScpUpload {
         upload(localFile, remoteFilename, fileMode);
     }
 
+    /**
+     * Uploads the local file to the remote server.
+     *
+     * @param localFile      the local file to be uploaded
+     * @param remoteFilename the file name on the remote server to upload to
+     * @param fileMode       the Unix file permissions to be set on the uploaded
+     *                       file
+     *
+     * @throws SshException if there is an error getting the IO Channel,
+     *                      connecting, checking the status, reading or writing
+     *                      to the channel or reading from the local file
+     */
     public void upload(File localFile, String remoteFilename, byte[] fileMode) throws SshException {
         updateStatus(SshOperationStatus.STARTING);
         JSchIOChannel ioChannel = getExecIOChannel();
@@ -71,6 +88,15 @@ class JSchScpUpload extends JSchScpOperation implements ScpUpload {
         updateStatus(SshOperationStatus.DISCONNECTED);
     }
 
+    /**
+     * Creates an {@link InputStream} for the local file.
+     *
+     * @param localFile the file the stream should read from
+     *
+     * @return the input stream
+     *
+     * @throws SshException if there is an error opening the file
+     */
     private InputStream getInputStream(File localFile) throws SshException {
         try {
             return ioFactory.createFileInputStream(localFile);
