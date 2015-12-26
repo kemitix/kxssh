@@ -14,6 +14,6 @@ public class IOChannelReadReply {
 
     private int bytesRequested;
     private int bytesRead;
-    private byte[] buffer;
+    private String buffer;
 
 }

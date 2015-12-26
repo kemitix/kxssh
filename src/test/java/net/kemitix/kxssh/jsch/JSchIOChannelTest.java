@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
@@ -202,11 +203,7 @@ public class JSchIOChannelTest {
         when(channel.isConnected()).thenReturn(true);
 
         IOChannelReadReply headerReply = mock(IOChannelReadReply.class);
-        byte[] headerBuffer = new byte[4];
-        headerBuffer[0] = '0';
-        headerBuffer[1] = '7';
-        headerBuffer[2] = '6';
-        headerBuffer[3] = '4';
+        String headerBuffer = "0764";
         when(headerReply.getBuffer()).thenReturn(headerBuffer);
 
         when(input.read())
@@ -219,7 +216,7 @@ public class JSchIOChannelTest {
         ScpCopyCommand scpCopyCommand = (ScpCopyCommand) ioChannel.readScpCommand();
 
         //then
-        assertThat(scpCopyCommand.getFileMode(), is(headerBuffer));
+        assertEquals(headerBuffer, scpCopyCommand.getFileMode());
         assertThat(scpCopyCommand.getLength(), is(7L));
         assertThat(scpCopyCommand.getName(), is("f"));
     }

@@ -1,5 +1,7 @@
 package net.kemitix.kxssh;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 /**
  * Factory class for creating instances of {@link IOChannelReadReply}.
  *
@@ -23,7 +25,7 @@ public class IOChannelReadReplyFactory {
         IOChannelReadReply reply = new IOChannelReadReply();
         reply.setBytesRequested(bytesRequested);
         reply.setBytesRead(bytesRead);
-        reply.setBuffer(buffer);
+        reply.setBuffer(new String(buffer, UTF_8));
         return reply;
     }
 

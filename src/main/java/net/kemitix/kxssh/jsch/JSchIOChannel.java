@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 /**
  * Implements an IO channel over SSH using JSCH.
  *
@@ -306,7 +308,7 @@ public class JSchIOChannel implements SshStatusProvider {
             int bytesRead = reply.getBytesRead();
             bytesRead = Integer.min(bytesRead, bytesToRead);
             try {
-                stream.write(reply.getBuffer(), 0, bytesRead);
+                stream.write(reply.getBuffer().getBytes(UTF_8), 0, bytesRead);
             } catch (IOException ex) {
                 updateStatus(SshErrorStatus.FILE_WRITE_ERROR);
                 throw new SshException("Error writing local file", ex);

@@ -8,6 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static java.lang.System.arraycopy;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Abstract class representing an SCP file transfer command.
@@ -51,12 +52,22 @@ public abstract class ScpTransferCommand extends ScpCommand {
      *
      * @param unixPermissions the file mode
      */
-    public void setFileMode(final byte[] unixPermissions) {
-        if (unixPermissions.length != FILE_MODE_LENGTH) {
+    public void setFileMode(final String unixPermissions) {
+        if (unixPermissions.length() != FILE_MODE_LENGTH) {
             throw new IllegalArgumentException(
                     "File mode must be 4-byte array");
         }
-        arraycopy(unixPermissions, 0, fileMode, 0, FILE_MODE_LENGTH);
+        arraycopy(unixPermissions.getBytes(UTF_8), 0, fileMode, 0,
+                FILE_MODE_LENGTH);
+    }
+
+    /**
+     * Returns the Unix file mode permissions.
+     *
+     * @return the Unix file mode permissions
+     */
+    public String getFileMode() {
+        return new String(fileMode, UTF_8);
     }
 
     /**
@@ -108,7 +119,7 @@ public abstract class ScpTransferCommand extends ScpCommand {
             buffer[0] = 'D';
         }
 
-        arraycopy(getFileMode(), 0, buffer, 1, FILE_MODE_LENGTH);
+        arraycopy(fileMode, 0, buffer, 1, FILE_MODE_LENGTH);
         buffer[FILE_MODE_LENGTH + 1] = ' ';
         arraycopy(lengthString.getBytes("UTF-8"), 0, buffer,
                 FILE_MODE_LENGTH + 2, lengthString.length());

@@ -77,7 +77,7 @@ public class JSchDownloadTest {
         IOChannelReadReply reply = mock(IOChannelReadReply.class);
         when(reply.getBytesRead()).thenReturn((int) filesize);
         byte[] buffer = new byte[(int) filesize];
-        when(reply.getBuffer()).thenReturn(buffer);
+        when(reply.getBuffer()).thenReturn(new String(buffer));
         when(ioChannel.read(eq((int) filesize))).thenReturn(reply);
         when(scpCopyCommand.getLength()).thenReturn(filesize);
         when(factory.createFileOutputStream(localFile)).thenReturn(outputStream);
@@ -117,7 +117,7 @@ public class JSchDownloadTest {
         IOChannelReadReply reply = mock(IOChannelReadReply.class);
         when(reply.getBytesRead()).thenReturn((int) filesize);
         byte[] buffer = new byte[(int) filesize];
-        when(reply.getBuffer()).thenReturn(buffer);
+        when(reply.getBuffer()).thenReturn(new String(buffer));
         when(ioChannel.read(eq((int) filesize))).thenReturn(reply);
         when(scpCopyCommand.getLength()).thenReturn(filesize);
         when(factory.createFileOutputStream(localFile)).thenReturn(outputStream);
@@ -236,7 +236,7 @@ public class JSchDownloadTest {
         IOChannelReadReply reply = mock(IOChannelReadReply.class);
         when(reply.getBytesRead()).thenReturn((int) filesize);
         byte[] buffer = new byte[(int) filesize];
-        when(reply.getBuffer()).thenReturn(buffer);
+        when(reply.getBuffer()).thenReturn(new String(buffer));
         when(ioChannel.read(eq((int) filesize))).thenReturn(reply);
         when(scpCopyCommand.getLength()).thenReturn(filesize);
         when(factory.createFileOutputStream(localFile)).thenReturn(outputStream);
