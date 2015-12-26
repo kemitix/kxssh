@@ -27,7 +27,7 @@ class JSchScpUpload extends JSchScpOperation implements ScpUpload {
      *
      * @param connectionProperties the remote host and authentication details
      */
-    public JSchScpUpload(final SshConnectionProperties connectionProperties) {
+    JSchScpUpload(final SshConnectionProperties connectionProperties) {
         super(connectionProperties);
     }
 

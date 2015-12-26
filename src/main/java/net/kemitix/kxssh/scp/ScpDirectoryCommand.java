@@ -12,7 +12,7 @@ class ScpDirectoryCommand extends ScpTransferCommand {
     /**
      * Default constructor.
      */
-    public ScpDirectoryCommand() {
+    ScpDirectoryCommand() {
         setLength(0);
     }
 
@@ -23,7 +23,7 @@ class ScpDirectoryCommand extends ScpTransferCommand {
      *
      * @throws UnsupportedEncodingException not thrown
      */
-    public ScpDirectoryCommand(final String commandLine)
+    ScpDirectoryCommand(final String commandLine)
             throws UnsupportedEncodingException {
         super(commandLine);
         setLength(0);

@@ -25,7 +25,7 @@ class ScpTimeCommand extends ScpCommand {
     /**
      * Default constructor.
      */
-    public ScpTimeCommand() {
+    ScpTimeCommand() {
     }
 
     /**
@@ -35,7 +35,7 @@ class ScpTimeCommand extends ScpCommand {
      *
      * @throws UnsupportedEncodingException not thrown
      */
-    public ScpTimeCommand(final String commandLine)
+    ScpTimeCommand(final String commandLine)
             throws UnsupportedEncodingException {
         parseCommandLine(commandLine);
     }
