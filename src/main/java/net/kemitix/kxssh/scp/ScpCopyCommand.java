@@ -2,12 +2,29 @@ package net.kemitix.kxssh.scp;
 
 import java.io.UnsupportedEncodingException;
 
+/**
+ * Represents the SCP Copy command for uploading or downloading a file over SSH.
+ *
+ * @author pcampbell
+ */
 public class ScpCopyCommand extends ScpTransferCommand {
 
+    /**
+     * Default constructor.
+     */
     public ScpCopyCommand() {
     }
 
-    public ScpCopyCommand(String commandLine) throws UnsupportedEncodingException {
+    /**
+     * Constructor.
+     *
+     * @param commandLine the command to parse
+     *
+     * @throws UnsupportedEncodingException if there is an error decoding the
+     *                                      command
+     */
+    public ScpCopyCommand(final String commandLine)
+            throws UnsupportedEncodingException {
         super(commandLine);
     }
 

@@ -5,20 +5,35 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import lombok.Getter;
 
+/**
+ * Represents authentication using a Private Key.
+ *
+ * @author pcampbell
+ */
 @Getter
 public class SshPrivateKeyAuthentication extends SshAuthentication {
 
     private final String privateKey;
     private final String passPhrase;
 
-    public SshPrivateKeyAuthentication(String username, String privateKey, String passPhrase) {
+    /**
+     * Constructor.
+     *
+     * @param username             the username to authenticate as
+     * @param sshPrivateKey        the private key to authenticate with
+     * @param privateKeyPassPhrase the pass-phrase to open the private key
+     */
+    public SshPrivateKeyAuthentication(
+            final String username,
+            final String sshPrivateKey,
+            final String privateKeyPassPhrase) {
         super(username);
-        this.privateKey = privateKey;
-        this.passPhrase = passPhrase;
+        privateKey = sshPrivateKey;
+        passPhrase = privateKeyPassPhrase;
     }
 
     @Override
-    public void prepare(JSch jsch) throws SshException {
+    public void prepare(final JSch jsch) {
         try {
             jsch.addIdentity(privateKey, passPhrase);
         } catch (JSchException ex) {
@@ -27,7 +42,7 @@ public class SshPrivateKeyAuthentication extends SshAuthentication {
     }
 
     @Override
-    public void authenticateSession(Session session) {
+    public void authenticateSession(final Session session) {
         //nothing needed done
     }
 

@@ -1,45 +1,103 @@
 package net.kemitix.kxssh.scp;
 
-import java.io.UnsupportedEncodingException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.UnsupportedEncodingException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static java.lang.System.arraycopy;
+import static java.nio.charset.StandardCharsets.UTF_8;
+
+/**
+ * Abstract class representing an SCP file transfer command.
+ *
+ * @author pcampbell
+ */
 @Setter
 @Getter
 public abstract class ScpTransferCommand extends ScpCommand {
 
-    private final byte[] fileMode = new byte[4];
+    /**
+     * The number of bytes in the Unix file mode permissions array.
+     */
+    private static final int FILE_MODE_LENGTH = 4;
+
+    private final byte[] fileMode = new byte[FILE_MODE_LENGTH];
     private long length;
     private String name;
 
+    /**
+     * Default constructor.
+     */
     public ScpTransferCommand() {
     }
 
-    public ScpTransferCommand(String commandLine) throws UnsupportedEncodingException {
+    /**
+     * Constructor.
+     *
+     * @param commandLine the command to parse
+     *
+     * @throws UnsupportedEncodingException if there is an error decoding the
+     *                                      command
+     */
+    public ScpTransferCommand(final String commandLine)
+            throws UnsupportedEncodingException {
         parseCommandLine(commandLine);
     }
 
-    public void setFileMode(byte[] fileMode) {
-        if (fileMode.length != 4) {
-            throw new IllegalArgumentException("File mode must be 4-byte array");
+    /**
+     * Sets the file's Unix file permissions mode.
+     *
+     * @param unixPermissions the file mode
+     */
+    public void setFileMode(final String unixPermissions) {
+        if (unixPermissions.length() != FILE_MODE_LENGTH) {
+            throw new IllegalArgumentException(
+                    "File mode must be 4-byte array");
         }
-        System.arraycopy(fileMode, 0, this.fileMode, 0, 4);
+        arraycopy(unixPermissions.getBytes(UTF_8), 0, fileMode, 0,
+                FILE_MODE_LENGTH);
     }
 
+    /**
+     * Returns the Unix file mode permissions.
+     *
+     * @return the Unix file mode permissions
+     */
+    public String getFileMode() {
+        return new String(fileMode, UTF_8);
+    }
+
+    /**
+     * Returns the regular expression the match the command against.
+     *
+     * @return the regular expression
+     */
     protected abstract String getCommandPattern();
 
-    private void parseCommandLine(String commandLine) throws UnsupportedEncodingException {
+    /**
+     * Parses the command for the transfer length and name.
+     *
+     * @param commandLine the command to parse.
+     *
+     * @throws UnsupportedEncodingException if there is an error decoding the
+     *                                      command
+     */
+    private void parseCommandLine(final String commandLine)
+            throws UnsupportedEncodingException {
         // parse "mmmm length filename"
         Matcher matcher
                 = Pattern
                 .compile(getCommandPattern())
                 .matcher(commandLine);
         if (!matcher.matches()) {
-            throw new IllegalArgumentException("Illegal command format: " + commandLine);
+            throw new IllegalArgumentException(
+                    "Illegal command format: " + commandLine);
         }
-        System.arraycopy(matcher.group("mode").getBytes("UTF-8"), 0, fileMode, 0, 4);
+        arraycopy(matcher.group("mode").getBytes("UTF-8"), 0, fileMode, 0,
+                FILE_MODE_LENGTH);
         length = Long.parseLong(matcher.group("length"));
         name = matcher.group("name");
     }
@@ -48,7 +106,8 @@ public abstract class ScpTransferCommand extends ScpCommand {
     public byte[] getBytes() throws UnsupportedEncodingException {
         String lengthString = Long.toString(getLength());
 
-        int bufferSize = 8 // command(1), fileMode(4), delimiters(2), terminator(1)
+        // command(1), fileMode(4), delimiters(2), terminator(1)
+        int bufferSize = 1 + FILE_MODE_LENGTH + 2 + 1
                 + lengthString.length()
                 + getName().length();
 
@@ -60,11 +119,14 @@ public abstract class ScpTransferCommand extends ScpCommand {
             buffer[0] = 'D';
         }
 
-        System.arraycopy(getFileMode(), 0, buffer, 1, 4);
-        buffer[5] = ' ';
-        System.arraycopy(lengthString.getBytes("UTF-8"), 0, buffer, 6, lengthString.length());
-        buffer[6 + lengthString.length()] = ' ';
-        System.arraycopy(getName().getBytes("UTF-8"), 0, buffer, 7 + lengthString.length(), getName().length());
+        arraycopy(fileMode, 0, buffer, 1, FILE_MODE_LENGTH);
+        buffer[FILE_MODE_LENGTH + 1] = ' ';
+        arraycopy(lengthString.getBytes("UTF-8"), 0, buffer,
+                FILE_MODE_LENGTH + 2, lengthString.length());
+        buffer[FILE_MODE_LENGTH + 2 + lengthString.length()] = ' ';
+        arraycopy(getName().getBytes("UTF-8"), 0, buffer,
+                1 + FILE_MODE_LENGTH + 2 + lengthString.length(),
+                getName().length());
 
         buffer[bufferSize - 1] = TERMINATOR;
 

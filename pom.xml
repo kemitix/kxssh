@@ -9,32 +9,15 @@
     <name>KxSsh</name>
     <description>Java SSH client (wrapper for jsch)</description>
 
+    <parent>
+        <groupId>net.kemitix</groupId>
+        <artifactId>kemitix-parent</artifactId>
+        <version>0.2.0</version>
+    </parent>
+
     <url>https://github.com/kemitix/kxssh</url>
 
-    <developers>
-        <developer>
-            <name>Paul Campbell</name>
-            <email>pcampbell@kemitix.net</email>
-        </developer>
-    </developers>
-
-    <organization>
-        <name>Kemitix</name>
-        <url>https://github.com/kemitix/</url>
-    </organization>
-
-    <licenses>
-        <license>
-            <name>MIT License</name>
-            <url>http://www.opensource.org/licenses/mit-license.php</url>
-        </license>
-    </licenses>
-
     <inceptionYear>2015</inceptionYear>
-
-    <prerequisites>
-        <maven>3.0.4</maven>
-    </prerequisites>
 
     <issueManagement>
         <url>https://github.com/kemitix/kxssh/issues</url>
@@ -47,12 +30,6 @@
         <url>https://github.com/kemitix/kxssh</url>
     </scm>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>com.jcraft</groupId>
@@ -62,7 +39,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.16.4</version>
+            <version>1.16.6</version>
         </dependency>
 
         <dependency>
@@ -90,176 +67,5 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <profiles>
-        <profile>
-            <id>release-sign-artifacts</id>
-            <activation>
-                <property>
-                    <name>performRelease</name>
-                    <value>true</value>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.6</version>
-                        <configuration>
-                            <passphrase>${gpg.passphrase}</passphrase>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.3</version>
-                <configuration>
-                    <showDeprecation>true</showDeprecation>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>findbugs-maven-plugin</artifactId>
-                <version>3.0.1</version>
-                <configuration>
-                    <xmlOutput>true</xmlOutput>
-                    <findbugsXmlOutput>true</findbugsXmlOutput>
-                    <findbugsXmlWithMessages>true</findbugsXmlWithMessages>
-                    <excludeFilterFile>config/findbugs-excludes.xml</excludeFilterFile>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>2.15</version>
-                <configuration>
-                    <includeTestSourceDirectory>true</includeTestSourceDirectory>
-                    <consoleOutput>true</consoleOutput>
-                    <logViolationsToConsole>true</logViolationsToConsole>
-                    <failOnViolation>true</failOnViolation>
-                    <configLocation>config/sun_checks.xml</configLocation>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.18.1</version>
-            </plugin>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.7.5.201505241946</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>report</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>default-check</id>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <rules>
-                        <rule implementation="org.jacoco.maven.RuleConfiguration">
-                            <element>CLASS</element>
-                            <excludes>
-                                <exclude>*Test</exclude>
-                            </excludes>
-                            <limits>
-                                <limit>
-                                    <counter>LINE</counter>
-                                    <value>COVEREDRATIO</value>
-                                    <minimum>0.50</minimum>
-                                </limit>
-                            </limits>
-                        </rule>
-                        <rule implementation="org.jacoco.maven.RuleConfiguration">
-                            <element>CLASS</element>
-                            <excludes>
-                                <exclude>*Test</exclude>
-                            </excludes>
-                            <limits>
-                                <limit implementation="org.jacoco.report.check.Limit">
-                                    <counter>INSTRUCTION</counter>
-                                    <value>COVEREDRATIO</value>
-                                    <minimum>0.80</minimum>
-                                </limit>
-                                <limit implementation="org.jacoco.report.check.Limit">
-                                    <counter>CLASS</counter>
-                                    <value>MISSEDCOUNT</value>
-                                    <maximum>0</maximum>
-                                </limit>
-                            </limits>
-                        </rule>
-                    </rules>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>2.4</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.10.3</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <version>2.8.2</version>
-            </plugin>
-        </plugins>
-    </build>
-
-    <distributionManagement>
-        <snapshotRepository>
-            <id>sonatype-nexus-snapshots</id>
-            <name>Sonatype Nexus Snapshots</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-        </snapshotRepository>
-        <repository>
-            <id>sonatype-nexus-staging</id>
-            <name>Nexus Release Repository</name>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
 
 </project>

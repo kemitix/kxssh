@@ -2,6 +2,11 @@ package net.kemitix.kxssh.scp;
 
 import java.io.UnsupportedEncodingException;
 
+/**
+ * Represents the SCP End command for terminating an SCP session.
+ *
+ * @author pcampbell
+ */
 public class ScpEndCommand extends ScpCommand {
 
     @Override

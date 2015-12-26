@@ -8,19 +8,6 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 public class KxSshTest {
 
     /**
-     * Test of constructor, of class KxSsh.
-     */
-    @Test
-    public void testConstructor() {
-        //given
-
-        //when
-        new KxSsh();
-
-        //then
-    }
-
-    /**
      * Test of getSftpClient method, of class KxSsh.
      *
      * Password Authentication

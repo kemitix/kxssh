@@ -1,31 +1,50 @@
 package net.kemitix.kxssh.jsch;
 
+import net.kemitix.kxssh.ScpDownload;
+import net.kemitix.kxssh.SshConnectionProperties;
+import net.kemitix.kxssh.SshErrorStatus;
+import net.kemitix.kxssh.SshException;
+import net.kemitix.kxssh.SshIOFactory;
+import net.kemitix.kxssh.SshOperationStatus;
+import net.kemitix.kxssh.scp.ScpCommand;
+import net.kemitix.kxssh.scp.ScpCopyCommand;
+
+import lombok.Setter;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import lombok.Setter;
-import net.kemitix.kxssh.ScpDownload;
-import net.kemitix.kxssh.SshConnectionProperties;
-import net.kemitix.kxssh.SshErrorStatus;
-import net.kemitix.kxssh.SshException;
-import net.kemitix.kxssh.SshOperationStatus;
-import net.kemitix.kxssh.scp.ScpCommand;
-import net.kemitix.kxssh.scp.ScpCopyCommand;
 
+/**
+ * Implementation of the SCP Download operation using JCSH.
+ *
+ * @author pcampbell
+ */
 @Setter
 public class JSchScpDownload extends JSchScpOperation implements ScpDownload {
 
-    public JSchScpDownload(SshConnectionProperties connectionProperties) {
-        super(connectionProperties);
+    /**
+     * Constructor.
+     *
+     * @param connectionProperties the remote host and authentication details
+     * @param jschFactory          the JSCH factory
+     * @param sshIOFactory         the SSH IO factory
+     */
+    public JSchScpDownload(
+            final SshConnectionProperties connectionProperties,
+            final JSchFactory jschFactory,
+            final SshIOFactory sshIOFactory) {
+        super(connectionProperties, jschFactory, sshIOFactory);
     }
 
-    private static final String ERROR_FILE_LOCAL_OPEN = "Error opening local file for writing";
+    private static final String ERROR_FILE_LOCAL_OPEN
+            = "Error opening local file for writing";
     private static final String ERROR_ACK = "Error in ACK";
 
     @Override
-    public void download(String remoteFilename, File localFile) throws SshException {
+    public void download(final String remoteFilename, final File localFile) {
         updateStatus(SshOperationStatus.STARTING);
         JSchIOChannel ioChannel = getExecIOChannel();
         updateStatus(SshOperationStatus.DOWNLOADING);
@@ -53,11 +72,20 @@ public class JSchScpDownload extends JSchScpOperation implements ScpDownload {
         updateStatus(SshOperationStatus.DISCONNECTED);
     }
 
-    private ScpCopyCommand readScpCopyCommand(JSchIOChannel ioChannel) throws SshException {
+    /**
+     * Read an SCP Copy command header from the remote server.
+     *
+     * @param ioChannel the channel to read the command from
+     *
+     * @return the SCP Copy command
+     */
+    private ScpCopyCommand readScpCopyCommand(final JSchIOChannel ioChannel) {
         try {
             ScpCommand scpCommand = ioChannel.readScpCommand();
             if (!(scpCommand instanceof ScpCopyCommand)) {
-                throw new SshException("Unexpected SCP protocol command (only support single files)");
+                throw new SshException(
+                        "Unexpected SCP protocol command"
+                        + " (only support single files)");
             }
             return (ScpCopyCommand) scpCommand;
         } catch (IOException ex) {
@@ -65,9 +93,16 @@ public class JSchScpDownload extends JSchScpOperation implements ScpDownload {
         }
     }
 
-    private FileOutputStream getOutputStream(File localFile) throws SshException {
+    /**
+     * Creates a {@link FileOutputStream} for the local file.
+     *
+     * @param localFile the file the stream should write to
+     *
+     * @return the output stream
+     */
+    private FileOutputStream getOutputStream(final File localFile) {
         try {
-            return ioFactory.createFileOutputStream(localFile);
+            return getIoFactory().createFileOutputStream(localFile);
         } catch (FileNotFoundException ex) {
             updateStatus(SshErrorStatus.FILE_OPEN_ERROR);
             throw new SshException(ERROR_FILE_LOCAL_OPEN, ex);

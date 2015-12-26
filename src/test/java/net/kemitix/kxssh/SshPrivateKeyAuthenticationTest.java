@@ -3,13 +3,14 @@ package net.kemitix.kxssh;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.mockito.Mockito;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -37,11 +38,10 @@ public class SshPrivateKeyAuthenticationTest {
     /**
      * Test of prepare method, of class SshPrivateKeyAuthentication.
      *
-     * @throws net.kemitix.kxssh.SshException
      * @throws com.jcraft.jsch.JSchException
      */
     @Test
-    public void testPrepare() throws SshException, JSchException {
+    public void testPrepare() throws JSchException {
         //given
 
         //when
@@ -56,11 +56,10 @@ public class SshPrivateKeyAuthenticationTest {
      *
      * JSchException is thrown
      *
-     * @throws net.kemitix.kxssh.SshException
      * @throws com.jcraft.jsch.JSchException
      */
     @Test(expected = SshException.class)
-    public void testPrepareJSchException() throws SshException, JSchException {
+    public void testPrepareJSchException() throws JSchException {
         //given
         Mockito.doThrow(JSchException.class)
                 .when(jsch)

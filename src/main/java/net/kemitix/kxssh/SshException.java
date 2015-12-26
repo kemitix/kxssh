@@ -1,12 +1,28 @@
 package net.kemitix.kxssh;
 
-public class SshException extends Exception {
+/**
+ * Represents an exception thrown by the kxssh library.
+ *
+ * @author pcampbell
+ */
+public class SshException extends RuntimeException {
 
-    public SshException(String message) {
+    /**
+     * Constructor.
+     *
+     * @param message the message
+     */
+    public SshException(final String message) {
         super(message);
     }
 
-    public SshException(String message, Throwable cause) {
+    /**
+     * Constructor.
+     *
+     * @param message the message
+     * @param cause   the original cause
+     */
+    public SshException(final String message, final Throwable cause) {
         super(message, cause);
     }
 

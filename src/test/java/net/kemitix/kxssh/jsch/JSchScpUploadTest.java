@@ -1,12 +1,5 @@
 package net.kemitix.kxssh.jsch;
 
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.Session;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import net.kemitix.kxssh.SshConnectionProperties;
 import net.kemitix.kxssh.SshErrorStatus;
 import net.kemitix.kxssh.SshException;
@@ -15,14 +8,24 @@ import net.kemitix.kxssh.SshOperationStatus;
 import net.kemitix.kxssh.SshPasswordAuthentication;
 import net.kemitix.kxssh.SshStatus;
 import net.kemitix.kxssh.SshStatusListener;
-import static org.hamcrest.CoreMatchers.is;
+
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.Session;
 import org.junit.After;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.BlockJUnit4ClassRunner;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doThrow;
@@ -64,7 +67,8 @@ public class JSchScpUploadTest {
         input = mock(FileInputStream.class);
         output = mock(FileOutputStream.class);
         connectionProperties = mock(SshConnectionProperties.class);
-        upload = new JSchScpUpload(connectionProperties);
+        upload = new JSchScpUpload(connectionProperties, jschFactory,
+                ioFactory);
 
         byte[] buffer = "test file".getBytes("UTF-8");
         new FileOutputStream(localFile).write(buffer);
@@ -137,7 +141,7 @@ public class JSchScpUploadTest {
     }
 
     @Test
-    public void testUpload() throws SshException {
+    public void testUpload() {
         //given
         upload.setStatusListener(listener);
         upload.setIoChannel(ioChannel);
@@ -155,11 +159,10 @@ public class JSchScpUploadTest {
     }
 
     @Test(expected = SshException.class)
-    public void testGetInputStreamFileNotFoundException() throws FileNotFoundException, SshException {
+    public void testGetInputStreamFileNotFoundException() throws FileNotFoundException {
         //given
         upload.setStatusListener(listener);
         upload.setIoChannel(ioChannel);
-        upload.setIoFactory(ioFactory);
         when(ioFactory.createFileInputStream(any())).thenThrow(FileNotFoundException.class);
 
         //when
@@ -170,7 +173,7 @@ public class JSchScpUploadTest {
     }
 
     @Test(expected = SshException.class)
-    public void testUploadIOException() throws SshException, FileNotFoundException, IOException {
+    public void testUploadIOException() throws FileNotFoundException, IOException {
         //given
         upload.setStatusListener(listener);
         upload.setIoChannel(ioChannel);

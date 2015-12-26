@@ -1,30 +1,29 @@
 package net.kemitix.kxssh.scp;
 
-import java.io.UnsupportedEncodingException;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.BlockJUnit4ClassRunner;
 
+import java.io.UnsupportedEncodingException;
+
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+
 @RunWith(BlockJUnit4ClassRunner.class)
 public class ScpCopyCommandTest {
 
     private ScpCopyCommand scpCopyCommand;
-    private byte[] fileMode;
+    private String fileMode;
     private long length;
     private String name;
 
     @Before
     public void setUp() {
         scpCopyCommand = new ScpCopyCommand();
-        fileMode = new byte[4];
-        fileMode[0] = '0';
-        fileMode[1] = '7';
-        fileMode[2] = '6';
-        fileMode[3] = '4';
+        fileMode = "0764";
         length = 1234L;
         name = "file name";
     }
@@ -40,10 +39,7 @@ public class ScpCopyCommandTest {
         scpCopyCommand.setFileMode(fileMode);
 
         //then
-        assertThat(scpCopyCommand.getFileMode()[0], is(fileMode[0]));
-        assertThat(scpCopyCommand.getFileMode()[1], is(fileMode[1]));
-        assertThat(scpCopyCommand.getFileMode()[2], is(fileMode[2]));
-        assertThat(scpCopyCommand.getFileMode()[3], is(fileMode[3]));
+        assertEquals(fileMode, scpCopyCommand.getFileMode());
     }
 
     /**
@@ -106,7 +102,7 @@ public class ScpCopyCommandTest {
     @Test(expected = IllegalArgumentException.class)
     public void testGetBytesBadFileModeArray() throws UnsupportedEncodingException {
         //given
-        byte[] shortFileMode = new byte[3];
+        String shortFileMode = "123";
         scpCopyCommand.setFileMode(shortFileMode);
         scpCopyCommand.setLength(length);
         scpCopyCommand.setName(name);

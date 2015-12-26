@@ -1,35 +1,59 @@
 package net.kemitix.kxssh.jsch;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import net.kemitix.kxssh.ScpUpload;
 import net.kemitix.kxssh.SshConnectionProperties;
 import net.kemitix.kxssh.SshErrorStatus;
 import net.kemitix.kxssh.SshException;
+import net.kemitix.kxssh.SshIOFactory;
 import net.kemitix.kxssh.SshOperationStatus;
 import net.kemitix.kxssh.scp.ScpCopyCommand;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+
+/**
+ * Implementation of the SCP Upload operation using JCSH.
+ *
+ * @author pcampbell
+ */
 class JSchScpUpload extends JSchScpOperation implements ScpUpload {
 
-    private static final String ERROR_FILE_LOCAL_OPEN = "Error opening local file for writing";
+    private static final String ERROR_FILE_LOCAL_OPEN
+            = "Error opening local file for writing";
 
-    public JSchScpUpload(SshConnectionProperties connectionProperties) {
-        super(connectionProperties);
+    /**
+     * Constructor.
+     *
+     * @param connectionProperties the remote host and authentication details
+     * @param jschFactory          the JSCH factory
+     * @param sshIOFactory         the SSH IO factory
+     */
+    JSchScpUpload(
+            final SshConnectionProperties connectionProperties,
+            final JSchFactory jschFactory,
+            final SshIOFactory sshIOFactory) {
+        super(connectionProperties, jschFactory, sshIOFactory);
     }
 
     @Override
-    public void upload(File localFile, String remoteFilename) throws SshException {
-        byte[] fileMode = new byte[4];
-        fileMode[0] = '0';
-        fileMode[1] = '6';
-        fileMode[2] = '4';
-        fileMode[3] = '0';
-        upload(localFile, remoteFilename, fileMode);
+    public void upload(final File localFile, final String remoteFilename) {
+        upload(localFile, remoteFilename, "0640");
     }
 
-    public void upload(File localFile, String remoteFilename, byte[] fileMode) throws SshException {
+    /**
+     * Uploads the local file to the remote server.
+     *
+     * @param localFile      the local file to be uploaded
+     * @param remoteFilename the file name on the remote server to upload to
+     * @param fileMode       the Unix file permissions to be set on the uploaded
+     *                       file
+     */
+    public void upload(
+            final File localFile,
+            final String remoteFilename,
+            final String fileMode) {
         updateStatus(SshOperationStatus.STARTING);
         JSchIOChannel ioChannel = getExecIOChannel();
 
@@ -65,9 +89,16 @@ class JSchScpUpload extends JSchScpOperation implements ScpUpload {
         updateStatus(SshOperationStatus.DISCONNECTED);
     }
 
-    private InputStream getInputStream(File localFile) throws SshException {
+    /**
+     * Creates an {@link InputStream} for the local file.
+     *
+     * @param localFile the file the stream should read from
+     *
+     * @return the input stream
+     */
+    private InputStream getInputStream(final File localFile) {
         try {
-            return ioFactory.createFileInputStream(localFile);
+            return getIoFactory().createFileInputStream(localFile);
         } catch (FileNotFoundException ex) {
             updateStatus(SshErrorStatus.FILE_OPEN_ERROR);
             throw new SshException(ERROR_FILE_LOCAL_OPEN, ex);

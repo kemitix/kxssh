@@ -1,5 +1,10 @@
 package net.kemitix.kxssh;
 
+/**
+ * Enumerations of error statuses for an SSH connection.
+ *
+ * @author pcampbell
+ */
 public enum SshErrorStatus implements SshStatus {
 
     HOSTNAME_ERROR,

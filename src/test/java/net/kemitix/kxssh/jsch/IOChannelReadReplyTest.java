@@ -1,12 +1,14 @@
 package net.kemitix.kxssh.jsch;
 
 import net.kemitix.kxssh.IOChannelReadReply;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.BlockJUnit4ClassRunner;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 @RunWith(BlockJUnit4ClassRunner.class)
 public class IOChannelReadReplyTest {
@@ -57,10 +59,10 @@ public class IOChannelReadReplyTest {
         byte[] buffer = new byte[1000];
 
         //when
-        reply.setBuffer(buffer);
+        reply.setBuffer(new String(buffer));
 
         //then
-        assertThat(reply.getBuffer(), is(buffer));
+        assertThat(reply.getBuffer(), is(new String(buffer)));
     }
 
 }

@@ -1,29 +1,28 @@
 package net.kemitix.kxssh.scp;
 
-import java.io.UnsupportedEncodingException;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.BlockJUnit4ClassRunner;
 
+import java.io.UnsupportedEncodingException;
+
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+
 @RunWith(BlockJUnit4ClassRunner.class)
 public class ScpDirectoryCommandTest {
 
     private ScpDirectoryCommand scpDirectoryCommand;
-    private byte[] fileMode;
+    private String fileMode;
     private String name;
 
     @Before
     public void setUp() {
         scpDirectoryCommand = new ScpDirectoryCommand();
-        fileMode = new byte[4];
-        fileMode[0] = '0';
-        fileMode[1] = '7';
-        fileMode[2] = '6';
-        fileMode[3] = '4';
+        fileMode = "0764";
         name = "directory name";
     }
 
@@ -56,10 +55,7 @@ public class ScpDirectoryCommandTest {
         scpDirectoryCommand.setFileMode(fileMode);
 
         //then
-        assertThat(scpDirectoryCommand.getFileMode()[0], is(fileMode[0]));
-        assertThat(scpDirectoryCommand.getFileMode()[1], is(fileMode[1]));
-        assertThat(scpDirectoryCommand.getFileMode()[2], is(fileMode[2]));
-        assertThat(scpDirectoryCommand.getFileMode()[3], is(fileMode[3]));
+        assertEquals(fileMode, scpDirectoryCommand.getFileMode());
     }
 
     /**
@@ -107,7 +103,7 @@ public class ScpDirectoryCommandTest {
     @Test(expected = IllegalArgumentException.class)
     public void testGetBytesBadFileModeArray() throws UnsupportedEncodingException {
         //given
-        byte[] shortFileMode = new byte[3];
+        String shortFileMode = "123";
         scpDirectoryCommand.setFileMode(shortFileMode);
         scpDirectoryCommand.setName(name);
 

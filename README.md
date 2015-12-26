@@ -4,6 +4,10 @@ Java SSH client (wrapper for jsch)
 master: [![Build Status](https://travis-ci.org/kemitix/kxssh.svg?branch=master)](https://travis-ci.org/kemitix/kxssh)
 develop: [![Build Status](https://travis-ci.org/kemitix/kxssh.svg?branch=develop)](https://travis-ci.org/kemitix/kxssh)
 
+## Reference
+
+* [How the SCP protocol works](https://blogs.oracle.com/janp/entry/how_the_scp_protocol_works)
+
 ## Usage
 
 ### Password Authenticated Client

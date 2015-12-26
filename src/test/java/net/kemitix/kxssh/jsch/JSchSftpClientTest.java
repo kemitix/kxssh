@@ -1,22 +1,24 @@
 package net.kemitix.kxssh.jsch;
 
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.Session;
-import java.io.File;
-import java.io.IOException;
 import net.kemitix.kxssh.SshAuthentication;
 import net.kemitix.kxssh.SshConnectionProperties;
-import net.kemitix.kxssh.SshException;
 import net.kemitix.kxssh.SshOperationStatus;
 import net.kemitix.kxssh.SshPasswordAuthentication;
 import net.kemitix.kxssh.SshStatus;
 import net.kemitix.kxssh.SshStatusListener;
+
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.BlockJUnit4ClassRunner;
+
+import java.io.File;
+import java.io.IOException;
+
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -41,7 +43,7 @@ public class JSchSftpClientTest {
     private File local;
 
     @Before
-    public void setUp() throws IOException, JSchException, SshException {
+    public void setUp() throws IOException, JSchException {
         connectionProperties = mock(SshConnectionProperties.class);
         authentication = mock(SshPasswordAuthentication.class);
         statusListener = mock(SshStatusListener.class);
@@ -63,9 +65,6 @@ public class JSchSftpClientTest {
         when(jSchFactory.build()).thenReturn(jsch);
         when(jsch.getSession(username, hostname)).thenReturn(session);
 
-        download.setJschFactory(jSchFactory);
-        upload.setJschFactory(jSchFactory);
-
         client = new JSchSftpClient(connectionProperties);
         client.setDownload(download);
         client.setUpload(upload);
@@ -82,11 +81,9 @@ public class JSchSftpClientTest {
 
     /**
      * Test of download method, of class JSchSftpClient.
-     *
-     * @throws net.kemitix.kxssh.SshException
      */
     @Test
-    public void testDownload() throws SshException {
+    public void testDownload() {
         //given
 
         //when
@@ -100,11 +97,9 @@ public class JSchSftpClientTest {
      * Test of download method, of class JSchSftpclient.
      *
      * When download not already set
-     *
-     * @throws net.kemitix.kxssh.SshException
      */
     @Test
-    public void testDownloadDownloadNotSet() throws SshException {
+    public void testDownloadDownloadNotSet() {
         //given
         client.setDownload(null);
 
@@ -147,11 +142,9 @@ public class JSchSftpClientTest {
 
     /**
      * Test of upload method, of class JSchSftpClient.
-     *
-     * @throws net.kemitix.kxssh.SshException
      */
     @Test
-    public void testUpload() throws SshException {
+    public void testUpload() {
         //given
 
         //when
@@ -165,11 +158,9 @@ public class JSchSftpClientTest {
      * Test of upload method, of class JSchSftpclient.
      *
      * When upload not already set
-     *
-     * @throws net.kemitix.kxssh.SshException
      */
     @Test
-    public void testUploadUploadNotSet() throws SshException {
+    public void testUploadUploadNotSet() {
         //given
         client.setUpload(null);
 

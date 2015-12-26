@@ -1,13 +1,26 @@
 package net.kemitix.kxssh.jsch;
 
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.JSchException;
 import net.kemitix.kxssh.SshAuthentication;
 import net.kemitix.kxssh.SshException;
 
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+
+/**
+ * Factory class to create an authenticated {@link JSch} connection.
+ *
+ * @author pcampbell
+ */
 public class JSchFactory {
 
-    public JSch build() throws SshException, JSchException {
+    /**
+     * Creates the {@link JSch} object.
+     *
+     * @return the created {@link JSch}
+     *
+     * @throws JSchException if error setting the known_hosts filename
+     */
+    public JSch build() throws JSchException {
         JSch jsch = new JSch();
         if (knownHosts != null) {
             jsch.setKnownHosts(knownHosts);
@@ -21,15 +34,29 @@ public class JSchFactory {
 
     private SshAuthentication authentication;
 
-    public JSchFactory authenticate(SshAuthentication authentication) {
-        this.authentication = authentication;
+    /**
+     * Sets the authentication method.
+     *
+     * @param sshAuthentication the authentication method
+     *
+     * @return the factory to allow chained methods
+     */
+    public JSchFactory authenticate(final SshAuthentication sshAuthentication) {
+        authentication = sshAuthentication;
         return this;
     }
 
     private String knownHosts;
 
-    public JSchFactory knownHosts(String knownHosts) {
-        this.knownHosts = knownHosts;
+    /**
+     * Sets the name of the known_hosts file.
+     *
+     * @param knownHostsFilename the filename of the known_hosts file
+     *
+     * @return the factory to allow chained methods
+     */
+    public JSchFactory knownHosts(final String knownHostsFilename) {
+        knownHosts = knownHostsFilename;
         return this;
     }
 }

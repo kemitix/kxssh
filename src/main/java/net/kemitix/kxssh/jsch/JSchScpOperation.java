@@ -1,11 +1,5 @@
 package net.kemitix.kxssh.jsch;
 
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.Session;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import lombok.Setter;
 import net.kemitix.kxssh.SshAuthentication;
 import net.kemitix.kxssh.SshConnectionProperties;
 import net.kemitix.kxssh.SshErrorStatus;
@@ -15,26 +9,60 @@ import net.kemitix.kxssh.SshStatus;
 import net.kemitix.kxssh.SshStatusListener;
 import net.kemitix.kxssh.SshStatusProvider;
 
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.java.Log;
+
+import java.util.logging.Level;
+
+/**
+ * Abstract class representing an SCP operation using JSCH.
+ *
+ * @author pcampbell
+ */
+@Log
 @Setter
 public abstract class JSchScpOperation implements SshStatusProvider {
 
     private String knownHosts = "~/.ssh/known_hosts";
 
-    protected final SshConnectionProperties connectionProperties;
+    private final SshConnectionProperties connectionProperties;
 
-    protected SshIOFactory ioFactory;
+    @Getter(AccessLevel.PROTECTED)
+    private final SshIOFactory ioFactory;
 
-    private JSchFactory jschFactory;
+    private final JSchFactory jFactory;
 
-    public JSchScpOperation(SshConnectionProperties connectionProperties) {
-        this.connectionProperties = connectionProperties;
-        jschFactory = new JSchFactory();
-        ioFactory = new SshIOFactory();
+    /**
+     * Constructor.
+     *
+     * @param connectionProps the remote host and authentication details
+     * @param jschFactory     the JSCH factory
+     * @param sshIOFactory    the SSH IO factory
+     */
+    public JSchScpOperation(
+            final SshConnectionProperties connectionProps,
+            final JSchFactory jschFactory,
+            final SshIOFactory sshIOFactory) {
+        connectionProperties = connectionProps;
+        jFactory = jschFactory;
+        ioFactory = sshIOFactory;
     }
 
-    protected JSch getJSch(SshAuthentication authentication) throws SshException {
+    /**
+     * Create a {@link JSch} instance using the provided authentication.
+     *
+     * @param authentication the authentication details
+     *
+     * @return the JSCH object
+     */
+    protected JSch getJSch(final SshAuthentication authentication) {
         try {
-            return jschFactory
+            return jFactory
                     .knownHosts(knownHosts)
                     .authenticate(authentication)
                     .build();
@@ -46,7 +74,13 @@ public abstract class JSchScpOperation implements SshStatusProvider {
     // IOCHANNEL
     private JSchIOChannel ioChannel;
 
-    protected JSchIOChannel getExecIOChannel() throws SshException {
+    /**
+     * Creates, as needed, the IO Channel for sending and receiving execution
+     * commands.
+     *
+     * @return the JSCH IO Channel
+     */
+    protected JSchIOChannel getExecIOChannel() {
         if (ioChannel == null) {
             ioChannel = JSchIOChannel.createExecIOChannel(getSession());
             ioChannel.setStatusListener(statusListener);
@@ -54,6 +88,9 @@ public abstract class JSchScpOperation implements SshStatusProvider {
         return ioChannel;
     }
 
+    /**
+     * Disconnects the IO Channel and session.
+     */
     protected void disconnect() {
         if (ioChannel != null) {
             ioChannel.disconnect();
@@ -67,15 +104,22 @@ public abstract class JSchScpOperation implements SshStatusProvider {
 
     // SESSION
     private static final String ERROR_SESSION_HOST = "Error host not set";
-    private static final String ERROR_SESSION = "Error creating/connecting session";
+    private static final String ERROR_SESSION
+            = "Error creating/connecting session";
 
     private Session session;
 
-    protected Session getSession() throws SshException {
+    /**
+     * Creates, as needed, the session.
+     *
+     * @return the JSCH session
+     */
+    protected Session getSession() {
         if (session != null) {
             return session;
         }
-        SshAuthentication authentication = connectionProperties.getAuthentication();
+        SshAuthentication authentication
+                = connectionProperties.getAuthentication();
         String hostname = connectionProperties.getHostname();
         String username = authentication.getUsername();
 
@@ -93,10 +137,9 @@ public abstract class JSchScpOperation implements SshStatusProvider {
             session.connect();
         } catch (JSchException ex) {
             if (ex.getMessage().contains("UnknownHostKey")) {
-                Logger.getLogger(this.getClass().getName())
-                        .log(Level.SEVERE, "Try adding key with: ssh-keyscan -t rsa {0} >> {1}", new Object[]{
-                            hostname, knownHosts
-                        });
+                log.log(Level.SEVERE,
+                        "Try adding key with: ssh-keyscan -t rsa {0} >> {1}",
+                        new Object[]{hostname, knownHosts});
             }
             updateStatus(SshErrorStatus.SESSION_ERROR);
             throw new SshException(ERROR_SESSION, ex);
@@ -108,19 +151,19 @@ public abstract class JSchScpOperation implements SshStatusProvider {
     private SshStatusListener statusListener;
 
     @Override
-    public void setStatusListener(SshStatusListener statusListener) {
-        this.statusListener = statusListener;
+    public void setStatusListener(final SshStatusListener listener) {
+        statusListener = listener;
     }
 
     @Override
-    public void updateProgress(long progress, long total) {
+    public void updateProgress(final long progress, final long total) {
         if (statusListener != null) {
             statusListener.onUpdateProgress(progress, total);
         }
     }
 
     @Override
-    public void updateStatus(SshStatus status) {
+    public void updateStatus(final SshStatus status) {
         if (statusListener != null) {
             statusListener.onUpdateStatus(status);
         }
