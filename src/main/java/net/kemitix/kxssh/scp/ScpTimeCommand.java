@@ -35,7 +35,7 @@ class ScpTimeCommand extends ScpCommand {
      *
      * @throws UnsupportedEncodingException not thrown
      */
-    public ScpTimeCommand(String commandLine)
+    public ScpTimeCommand(final String commandLine)
             throws UnsupportedEncodingException {
         parseCommandLine(commandLine);
     }
@@ -47,7 +47,7 @@ class ScpTimeCommand extends ScpCommand {
      *
      * @throws UnsupportedEncodingException not thrown
      */
-    private void parseCommandLine(String commandLine)
+    private void parseCommandLine(final String commandLine)
             throws UnsupportedEncodingException {
         // parse "mtime 0 atime 0"
         Matcher matcher

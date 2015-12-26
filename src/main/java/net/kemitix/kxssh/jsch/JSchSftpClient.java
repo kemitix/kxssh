@@ -28,12 +28,12 @@ public class JSchSftpClient implements SftpClient {
      *
      * @param connectionProperties the remote host and authentication details
      */
-    public JSchSftpClient(SshConnectionProperties connectionProperties) {
+    public JSchSftpClient(final SshConnectionProperties connectionProperties) {
         this.connectionProperties = connectionProperties;
     }
 
     @Override
-    public void download(String remoteFilename, File localFile) {
+    public void download(final String remoteFilename, final File localFile) {
         requireDownload();
         download.download(remoteFilename, localFile);
     }
@@ -49,7 +49,7 @@ public class JSchSftpClient implements SftpClient {
     }
 
     @Override
-    public void upload(File localFile, String remoteFilename) {
+    public void upload(final File localFile, final String remoteFilename) {
         requireUpload();
         upload.upload(localFile, remoteFilename);
     }
@@ -68,17 +68,17 @@ public class JSchSftpClient implements SftpClient {
     private SshStatusListener statusListener;
 
     @Override
-    public void setStatusListener(SshStatusListener statusListener) {
+    public void setStatusListener(final SshStatusListener statusListener) {
         this.statusListener = statusListener;
     }
 
     @Override
-    public void updateProgress(long progress, long total) {
+    public void updateProgress(final long progress, final long total) {
         statusListener.onUpdateProgress(progress, total);
     }
 
     @Override
-    public void updateStatus(SshStatus status) {
+    public void updateStatus(final SshStatus status) {
         statusListener.onUpdateStatus(status);
     }
 

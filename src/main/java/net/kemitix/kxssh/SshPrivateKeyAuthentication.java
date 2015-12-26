@@ -24,16 +24,16 @@ public class SshPrivateKeyAuthentication extends SshAuthentication {
      * @param passPhrase the pass-phrase to open the private key
      */
     public SshPrivateKeyAuthentication(
-            String username,
-            String privateKey,
-            String passPhrase) {
+            final String username,
+            final String privateKey,
+            final String passPhrase) {
         super(username);
         this.privateKey = privateKey;
         this.passPhrase = passPhrase;
     }
 
     @Override
-    public void prepare(JSch jsch) {
+    public void prepare(final JSch jsch) {
         try {
             jsch.addIdentity(privateKey, passPhrase);
         } catch (JSchException ex) {
@@ -42,7 +42,7 @@ public class SshPrivateKeyAuthentication extends SshAuthentication {
     }
 
     @Override
-    public void authenticateSession(Session session) {
+    public void authenticateSession(final Session session) {
         //nothing needed done
     }
 

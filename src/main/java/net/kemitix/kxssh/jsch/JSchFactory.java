@@ -41,7 +41,7 @@ public class JSchFactory {
      *
      * @return the factory to allow chained methods
      */
-    public JSchFactory authenticate(SshAuthentication authentication) {
+    public JSchFactory authenticate(final SshAuthentication authentication) {
         this.authentication = authentication;
         return this;
     }
@@ -55,7 +55,7 @@ public class JSchFactory {
      *
      * @return the factory to allow chained methods
      */
-    public JSchFactory knownHosts(String knownHosts) {
+    public JSchFactory knownHosts(final String knownHosts) {
         this.knownHosts = knownHosts;
         return this;
     }

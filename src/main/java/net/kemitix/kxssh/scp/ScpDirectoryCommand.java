@@ -23,7 +23,7 @@ class ScpDirectoryCommand extends ScpTransferCommand {
      *
      * @throws UnsupportedEncodingException not thrown
      */
-    public ScpDirectoryCommand(String commandLine)
+    public ScpDirectoryCommand(final String commandLine)
             throws UnsupportedEncodingException {
         super(commandLine);
         setLength(0);

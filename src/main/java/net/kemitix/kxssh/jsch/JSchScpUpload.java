@@ -27,12 +27,12 @@ class JSchScpUpload extends JSchScpOperation implements ScpUpload {
      *
      * @param connectionProperties the remote host and authentication details
      */
-    public JSchScpUpload(SshConnectionProperties connectionProperties) {
+    public JSchScpUpload(final SshConnectionProperties connectionProperties) {
         super(connectionProperties);
     }
 
     @Override
-    public void upload(File localFile, String remoteFilename) {
+    public void upload(final File localFile, final String remoteFilename) {
         byte[] fileMode = new byte[4];
         fileMode[0] = '0';
         fileMode[1] = '6';
@@ -49,7 +49,10 @@ class JSchScpUpload extends JSchScpOperation implements ScpUpload {
      * @param fileMode       the Unix file permissions to be set on the uploaded
      *                       file
      */
-    public void upload(File localFile, String remoteFilename, byte[] fileMode) {
+    public void upload(
+            final File localFile,
+            final String remoteFilename,
+            final byte[] fileMode) {
         updateStatus(SshOperationStatus.STARTING);
         JSchIOChannel ioChannel = getExecIOChannel();
 
@@ -92,7 +95,7 @@ class JSchScpUpload extends JSchScpOperation implements ScpUpload {
      *
      * @return the input stream
      */
-    private InputStream getInputStream(File localFile) {
+    private InputStream getInputStream(final File localFile) {
         try {
             return ioFactory.createFileInputStream(localFile);
         } catch (FileNotFoundException ex) {

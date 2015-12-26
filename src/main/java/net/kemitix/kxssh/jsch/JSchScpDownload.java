@@ -29,7 +29,7 @@ public class JSchScpDownload extends JSchScpOperation implements ScpDownload {
      *
      * @param connectionProperties the remote host and authentication details
      */
-    public JSchScpDownload(SshConnectionProperties connectionProperties) {
+    public JSchScpDownload(final SshConnectionProperties connectionProperties) {
         super(connectionProperties);
     }
 
@@ -38,7 +38,7 @@ public class JSchScpDownload extends JSchScpOperation implements ScpDownload {
     private static final String ERROR_ACK = "Error in ACK";
 
     @Override
-    public void download(String remoteFilename, File localFile) {
+    public void download(final String remoteFilename, final File localFile) {
         updateStatus(SshOperationStatus.STARTING);
         JSchIOChannel ioChannel = getExecIOChannel();
         updateStatus(SshOperationStatus.DOWNLOADING);
@@ -73,7 +73,7 @@ public class JSchScpDownload extends JSchScpOperation implements ScpDownload {
      *
      * @return the SCP Copy command
      */
-    private ScpCopyCommand readScpCopyCommand(JSchIOChannel ioChannel) {
+    private ScpCopyCommand readScpCopyCommand(final JSchIOChannel ioChannel) {
         try {
             ScpCommand scpCommand = ioChannel.readScpCommand();
             if (!(scpCommand instanceof ScpCopyCommand)) {
@@ -94,7 +94,7 @@ public class JSchScpDownload extends JSchScpOperation implements ScpDownload {
      *
      * @return the output stream
      */
-    private FileOutputStream getOutputStream(File localFile) {
+    private FileOutputStream getOutputStream(final File localFile) {
         try {
             return ioFactory.createFileOutputStream(localFile);
         } catch (FileNotFoundException ex) {

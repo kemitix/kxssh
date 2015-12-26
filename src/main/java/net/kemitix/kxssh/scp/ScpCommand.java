@@ -31,7 +31,7 @@ public abstract class ScpCommand {
      * @throws UnsupportedEncodingException if there is an error decoding the
      *                                      command
      */
-    public static ScpCommand parse(String commandLine)
+    public static ScpCommand parse(final String commandLine)
             throws UnsupportedEncodingException {
         char commandPrefix = commandLine.charAt(0);
         switch (commandPrefix) {

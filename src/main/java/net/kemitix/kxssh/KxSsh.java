@@ -19,7 +19,10 @@ public class KxSsh {
      *
      * @return an {@link SftpClient}
      */
-    public static SftpClient getSftpClient(String hostname, String username, String password) {
+    public static SftpClient getSftpClient(
+            final String hostname,
+            final String username,
+            final String password) {
         SshPasswordAuthentication authentication
                 = new SshPasswordAuthentication(username, password);
         SftpClient client
@@ -38,9 +41,14 @@ public class KxSsh {
      *
      * @return an {@link SftpClient}
      */
-    public static SftpClient getSftpClient(String hostname, String username, String privateKey, String passPhrase) {
+    public static SftpClient getSftpClient(
+            final String hostname,
+            final String username,
+            final String privateKey,
+            final String passPhrase) {
         SshPrivateKeyAuthentication authentication
-                = new SshPrivateKeyAuthentication(username, privateKey, passPhrase);
+                = new SshPrivateKeyAuthentication(username, privateKey,
+                        passPhrase);
         SftpClient client
                 = getAuthenticatedClient(hostname, authentication);
         return client;
@@ -55,7 +63,9 @@ public class KxSsh {
      *
      * @return an {@link SftpClient}
      */
-    private static SftpClient getAuthenticatedClient(String hostname, SshAuthentication authentication) {
+    private static SftpClient getAuthenticatedClient(
+            final String hostname,
+            final SshAuthentication authentication) {
         SshConnectionProperties connectionProperties
                 = new SshConnectionProperties(hostname, authentication);
         SftpClient client = new JSchSftpClient(connectionProperties);

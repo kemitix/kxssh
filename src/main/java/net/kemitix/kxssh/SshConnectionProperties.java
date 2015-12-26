@@ -21,8 +21,8 @@ public class SshConnectionProperties {
      * @param authentication the authentication details
      */
     public SshConnectionProperties(
-            String hostname,
-            SshAuthentication authentication) {
+            final String hostname,
+            final SshAuthentication authentication) {
         this.hostname = hostname;
         this.authentication = authentication;
     }

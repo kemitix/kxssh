@@ -51,7 +51,7 @@ public class JSchIOChannel implements SshStatusProvider {
      *
      * @return the JSCH IO Channel
      */
-    public static JSchIOChannel createExecIOChannel(Session session) {
+    public static JSchIOChannel createExecIOChannel(final Session session) {
         JSchIOChannel ioChannel = new JSchIOChannel();
         try {
             ioChannel.setChannel(session.openChannel("exec"));
@@ -72,7 +72,7 @@ public class JSchIOChannel implements SshStatusProvider {
      * @throws IOException if there is an error getting either of the IO streams
      *                     from the channel
      */
-    protected void setChannel(Channel channel) throws IOException {
+    protected void setChannel(final Channel channel) throws IOException {
         this.channel = channel;
         if (channel == null) {
             output = null;
@@ -88,7 +88,7 @@ public class JSchIOChannel implements SshStatusProvider {
      *
      * @param remoteCommand the command
      */
-    public void setExecCommand(String remoteCommand) {
+    public void setExecCommand(final String remoteCommand) {
         ((ChannelExec) channel).setCommand(remoteCommand);
     }
 
@@ -149,7 +149,7 @@ public class JSchIOChannel implements SshStatusProvider {
      * @return a read reply object containing the status of the read and the
      *         bytes, if any, read
      */
-    public IOChannelReadReply read(int length) {
+    public IOChannelReadReply read(final int length) {
         requireConnection();
         byte[] buffer = new byte[length];
         int bytesRead;
@@ -173,7 +173,8 @@ public class JSchIOChannel implements SshStatusProvider {
      *
      * @throws IOException if there is an error writing to the channel
      */
-    void write(byte[] buffer, int offset, int length) throws IOException {
+    void write(final byte[] buffer, final int offset, final int length)
+            throws IOException {
         requireConnection();
         output.write(buffer, offset, length);
     }
@@ -242,7 +243,7 @@ public class JSchIOChannel implements SshStatusProvider {
      *
      * @throws IOException if there is an error reading from the input stream
      */
-    public String readToEol(char terminator) throws IOException {
+    public String readToEol(final char terminator) throws IOException {
         requireConnection();
         StringBuilder sb = new StringBuilder();
         int c;
@@ -294,7 +295,7 @@ public class JSchIOChannel implements SshStatusProvider {
      * @param stream the stream to write to
      * @param length the number of bytes to write
      */
-    void writeToStream(OutputStream stream, long length) {
+    void writeToStream(final OutputStream stream, final long length) {
         long remaining = length;
         updateProgress(0, length);
         do {
@@ -325,7 +326,8 @@ public class JSchIOChannel implements SshStatusProvider {
      * @throws IOException if there is an error reading from the supplied input
      *                     stream of writing to the output stream
      */
-    void readFromStream(InputStream stream, long length) throws IOException {
+    void readFromStream(final InputStream stream, final long length)
+            throws IOException {
         byte[] buffer = new byte[BLOCK_SIZE];
         long remaining = length;
         updateProgress(0, length);
@@ -344,19 +346,19 @@ public class JSchIOChannel implements SshStatusProvider {
     private SshStatusListener statusListener;
 
     @Override
-    public void setStatusListener(SshStatusListener statusListener) {
+    public void setStatusListener(final SshStatusListener statusListener) {
         this.statusListener = statusListener;
     }
 
     @Override
-    public void updateProgress(long progress, long total) {
+    public void updateProgress(final long progress, final long total) {
         if (statusListener != null) {
             statusListener.onUpdateProgress(progress, total);
         }
     }
 
     @Override
-    public void updateStatus(SshStatus status) {
+    public void updateStatus(final SshStatus status) {
         if (statusListener != null) {
             statusListener.onUpdateStatus(status);
         }

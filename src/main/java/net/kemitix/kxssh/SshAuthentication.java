@@ -23,7 +23,8 @@ public abstract class SshAuthentication {
      *
      * @param username the user to authenticate as
      */
-    public SshAuthentication(String username) {
+    @SuppressWarnings("hiddenfield")
+    public SshAuthentication(final String username) {
         this.username = username;
     }
 

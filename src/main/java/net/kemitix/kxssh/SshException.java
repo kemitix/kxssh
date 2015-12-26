@@ -12,7 +12,7 @@ public class SshException extends RuntimeException {
      *
      * @param message the message
      */
-    public SshException(String message) {
+    public SshException(final String message) {
         super(message);
     }
 
@@ -22,7 +22,7 @@ public class SshException extends RuntimeException {
      * @param message the message
      * @param cause   the original cause
      */
-    public SshException(String message, Throwable cause) {
+    public SshException(final String message, final Throwable cause) {
         super(message, cause);
     }
 

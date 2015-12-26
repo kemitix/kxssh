@@ -20,18 +20,18 @@ public class SshPasswordAuthentication extends SshAuthentication {
      * @param username the username to authenticate as
      * @param password the password the authenticate with
      */
-    SshPasswordAuthentication(String username, String password) {
+    SshPasswordAuthentication(final String username, final String password) {
         super(username);
         this.password = password;
     }
 
     @Override
-    public void prepare(JSch jsch) {
+    public void prepare(final JSch jsch) {
         // nothing needed done
     }
 
     @Override
-    public void authenticateSession(Session session) {
+    public void authenticateSession(final Session session) {
         session.setPassword(password);
     }
 

@@ -36,7 +36,7 @@ public abstract class ScpTransferCommand extends ScpCommand {
      * @throws UnsupportedEncodingException if there is an error decoding the
      *                                      command
      */
-    public ScpTransferCommand(String commandLine)
+    public ScpTransferCommand(final String commandLine)
             throws UnsupportedEncodingException {
         parseCommandLine(commandLine);
     }
@@ -46,7 +46,7 @@ public abstract class ScpTransferCommand extends ScpCommand {
      *
      * @param fileMode the file mode
      */
-    public void setFileMode(byte[] fileMode) {
+    public void setFileMode(final byte[] fileMode) {
         if (fileMode.length != 4) {
             throw new IllegalArgumentException(
                     "File mode must be 4-byte array");
@@ -69,7 +69,7 @@ public abstract class ScpTransferCommand extends ScpCommand {
      * @throws UnsupportedEncodingException if there is an error decoding the
      *                                      command
      */
-    private void parseCommandLine(String commandLine)
+    private void parseCommandLine(final String commandLine)
             throws UnsupportedEncodingException {
         // parse "mmmm length filename"
         Matcher matcher

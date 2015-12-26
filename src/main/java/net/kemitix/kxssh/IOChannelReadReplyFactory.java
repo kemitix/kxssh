@@ -17,9 +17,9 @@ public class IOChannelReadReplyFactory {
      * @return an {@link IOChannelReadReply}
      */
     public IOChannelReadReply createReply(
-            int bytesRequested,
-            int bytesRead,
-            byte[] buffer) {
+            final int bytesRequested,
+            final int bytesRead,
+            final byte[] buffer) {
         IOChannelReadReply reply = new IOChannelReadReply();
         reply.setBytesRequested(bytesRequested);
         reply.setBytesRead(bytesRead);

@@ -24,7 +24,7 @@ public class SshIOFactory {
      * @throws FileNotFoundException if the file doesn't exist, can't be created
      *                               or can't be written to
      */
-    public FileOutputStream createFileOutputStream(File output)
+    public FileOutputStream createFileOutputStream(final File output)
             throws FileNotFoundException {
         return new FileOutputStream(output);
     }
@@ -39,7 +39,7 @@ public class SshIOFactory {
      * @throws FileNotFoundException if the file doesn't exist, can't be opened
      *                               or can't be read from
      */
-    public InputStream createFileInputStream(File input)
+    public InputStream createFileInputStream(final File input)
             throws FileNotFoundException {
         return new FileInputStream(input);
     }

@@ -37,10 +37,10 @@ public abstract class JSchScpOperation implements SshStatusProvider {
     /**
      * Constructor.
      *
-     * @param connectionProperties the remote host and authentication details
+     * @param connectionProps the remote host and authentication details
      */
-    public JSchScpOperation(SshConnectionProperties connectionProperties) {
-        this.connectionProperties = connectionProperties;
+    public JSchScpOperation(final SshConnectionProperties connectionProps) {
+        this.connectionProperties = connectionProps;
         jschFactory = new JSchFactory();
         ioFactory = new SshIOFactory();
     }
@@ -52,7 +52,7 @@ public abstract class JSchScpOperation implements SshStatusProvider {
      *
      * @return the JSCH object
      */
-    protected JSch getJSch(SshAuthentication authentication) {
+    protected JSch getJSch(final SshAuthentication authentication) {
         try {
             return jschFactory
                     .knownHosts(knownHosts)
@@ -143,19 +143,19 @@ public abstract class JSchScpOperation implements SshStatusProvider {
     private SshStatusListener statusListener;
 
     @Override
-    public void setStatusListener(SshStatusListener statusListener) {
+    public void setStatusListener(final SshStatusListener statusListener) {
         this.statusListener = statusListener;
     }
 
     @Override
-    public void updateProgress(long progress, long total) {
+    public void updateProgress(final long progress, final long total) {
         if (statusListener != null) {
             statusListener.onUpdateProgress(progress, total);
         }
     }
 
     @Override
-    public void updateStatus(SshStatus status) {
+    public void updateStatus(final SshStatus status) {
         if (statusListener != null) {
             statusListener.onUpdateStatus(status);
         }
