@@ -4,7 +4,6 @@ import net.kemitix.kxssh.ScpDownload;
 import net.kemitix.kxssh.ScpUpload;
 import net.kemitix.kxssh.SftpClient;
 import net.kemitix.kxssh.SshConnectionProperties;
-import net.kemitix.kxssh.SshException;
 import net.kemitix.kxssh.SshStatus;
 import net.kemitix.kxssh.SshStatusListener;
 
@@ -34,7 +33,7 @@ public class JSchSftpClient implements SftpClient {
     }
 
     @Override
-    public void download(String remoteFilename, File localFile) throws SshException {
+    public void download(String remoteFilename, File localFile) {
         requireDownload();
         download.download(remoteFilename, localFile);
     }
@@ -50,7 +49,7 @@ public class JSchSftpClient implements SftpClient {
     }
 
     @Override
-    public void upload(File localFile, String remoteFilename) throws SshException {
+    public void upload(File localFile, String remoteFilename) {
         requireUpload();
         upload.upload(localFile, remoteFilename);
     }

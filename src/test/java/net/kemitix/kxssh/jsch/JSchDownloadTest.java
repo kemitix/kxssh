@@ -1,10 +1,5 @@
 package net.kemitix.kxssh.jsch;
 
-import com.jcraft.jsch.Session;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import net.kemitix.kxssh.IOChannelReadReply;
 import net.kemitix.kxssh.SshConnectionProperties;
 import net.kemitix.kxssh.SshErrorStatus;
@@ -14,10 +9,18 @@ import net.kemitix.kxssh.SshOperationStatus;
 import net.kemitix.kxssh.SshStatusListener;
 import net.kemitix.kxssh.scp.ScpCommand;
 import net.kemitix.kxssh.scp.ScpCopyCommand;
+
+import com.jcraft.jsch.Session;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.BlockJUnit4ClassRunner;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 import static org.mockito.Matchers.contains;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -176,10 +179,9 @@ public class JSchDownloadTest {
      * Where readScpCommand() throws an IOException.
      *
      * @throws java.io.IOException
-     * @throws net.kemitix.kxssh.SshException
      */
     @Test(expected = SshException.class)
-    public void testDownloadThrowIOException() throws IOException, SshException {
+    public void testDownloadThrowIOException() throws IOException {
         //given
         String remote = "remote.txt";
         File localFile = new File("local.txt");
@@ -197,10 +199,9 @@ public class JSchDownloadTest {
      * Where readScpCommand() does not return an ScpCopyCommand
      *
      * @throws java.io.IOException
-     * @throws net.kemitix.kxssh.SshException
      */
     @Test(expected = SshException.class)
-    public void testDownloadScpOtherCommand() throws IOException, SshException {
+    public void testDownloadScpOtherCommand() throws IOException {
         //given
         String remote = "remote.txt";
         File localFile = new File("local.txt");

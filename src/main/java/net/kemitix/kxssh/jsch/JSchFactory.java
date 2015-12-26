@@ -18,11 +18,9 @@ public class JSchFactory {
      *
      * @return the created {@link JSch}
      *
-     * @throws SshException  if authentication not set or there is in error in
-     *                       the authentication
      * @throws JSchException if error setting the known_hosts filename
      */
-    public JSch build() throws SshException, JSchException {
+    public JSch build() throws JSchException {
         JSch jsch = new JSch();
         if (knownHosts != null) {
             jsch.setKnownHosts(knownHosts);

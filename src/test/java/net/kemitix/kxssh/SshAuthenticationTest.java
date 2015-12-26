@@ -24,7 +24,7 @@ public class SshAuthenticationTest {
         authentication = new SshAuthentication(username) {
 
             @Override
-            public void prepare(JSch jsch) throws SshException {
+            public void prepare(JSch jsch) {
                 jsch.getClass();
             }
 

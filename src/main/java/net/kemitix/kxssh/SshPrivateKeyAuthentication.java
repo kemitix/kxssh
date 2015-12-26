@@ -30,7 +30,7 @@ public class SshPrivateKeyAuthentication extends SshAuthentication {
     }
 
     @Override
-    public void prepare(JSch jsch) throws SshException {
+    public void prepare(JSch jsch) {
         try {
             jsch.addIdentity(privateKey, passPhrase);
         } catch (JSchException ex) {

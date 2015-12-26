@@ -1,12 +1,5 @@
 package net.kemitix.kxssh.jsch;
 
-import com.jcraft.jsch.Channel;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.Session;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import net.kemitix.kxssh.SshConnectionProperties;
 import net.kemitix.kxssh.SshErrorStatus;
 import net.kemitix.kxssh.SshException;
@@ -14,10 +7,20 @@ import net.kemitix.kxssh.SshIOFactory;
 import net.kemitix.kxssh.SshOperationStatus;
 import net.kemitix.kxssh.SshPasswordAuthentication;
 import net.kemitix.kxssh.SshStatusListener;
+
+import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.BlockJUnit4ClassRunner;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doThrow;
@@ -47,7 +50,7 @@ public class JSchScpOperationTest {
     private JSchIOChannel ioChannel;
 
     @Before
-    public void setUp() throws JSchException, SshException {
+    public void setUp() throws JSchException {
         connectionProperties = mock(SshConnectionProperties.class);
         authentication = mock(SshPasswordAuthentication.class);
         session = mock(Session.class);
@@ -88,11 +91,10 @@ public class JSchScpOperationTest {
     /**
      * Test of getSession method, of class JSchScpOperation
      *
-     * @throws net.kemitix.kxssh.SshException
      * @throws com.jcraft.jsch.JSchException
      */
     @Test
-    public void testInitSession() throws SshException, JSchException {
+    public void testInitSession() throws JSchException {
         //given
 
         //when
@@ -108,11 +110,9 @@ public class JSchScpOperationTest {
      * Test of getSession method, of class JSchScpOperation
      *
      * When session already exists
-     *
-     * @throws net.kemitix.kxssh.SshException
      */
     @Test
-    public void testInitSessionSessionExists() throws SshException {
+    public void testInitSessionSessionExists() {
         //given
         operation.setSession(session);
 
@@ -126,11 +126,9 @@ public class JSchScpOperationTest {
      * Test of getSession method, of class JSchScpOperation
      *
      * When hostname is blank.
-     *
-     * @throws net.kemitix.kxssh.SshException
      */
     @Test(expected = SshException.class)
-    public void testInitSessionBlankHostname() throws SshException {
+    public void testInitSessionBlankHostname() {
         //given
         when(connectionProperties.getHostname()).thenReturn("");
 
@@ -145,11 +143,9 @@ public class JSchScpOperationTest {
      * Test of getSession method, of class JSchScpOperation
      *
      * When hostname is null.
-     *
-     * @throws net.kemitix.kxssh.SshException
      */
     @Test(expected = SshException.class)
-    public void testInitSessionNullHostname() throws SshException {
+    public void testInitSessionNullHostname() {
         //given
         when(connectionProperties.getHostname()).thenReturn(null);
 
@@ -165,11 +161,10 @@ public class JSchScpOperationTest {
      *
      * When username is blank.
      *
-     * @throws net.kemitix.kxssh.SshException
      * @throws com.jcraft.jsch.JSchException
      */
     @Test
-    public void testInitSessionBlankUsername() throws SshException, JSchException {
+    public void testInitSessionBlankUsername() throws JSchException {
         //given
         when(jsch.getSession(any(), eq(hostname))).thenReturn(session);
         when(authentication.getUsername()).thenReturn("");
@@ -188,11 +183,10 @@ public class JSchScpOperationTest {
      *
      * When username is null.
      *
-     * @throws net.kemitix.kxssh.SshException
      * @throws com.jcraft.jsch.JSchException
      */
     @Test
-    public void testInitSessionNullUsername() throws SshException, JSchException {
+    public void testInitSessionNullUsername() throws JSchException {
         //given
         when(jsch.getSession(any(), eq(hostname))).thenReturn(session);
         when(authentication.getUsername()).thenReturn(null);
@@ -212,10 +206,9 @@ public class JSchScpOperationTest {
      * Throw JSchException for an Unknown Host Key on session.connect()
      *
      * @throws com.jcraft.jsch.JSchException
-     * @throws net.kemitix.kxssh.SshException
      */
     @Test(expected = SshException.class)
-    public void testInitSessionJSchExceptionUnknownHostKey() throws JSchException, SshException {
+    public void testInitSessionJSchExceptionUnknownHostKey() throws JSchException {
         //given
         doThrow(new JSchException("UnknownHostKey")).when(session).connect();
 
@@ -235,10 +228,9 @@ public class JSchScpOperationTest {
      * Throw JSchException on session.connect()
      *
      * @throws com.jcraft.jsch.JSchException
-     * @throws net.kemitix.kxssh.SshException
      */
     @Test(expected = SshException.class)
-    public void testInitSessionJSchException() throws JSchException, SshException {
+    public void testInitSessionJSchException() throws JSchException {
         //given
         doThrow(new JSchException("another message")).when(session).connect();
 
@@ -269,12 +261,11 @@ public class JSchScpOperationTest {
     /**
      * Test of getExecIOChannel method, of class JSchScpOperation
      *
-     * @throws net.kemitix.kxssh.SshException
      * @throws com.jcraft.jsch.JSchException
      * @throws java.io.IOException
      */
     @Test
-    public void testGetExecIOChannel() throws SshException, JSchException, IOException {
+    public void testGetExecIOChannel() throws IOException, JSchException {
         //given
         operation.setIoChannel(null);
         when(session.openChannel("exec")).thenReturn(channel);
@@ -294,10 +285,9 @@ public class JSchScpOperationTest {
      * Test of getJSch method, of class JSchScpOperation
      *
      * @throws com.jcraft.jsch.JSchException
-     * @throws net.kemitix.kxssh.SshException
      */
     @Test(expected = RuntimeException.class)
-    public void testGetJSchThrowsException() throws JSchException, SshException {
+    public void testGetJSchThrowsException() throws JSchException {
         //given
         when(jschFactory.build()).thenThrow(JSchException.class);
 

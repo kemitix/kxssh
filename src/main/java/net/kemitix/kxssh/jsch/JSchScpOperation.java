@@ -50,10 +50,8 @@ public abstract class JSchScpOperation implements SshStatusProvider {
      * @param authentication the authentication details
      *
      * @return the JSCH object
-     *
-     * @throws SshException if there is an error creating the JSCH object
      */
-    protected JSch getJSch(SshAuthentication authentication) throws SshException {
+    protected JSch getJSch(SshAuthentication authentication) {
         try {
             return jschFactory
                     .knownHosts(knownHosts)
@@ -72,10 +70,8 @@ public abstract class JSchScpOperation implements SshStatusProvider {
      * commands.
      *
      * @return the JSCH IO Channel
-     *
-     * @throws SshException if there is and error creating the IO channel
      */
-    protected JSchIOChannel getExecIOChannel() throws SshException {
+    protected JSchIOChannel getExecIOChannel() {
         if (ioChannel == null) {
             ioChannel = JSchIOChannel.createExecIOChannel(getSession());
             ioChannel.setStatusListener(statusListener);
@@ -107,11 +103,8 @@ public abstract class JSchScpOperation implements SshStatusProvider {
      * Creates, as needed, the session.
      *
      * @return the JSCH session
-     *
-     * @throws SshException if there is an error with the remote hostname,
-     *                      authentication or the host is not known
      */
-    protected Session getSession() throws SshException {
+    protected Session getSession() {
         if (session != null) {
             return session;
         }

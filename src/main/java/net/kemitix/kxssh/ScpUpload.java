@@ -14,9 +14,7 @@ public interface ScpUpload extends SshStatusProvider {
      *
      * @param localFile      the file to be uploaded
      * @param remoteFilename the file to save as on the remote server
-     *
-     * @throws SshException if there is an error in the transfer
      */
-    void upload(File localFile, String remoteFilename) throws SshException;
+    void upload(File localFile, String remoteFilename);
 
 }

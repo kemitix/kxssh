@@ -1,14 +1,16 @@
 package net.kemitix.kxssh.jsch;
 
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.JSchException;
 import net.kemitix.kxssh.SshAuthentication;
 import net.kemitix.kxssh.SshException;
-import static org.junit.Assert.assertNotNull;
+
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.BlockJUnit4ClassRunner;
+
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 
 @RunWith(BlockJUnit4ClassRunner.class)
@@ -26,11 +28,10 @@ public class JSchFactoryTest {
      *
      * No known hosts or authenticate - invalid
      *
-     * @throws net.kemitix.kxssh.SshException
      * @throws com.jcraft.jsch.JSchException
      */
     @Test(expected = SshException.class)
-    public void testBuild() throws SshException, JSchException {
+    public void testBuild() throws JSchException {
         //given
 
         //when
@@ -44,11 +45,10 @@ public class JSchFactoryTest {
      *
      * Set Known Hosts but no authenticate - still invalid
      *
-     * @throws net.kemitix.kxssh.SshException
      * @throws com.jcraft.jsch.JSchException
      */
     @Test(expected = SshException.class)
-    public void testBuildKnownHosts() throws SshException, JSchException {
+    public void testBuildKnownHosts() throws JSchException {
         //given
         String knownHosts = "~/.ssh/known_hosts";
 
@@ -65,11 +65,10 @@ public class JSchFactoryTest {
      *
      * With authenticate - valid
      *
-     * @throws net.kemitix.kxssh.SshException
      * @throws com.jcraft.jsch.JSchException
      */
     @Test
-    public void testBuildAuthentication() throws SshException, JSchException {
+    public void testBuildAuthentication() throws JSchException {
         //given
         SshAuthentication authentication = mock(SshAuthentication.class);
 

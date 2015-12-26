@@ -5,7 +5,7 @@ package net.kemitix.kxssh;
  *
  * @author pcampbell
  */
-public class SshException extends Exception {
+public class SshException extends RuntimeException {
 
     /**
      * Constructor.

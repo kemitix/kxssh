@@ -50,11 +50,8 @@ public class JSchIOChannel implements SshStatusProvider {
      * @param session the session for the IO channel
      *
      * @return the JSCH IO Channel
-     *
-     * @throws SshException if there is an error opening the exec channel or
-     *                      getting the IO streams from the opened channel
      */
-    public static JSchIOChannel createExecIOChannel(Session session) throws SshException {
+    public static JSchIOChannel createExecIOChannel(Session session) {
         JSchIOChannel ioChannel = new JSchIOChannel();
         try {
             ioChannel.setChannel(session.openChannel("exec"));
@@ -89,10 +86,8 @@ public class JSchIOChannel implements SshStatusProvider {
      * Sets the command to be executed.
      *
      * @param remoteCommand the command
-     *
-     * @throws SshException not thrown
      */
-    public void setExecCommand(String remoteCommand) throws SshException {
+    public void setExecCommand(String remoteCommand) {
         ((ChannelExec) channel).setCommand(remoteCommand);
     }
 
@@ -107,10 +102,8 @@ public class JSchIOChannel implements SshStatusProvider {
 
     /**
      * Attempts to connect the IO channel.
-     *
-     * @throws SshException if there is an error connecting the channel
      */
-    public void connect() throws SshException {
+    public void connect() {
         if (!isConnected()) {
             try {
                 channel.connect();
@@ -132,10 +125,8 @@ public class JSchIOChannel implements SshStatusProvider {
     /**
      * Ensures that the IO channel is connected and throws an
      * {@link SshException} if it is not.
-     *
-     * @throws SshException if IO channels are not connected
      */
-    private void requireConnection() throws SshException {
+    private void requireConnection() {
         if (!isConnected()) {
             throw new SshException("Not connected to channel");
         }
@@ -154,11 +145,8 @@ public class JSchIOChannel implements SshStatusProvider {
      *
      * @return a read reply object containing the status of the read and the
      *         bytes, if any, read
-     *
-     * @throws SshException if the stream reaches the end-of-file or there is
-     *                      error reading from the remote end of the channel
      */
-    public IOChannelReadReply read(int length) throws SshException {
+    public IOChannelReadReply read(int length) {
         requireConnection();
         byte[] buffer = new byte[length];
         int bytesRead;
@@ -180,10 +168,9 @@ public class JSchIOChannel implements SshStatusProvider {
      * @param offset where to start from in the buffer
      * @param length the number of bytes to be written
      *
-     * @throws SshException if the channel is not connected
-     * @throws IOException  if there is an error writing to the channel
+     * @throws IOException if there is an error writing to the channel
      */
-    void write(byte[] buffer, int offset, int length) throws IOException, SshException {
+    void write(byte[] buffer, int offset, int length) throws IOException {
         requireConnection();
         output.write(buffer, offset, length);
     }
@@ -191,10 +178,9 @@ public class JSchIOChannel implements SshStatusProvider {
     /**
      * Flushes the IO channel's output stream.
      *
-     * @throws SshException if the channel is not connected
-     * @throws IOException  if there is an error on the channel
+     * @throws IOException if there is an error on the channel
      */
-    void flush() throws IOException, SshException {
+    void flush() throws IOException {
         requireConnection();
         output.flush();
     }
@@ -213,11 +199,8 @@ public class JSchIOChannel implements SshStatusProvider {
      * Reads the status from the IO channel's input stream.
      *
      * @return the status
-     *
-     * @throws SshException if the channel is in error or there is an error
-     *                      reading the status
      */
-    protected int checkStatus() throws SshException {
+    protected int checkStatus() {
         try {
             int status = input.read();
             switch (status) {
@@ -240,10 +223,9 @@ public class JSchIOChannel implements SshStatusProvider {
      *
      * @return the line read
      *
-     * @throws IOException  if there is an error reading from the input stream
-     * @throws SshException if the IO channel is not connected
+     * @throws IOException if there is an error reading from the input stream
      */
-    public String readToEol() throws IOException, SshException {
+    public String readToEol() throws IOException {
         return readToEol('\n');
     }
 
@@ -255,10 +237,9 @@ public class JSchIOChannel implements SshStatusProvider {
      *
      * @return the line read
      *
-     * @throws IOException  if there is an error reading from the input stream
-     * @throws SshException if the IO channel is not connected
+     * @throws IOException if there is an error reading from the input stream
      */
-    public String readToEol(char terminator) throws IOException, SshException {
+    public String readToEol(char terminator) throws IOException {
         requireConnection();
         StringBuilder sb = new StringBuilder();
         int c;
@@ -274,10 +255,8 @@ public class JSchIOChannel implements SshStatusProvider {
 
     /**
      * Notify the remote server that we are ready.
-     *
-     * @throws SshException if the IO channel is not connected
      */
-    protected void notifyReady() throws SshException {
+    protected void notifyReady() {
         requireConnection();
         byte[] buf = new byte[1];
         buf[0] = 0; // send '\0' - null
@@ -295,10 +274,9 @@ public class JSchIOChannel implements SshStatusProvider {
      *
      * @return the scp protocol command
      *
-     * @throws IOException  if there is an error reading or parsing the command
-     * @throws SshException if the IO channel is not connected
+     * @throws IOException if there is an error reading or parsing the command
      */
-    protected ScpCommand readScpCommand() throws IOException, SshException {
+    protected ScpCommand readScpCommand() throws IOException {
         String commandLine = readToEol(ScpCommand.TERMINATOR);
         ScpCommand scpCommand = ScpCommand.parse(commandLine);
         return scpCommand;
@@ -311,11 +289,8 @@ public class JSchIOChannel implements SshStatusProvider {
      *
      * @param stream the stream to write to
      * @param length the number of bytes to write
-     *
-     * @throws SshException if there is an error reading from the input stream
-     *                      or writing to the supplied output stream
      */
-    void writeToStream(OutputStream stream, long length) throws SshException {
+    void writeToStream(OutputStream stream, long length) {
         long remaining = length;
         updateProgress(0, length);
         do {
@@ -342,11 +317,10 @@ public class JSchIOChannel implements SshStatusProvider {
      * @param stream the stream to read from
      * @param length the number of bytes to read
      *
-     * @throws IOException  if there is an error reading from the supplied input
-     *                      stream of writing to the output stream
-     * @throws SshException not thrown
+     * @throws IOException if there is an error reading from the supplied input
+     *                     stream of writing to the output stream
      */
-    void readFromStream(InputStream stream, long length) throws IOException, SshException {
+    void readFromStream(InputStream stream, long length) throws IOException {
         byte[] buffer = new byte[BLOCK_SIZE];
         long remaining = length;
         updateProgress(0, length);

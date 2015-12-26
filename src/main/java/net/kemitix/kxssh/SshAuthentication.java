@@ -38,9 +38,7 @@ public abstract class SshAuthentication {
      * Prepare the JSCH with the appropriate authentication if needed.
      *
      * @param jsch the JSCH to be prepared
-     *
-     * @throws SshException if there is an error
      */
-    public abstract void prepare(JSch jsch) throws SshException;
+    public abstract void prepare(JSch jsch);
 
 }

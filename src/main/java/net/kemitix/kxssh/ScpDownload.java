@@ -14,9 +14,7 @@ public interface ScpDownload extends SshStatusProvider {
      *
      * @param remoteFilename the file on the remote server to be downloaded
      * @param localFile      the file to save the remote file as
-     *
-     * @throws SshException if there is an error in the transfer
      */
-    void download(String remoteFilename, File localFile) throws SshException;
+    void download(String remoteFilename, File localFile);
 
 }

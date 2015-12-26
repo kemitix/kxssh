@@ -31,7 +31,7 @@ class JSchScpUpload extends JSchScpOperation implements ScpUpload {
     }
 
     @Override
-    public void upload(File localFile, String remoteFilename) throws SshException {
+    public void upload(File localFile, String remoteFilename) {
         byte[] fileMode = new byte[4];
         fileMode[0] = '0';
         fileMode[1] = '6';
@@ -47,12 +47,8 @@ class JSchScpUpload extends JSchScpOperation implements ScpUpload {
      * @param remoteFilename the file name on the remote server to upload to
      * @param fileMode       the Unix file permissions to be set on the uploaded
      *                       file
-     *
-     * @throws SshException if there is an error getting the IO Channel,
-     *                      connecting, checking the status, reading or writing
-     *                      to the channel or reading from the local file
      */
-    public void upload(File localFile, String remoteFilename, byte[] fileMode) throws SshException {
+    public void upload(File localFile, String remoteFilename, byte[] fileMode) {
         updateStatus(SshOperationStatus.STARTING);
         JSchIOChannel ioChannel = getExecIOChannel();
 
@@ -94,10 +90,8 @@ class JSchScpUpload extends JSchScpOperation implements ScpUpload {
      * @param localFile the file the stream should read from
      *
      * @return the input stream
-     *
-     * @throws SshException if there is an error opening the file
      */
-    private InputStream getInputStream(File localFile) throws SshException {
+    private InputStream getInputStream(File localFile) {
         try {
             return ioFactory.createFileInputStream(localFile);
         } catch (FileNotFoundException ex) {
