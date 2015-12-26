@@ -65,9 +65,6 @@ public class JSchSftpClientTest {
         when(jSchFactory.build()).thenReturn(jsch);
         when(jsch.getSession(username, hostname)).thenReturn(session);
 
-        download.setJschFactory(jSchFactory);
-        upload.setJschFactory(jSchFactory);
-
         client = new JSchSftpClient(connectionProperties);
         client.setDownload(download);
         client.setUpload(upload);

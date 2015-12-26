@@ -4,6 +4,7 @@ import net.kemitix.kxssh.ScpUpload;
 import net.kemitix.kxssh.SshConnectionProperties;
 import net.kemitix.kxssh.SshErrorStatus;
 import net.kemitix.kxssh.SshException;
+import net.kemitix.kxssh.SshIOFactory;
 import net.kemitix.kxssh.SshOperationStatus;
 import net.kemitix.kxssh.scp.ScpCopyCommand;
 
@@ -26,9 +27,14 @@ class JSchScpUpload extends JSchScpOperation implements ScpUpload {
      * Constructor.
      *
      * @param connectionProperties the remote host and authentication details
+     * @param jschFactory          the JSCH factory
+     * @param sshIOFactory         the SSH IO factory
      */
-    JSchScpUpload(final SshConnectionProperties connectionProperties) {
-        super(connectionProperties);
+    JSchScpUpload(
+            final SshConnectionProperties connectionProperties,
+            final JSchFactory jschFactory,
+            final SshIOFactory sshIOFactory) {
+        super(connectionProperties, jschFactory, sshIOFactory);
     }
 
     @Override
@@ -92,7 +98,7 @@ class JSchScpUpload extends JSchScpOperation implements ScpUpload {
      */
     private InputStream getInputStream(final File localFile) {
         try {
-            return ioFactory.createFileInputStream(localFile);
+            return getIoFactory().createFileInputStream(localFile);
         } catch (FileNotFoundException ex) {
             updateStatus(SshErrorStatus.FILE_OPEN_ERROR);
             throw new SshException(ERROR_FILE_LOCAL_OPEN, ex);

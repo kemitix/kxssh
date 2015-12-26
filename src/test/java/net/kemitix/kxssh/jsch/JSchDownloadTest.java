@@ -49,11 +49,11 @@ public class JSchDownloadTest {
         listener = mock(SshStatusListener.class);
         factory = mock(SshIOFactory.class);
         outputStream = mock(FileOutputStream.class);
-        download = new JSchScpDownload(connectionProperties);
+        download = new JSchScpDownload(connectionProperties, new JSchFactory(),
+                factory);
         download.setSession(session);
         download.setIoChannel(ioChannel);
         download.setStatusListener(listener);
-        download.setIoFactory(factory);
     }
 
     /**

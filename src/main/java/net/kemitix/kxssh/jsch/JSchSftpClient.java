@@ -4,6 +4,7 @@ import net.kemitix.kxssh.ScpDownload;
 import net.kemitix.kxssh.ScpUpload;
 import net.kemitix.kxssh.SftpClient;
 import net.kemitix.kxssh.SshConnectionProperties;
+import net.kemitix.kxssh.SshIOFactory;
 import net.kemitix.kxssh.SshStatus;
 import net.kemitix.kxssh.SshStatusListener;
 
@@ -43,7 +44,8 @@ public class JSchSftpClient implements SftpClient {
      */
     protected void requireDownload() {
         if (download == null) {
-            download = new JSchScpDownload(connectionProperties);
+            download = new JSchScpDownload(connectionProperties,
+                    new JSchFactory(), new SshIOFactory());
             download.setStatusListener(statusListener);
         }
     }
@@ -59,7 +61,8 @@ public class JSchSftpClient implements SftpClient {
      */
     protected void requireUpload() {
         if (upload == null) {
-            upload = new JSchScpUpload(connectionProperties);
+            upload = new JSchScpUpload(connectionProperties,
+                    new JSchFactory(), new SshIOFactory());
             upload.setStatusListener(statusListener);
         }
     }

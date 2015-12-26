@@ -67,7 +67,8 @@ public class JSchScpUploadTest {
         input = mock(FileInputStream.class);
         output = mock(FileOutputStream.class);
         connectionProperties = mock(SshConnectionProperties.class);
-        upload = new JSchScpUpload(connectionProperties);
+        upload = new JSchScpUpload(connectionProperties, jschFactory,
+                ioFactory);
 
         byte[] buffer = "test file".getBytes("UTF-8");
         new FileOutputStream(localFile).write(buffer);
@@ -162,7 +163,6 @@ public class JSchScpUploadTest {
         //given
         upload.setStatusListener(listener);
         upload.setIoChannel(ioChannel);
-        upload.setIoFactory(ioFactory);
         when(ioFactory.createFileInputStream(any())).thenThrow(FileNotFoundException.class);
 
         //when

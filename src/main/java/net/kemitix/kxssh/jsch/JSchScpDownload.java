@@ -4,6 +4,7 @@ import net.kemitix.kxssh.ScpDownload;
 import net.kemitix.kxssh.SshConnectionProperties;
 import net.kemitix.kxssh.SshErrorStatus;
 import net.kemitix.kxssh.SshException;
+import net.kemitix.kxssh.SshIOFactory;
 import net.kemitix.kxssh.SshOperationStatus;
 import net.kemitix.kxssh.scp.ScpCommand;
 import net.kemitix.kxssh.scp.ScpCopyCommand;
@@ -28,9 +29,14 @@ public class JSchScpDownload extends JSchScpOperation implements ScpDownload {
      * Constructor.
      *
      * @param connectionProperties the remote host and authentication details
+     * @param jschFactory          the JSCH factory
+     * @param sshIOFactory         the SSH IO factory
      */
-    public JSchScpDownload(final SshConnectionProperties connectionProperties) {
-        super(connectionProperties);
+    public JSchScpDownload(
+            final SshConnectionProperties connectionProperties,
+            final JSchFactory jschFactory,
+            final SshIOFactory sshIOFactory) {
+        super(connectionProperties, jschFactory, sshIOFactory);
     }
 
     private static final String ERROR_FILE_LOCAL_OPEN
@@ -96,7 +102,7 @@ public class JSchScpDownload extends JSchScpOperation implements ScpDownload {
      */
     private FileOutputStream getOutputStream(final File localFile) {
         try {
-            return ioFactory.createFileOutputStream(localFile);
+            return getIoFactory().createFileOutputStream(localFile);
         } catch (FileNotFoundException ex) {
             updateStatus(SshErrorStatus.FILE_OPEN_ERROR);
             throw new SshException(ERROR_FILE_LOCAL_OPEN, ex);

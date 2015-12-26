@@ -63,7 +63,8 @@ public class JSchScpOperationTest {
         inputStream = mock(InputStream.class);
         ioChannel = mock(JSchIOChannel.class);
 
-        operation = new JSchScpOperation(connectionProperties) {
+        operation = new JSchScpOperation(connectionProperties, jschFactory,
+                ioFactory) {
         };
 
         knownHosts = "src/test/resources/known_hosts";
@@ -73,8 +74,6 @@ public class JSchScpOperationTest {
 
         operation.setStatusListener(listener);
         operation.setKnownHosts(knownHosts);
-        operation.setJschFactory(jschFactory);
-        operation.setIoFactory(ioFactory);
 
         when(connectionProperties.getAuthentication()).thenReturn(authentication);
         when(authentication.getUsername()).thenReturn(username);

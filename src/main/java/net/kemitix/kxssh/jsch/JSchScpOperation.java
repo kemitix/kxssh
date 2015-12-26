@@ -12,6 +12,8 @@ import net.kemitix.kxssh.SshStatusProvider;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.java.Log;
 
@@ -28,21 +30,27 @@ public abstract class JSchScpOperation implements SshStatusProvider {
 
     private String knownHosts = "~/.ssh/known_hosts";
 
-    protected final SshConnectionProperties connectionProperties;
+    private final SshConnectionProperties connectionProperties;
 
-    protected SshIOFactory ioFactory;
+    @Getter(AccessLevel.PROTECTED)
+    private final SshIOFactory ioFactory;
 
-    private JSchFactory jschFactory;
+    private final JSchFactory jFactory;
 
     /**
      * Constructor.
      *
      * @param connectionProps the remote host and authentication details
+     * @param jschFactory     the JSCH factory
+     * @param sshIOFactory    the SSH IO factory
      */
-    public JSchScpOperation(final SshConnectionProperties connectionProps) {
-        this.connectionProperties = connectionProps;
-        jschFactory = new JSchFactory();
-        ioFactory = new SshIOFactory();
+    public JSchScpOperation(
+            final SshConnectionProperties connectionProps,
+            final JSchFactory jschFactory,
+            final SshIOFactory sshIOFactory) {
+        connectionProperties = connectionProps;
+        jFactory = jschFactory;
+        ioFactory = sshIOFactory;
     }
 
     /**
@@ -54,7 +62,7 @@ public abstract class JSchScpOperation implements SshStatusProvider {
      */
     protected JSch getJSch(final SshAuthentication authentication) {
         try {
-            return jschFactory
+            return jFactory
                     .knownHosts(knownHosts)
                     .authenticate(authentication)
                     .build();
