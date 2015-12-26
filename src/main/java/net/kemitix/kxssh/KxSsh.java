@@ -7,7 +7,7 @@ import net.kemitix.kxssh.jsch.JSchSftpClient;
  *
  * @author pcampbell
  */
-public class KxSsh {
+public interface KxSsh {
 
     /**
      * Creates an {@link SftpClient} for a host using username/password
@@ -19,7 +19,7 @@ public class KxSsh {
      *
      * @return an {@link SftpClient}
      */
-    public static SftpClient getSftpClient(
+    static SftpClient getSftpClient(
             final String hostname,
             final String username,
             final String password) {
@@ -41,7 +41,7 @@ public class KxSsh {
      *
      * @return an {@link SftpClient}
      */
-    public static SftpClient getSftpClient(
+    static SftpClient getSftpClient(
             final String hostname,
             final String username,
             final String privateKey,
@@ -63,7 +63,7 @@ public class KxSsh {
      *
      * @return an {@link SftpClient}
      */
-    private static SftpClient getAuthenticatedClient(
+    static SftpClient getAuthenticatedClient(
             final String hostname,
             final SshAuthentication authentication) {
         SshConnectionProperties connectionProperties
