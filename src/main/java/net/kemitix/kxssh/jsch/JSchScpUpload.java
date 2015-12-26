@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 
 /**
  * Implementation of the SCP Upload operation using JCSH.
@@ -33,12 +34,11 @@ class JSchScpUpload extends JSchScpOperation implements ScpUpload {
 
     @Override
     public void upload(final File localFile, final String remoteFilename) {
-        byte[] fileMode = new byte[4];
-        fileMode[0] = '0';
-        fileMode[1] = '6';
-        fileMode[2] = '4';
-        fileMode[3] = '0';
-        upload(localFile, remoteFilename, fileMode);
+        try {
+            upload(localFile, remoteFilename, "0640".getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException ex) {
+            throw new SshException("Encoding Unix file mode permissions", ex);
+        }
     }
 
     /**

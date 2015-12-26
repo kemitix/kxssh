@@ -7,8 +7,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static java.lang.System.arraycopy;
-
 /**
  * Represent the SCP Time command for getting the modify and access times of a
  * file.
@@ -80,30 +78,10 @@ class ScpTimeCommand extends ScpCommand {
 
     @Override
     public byte[] getBytes() throws UnsupportedEncodingException {
-        String mTimeString = Long.toString(mtime);
-        String aTimeString = Long.toString(atime);
-
-        int bufferSize = 7 // command(1), delimiters(3), zeros(2), terminator(1)
-                + mTimeString.length()
-                + aTimeString.length();
-
-        byte[] buffer = new byte[bufferSize];
-
-        buffer[0] = 'T';
-
-        arraycopy(mTimeString.getBytes("UTF-8"), 0, buffer, 1,
-                mTimeString.length());
-        buffer[mTimeString.length() + 1] = ' ';
-        buffer[mTimeString.length() + 2] = '0';
-        buffer[mTimeString.length() + 3] = ' ';
-        arraycopy(aTimeString.getBytes("UTF-8"), 0, buffer,
-                mTimeString.length() + 4, aTimeString.length());
-        buffer[mTimeString.length() + aTimeString.length() + 4] = ' ';
-        buffer[mTimeString.length() + aTimeString.length() + 5] = '0';
-
-        buffer[bufferSize - 1] = TERMINATOR;
-
-        return buffer;
+        StringBuilder message = new StringBuilder();
+        message.append("T").append(Long.toString(mtime)).append(" 0 ")
+                .append(Long.toString(atime)).append(" 0").append(TERMINATOR);
+        return message.toString().getBytes("UTF-8");
     }
 
 }

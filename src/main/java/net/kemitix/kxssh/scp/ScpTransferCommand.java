@@ -18,7 +18,12 @@ import static java.lang.System.arraycopy;
 @Getter
 public abstract class ScpTransferCommand extends ScpCommand {
 
-    private final byte[] fileMode = new byte[4];
+    /**
+     * The number of bytes in the Unix file mode permissions array.
+     */
+    private static final int FILE_MODE_LENGTH = 4;
+
+    private final byte[] fileMode = new byte[FILE_MODE_LENGTH];
     private long length;
     private String name;
 
@@ -47,11 +52,11 @@ public abstract class ScpTransferCommand extends ScpCommand {
      * @param unixPermissions the file mode
      */
     public void setFileMode(final byte[] unixPermissions) {
-        if (unixPermissions.length != 4) {
+        if (unixPermissions.length != FILE_MODE_LENGTH) {
             throw new IllegalArgumentException(
                     "File mode must be 4-byte array");
         }
-        arraycopy(unixPermissions, 0, fileMode, 0, 4);
+        arraycopy(unixPermissions, 0, fileMode, 0, FILE_MODE_LENGTH);
     }
 
     /**
@@ -80,7 +85,8 @@ public abstract class ScpTransferCommand extends ScpCommand {
             throw new IllegalArgumentException(
                     "Illegal command format: " + commandLine);
         }
-        arraycopy(matcher.group("mode").getBytes("UTF-8"), 0, fileMode, 0, 4);
+        arraycopy(matcher.group("mode").getBytes("UTF-8"), 0, fileMode, 0,
+                FILE_MODE_LENGTH);
         length = Long.parseLong(matcher.group("length"));
         name = matcher.group("name");
     }
@@ -90,7 +96,7 @@ public abstract class ScpTransferCommand extends ScpCommand {
         String lengthString = Long.toString(getLength());
 
         // command(1), fileMode(4), delimiters(2), terminator(1)
-        int bufferSize = 8
+        int bufferSize = 1 + FILE_MODE_LENGTH + 2 + 1
                 + lengthString.length()
                 + getName().length();
 
@@ -102,13 +108,14 @@ public abstract class ScpTransferCommand extends ScpCommand {
             buffer[0] = 'D';
         }
 
-        arraycopy(getFileMode(), 0, buffer, 1, 4);
-        buffer[5] = ' ';
-        arraycopy(lengthString.getBytes("UTF-8"), 0, buffer, 6,
-                lengthString.length());
-        buffer[6 + lengthString.length()] = ' ';
+        arraycopy(getFileMode(), 0, buffer, 1, FILE_MODE_LENGTH);
+        buffer[FILE_MODE_LENGTH + 1] = ' ';
+        arraycopy(lengthString.getBytes("UTF-8"), 0, buffer,
+                FILE_MODE_LENGTH + 2, lengthString.length());
+        buffer[FILE_MODE_LENGTH + 2 + lengthString.length()] = ' ';
         arraycopy(getName().getBytes("UTF-8"), 0, buffer,
-                7 + lengthString.length(), getName().length());
+                1 + FILE_MODE_LENGTH + 2 + lengthString.length(),
+                getName().length());
 
         buffer[bufferSize - 1] = TERMINATOR;
 
