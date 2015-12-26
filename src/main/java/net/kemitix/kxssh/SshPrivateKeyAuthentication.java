@@ -23,7 +23,10 @@ public class SshPrivateKeyAuthentication extends SshAuthentication {
      * @param privateKey the private key to authenticate with
      * @param passPhrase the pass-phrase to open the private key
      */
-    public SshPrivateKeyAuthentication(String username, String privateKey, String passPhrase) {
+    public SshPrivateKeyAuthentication(
+            String username,
+            String privateKey,
+            String passPhrase) {
         super(username);
         this.privateKey = privateKey;
         this.passPhrase = passPhrase;

@@ -33,7 +33,8 @@ public class JSchScpDownload extends JSchScpOperation implements ScpDownload {
         super(connectionProperties);
     }
 
-    private static final String ERROR_FILE_LOCAL_OPEN = "Error opening local file for writing";
+    private static final String ERROR_FILE_LOCAL_OPEN
+            = "Error opening local file for writing";
     private static final String ERROR_ACK = "Error in ACK";
 
     @Override
@@ -76,7 +77,9 @@ public class JSchScpDownload extends JSchScpOperation implements ScpDownload {
         try {
             ScpCommand scpCommand = ioChannel.readScpCommand();
             if (!(scpCommand instanceof ScpCopyCommand)) {
-                throw new SshException("Unexpected SCP protocol command (only support single files)");
+                throw new SshException(
+                        "Unexpected SCP protocol command"
+                        + " (only support single files)");
             }
             return (ScpCopyCommand) scpCommand;
         } catch (IOException ex) {

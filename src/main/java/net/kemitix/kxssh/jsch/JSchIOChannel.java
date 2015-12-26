@@ -58,7 +58,8 @@ public class JSchIOChannel implements SshStatusProvider {
         } catch (JSchException ex) {
             throw new SshException("Error opening exec channel", ex);
         } catch (IOException ex) {
-            throw new SshException("Error getting Input/Output Streams from channel", ex);
+            throw new SshException(
+                    "Error getting Input/Output Streams from channel", ex);
         }
         return ioChannel;
     }
@@ -133,8 +134,10 @@ public class JSchIOChannel implements SshStatusProvider {
     }
 
     // READ, WRITE & FLUSH
-    private static final String ERROR_FILE_REMOTE_READ = "Error reading remote file";
-    private static final String ERROR_READ_EOF = "Error tried to read past end of file";
+    private static final String ERROR_FILE_REMOTE_READ
+            = "Error reading remote file";
+    private static final String ERROR_READ_EOF
+            = "Error tried to read past end of file";
 
     private IOChannelReadReplyFactory readReplyFactory;
 
@@ -251,7 +254,8 @@ public class JSchIOChannel implements SshStatusProvider {
     }
 
     // NOTIFY READY
-    private static final String ERROR_REMOTE_NOTIFY = "Error writing/flushing null on output stream";
+    private static final String ERROR_REMOTE_NOTIFY
+            = "Error writing/flushing null on output stream";
 
     /**
      * Notify the remote server that we are ready.
@@ -294,7 +298,8 @@ public class JSchIOChannel implements SshStatusProvider {
         long remaining = length;
         updateProgress(0, length);
         do {
-            int bytesToRead = Integer.min(BLOCK_SIZE, (int) Long.min(remaining, (long) Integer.MAX_VALUE));
+            int bytesToRead = Integer.min(BLOCK_SIZE,
+                    (int) Long.min(remaining, (long) Integer.MAX_VALUE));
             IOChannelReadReply reply = read(bytesToRead);
             int bytesRead = reply.getBytesRead();
             bytesRead = Integer.min(bytesRead, bytesToRead);
@@ -325,7 +330,8 @@ public class JSchIOChannel implements SshStatusProvider {
         long remaining = length;
         updateProgress(0, length);
         do {
-            int bytesToRead = Integer.min(BLOCK_SIZE, (int) Long.min(Integer.MAX_VALUE, remaining));
+            int bytesToRead = Integer.min(BLOCK_SIZE,
+                    (int) Long.min(Integer.MAX_VALUE, remaining));
             int bytesRead = stream.read(buffer, 0, bytesToRead);
             output.write(buffer, 0, bytesRead);
             output.flush();

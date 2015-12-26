@@ -31,7 +31,8 @@ public abstract class ScpCommand {
      * @throws UnsupportedEncodingException if there is an error decoding the
      *                                      command
      */
-    public static ScpCommand parse(String commandLine) throws UnsupportedEncodingException {
+    public static ScpCommand parse(String commandLine)
+            throws UnsupportedEncodingException {
         char commandPrefix = commandLine.charAt(0);
         switch (commandPrefix) {
             case 'C':
@@ -43,7 +44,8 @@ public abstract class ScpCommand {
             case 'T':
                 return new ScpTimeCommand(commandLine);
             default:
-                throw new IllegalArgumentException("Unknown command: " + commandLine);
+                throw new IllegalArgumentException(
+                        "Unknown command: " + commandLine);
         }
     }
 

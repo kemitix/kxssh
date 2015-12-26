@@ -19,7 +19,8 @@ import java.io.InputStream;
  */
 class JSchScpUpload extends JSchScpOperation implements ScpUpload {
 
-    private static final String ERROR_FILE_LOCAL_OPEN = "Error opening local file for writing";
+    private static final String ERROR_FILE_LOCAL_OPEN
+            = "Error opening local file for writing";
 
     /**
      * Constructor.

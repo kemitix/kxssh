@@ -7,6 +7,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static java.lang.System.arraycopy;
+
 /**
  * Abstract class representing an SCP file transfer command.
  *
@@ -34,7 +36,8 @@ public abstract class ScpTransferCommand extends ScpCommand {
      * @throws UnsupportedEncodingException if there is an error decoding the
      *                                      command
      */
-    public ScpTransferCommand(String commandLine) throws UnsupportedEncodingException {
+    public ScpTransferCommand(String commandLine)
+            throws UnsupportedEncodingException {
         parseCommandLine(commandLine);
     }
 
@@ -45,9 +48,10 @@ public abstract class ScpTransferCommand extends ScpCommand {
      */
     public void setFileMode(byte[] fileMode) {
         if (fileMode.length != 4) {
-            throw new IllegalArgumentException("File mode must be 4-byte array");
+            throw new IllegalArgumentException(
+                    "File mode must be 4-byte array");
         }
-        System.arraycopy(fileMode, 0, this.fileMode, 0, 4);
+        arraycopy(fileMode, 0, this.fileMode, 0, 4);
     }
 
     /**
@@ -65,16 +69,18 @@ public abstract class ScpTransferCommand extends ScpCommand {
      * @throws UnsupportedEncodingException if there is an error decoding the
      *                                      command
      */
-    private void parseCommandLine(String commandLine) throws UnsupportedEncodingException {
+    private void parseCommandLine(String commandLine)
+            throws UnsupportedEncodingException {
         // parse "mmmm length filename"
         Matcher matcher
                 = Pattern
                 .compile(getCommandPattern())
                 .matcher(commandLine);
         if (!matcher.matches()) {
-            throw new IllegalArgumentException("Illegal command format: " + commandLine);
+            throw new IllegalArgumentException(
+                    "Illegal command format: " + commandLine);
         }
-        System.arraycopy(matcher.group("mode").getBytes("UTF-8"), 0, fileMode, 0, 4);
+        arraycopy(matcher.group("mode").getBytes("UTF-8"), 0, fileMode, 0, 4);
         length = Long.parseLong(matcher.group("length"));
         name = matcher.group("name");
     }
@@ -83,7 +89,8 @@ public abstract class ScpTransferCommand extends ScpCommand {
     public byte[] getBytes() throws UnsupportedEncodingException {
         String lengthString = Long.toString(getLength());
 
-        int bufferSize = 8 // command(1), fileMode(4), delimiters(2), terminator(1)
+        // command(1), fileMode(4), delimiters(2), terminator(1)
+        int bufferSize = 8
                 + lengthString.length()
                 + getName().length();
 
@@ -95,11 +102,13 @@ public abstract class ScpTransferCommand extends ScpCommand {
             buffer[0] = 'D';
         }
 
-        System.arraycopy(getFileMode(), 0, buffer, 1, 4);
+        arraycopy(getFileMode(), 0, buffer, 1, 4);
         buffer[5] = ' ';
-        System.arraycopy(lengthString.getBytes("UTF-8"), 0, buffer, 6, lengthString.length());
+        arraycopy(lengthString.getBytes("UTF-8"), 0, buffer, 6,
+                lengthString.length());
         buffer[6 + lengthString.length()] = ' ';
-        System.arraycopy(getName().getBytes("UTF-8"), 0, buffer, 7 + lengthString.length(), getName().length());
+        arraycopy(getName().getBytes("UTF-8"), 0, buffer,
+                7 + lengthString.length(), getName().length());
 
         buffer[bufferSize - 1] = TERMINATOR;
 

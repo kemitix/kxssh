@@ -23,7 +23,8 @@ public class ScpCopyCommand extends ScpTransferCommand {
      * @throws UnsupportedEncodingException if there is an error decoding the
      *                                      command
      */
-    public ScpCopyCommand(String commandLine) throws UnsupportedEncodingException {
+    public ScpCopyCommand(String commandLine)
+            throws UnsupportedEncodingException {
         super(commandLine);
     }
 

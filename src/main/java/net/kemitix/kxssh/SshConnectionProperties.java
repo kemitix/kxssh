@@ -20,7 +20,9 @@ public class SshConnectionProperties {
      * @param hostname       the host to connect to
      * @param authentication the authentication details
      */
-    public SshConnectionProperties(String hostname, SshAuthentication authentication) {
+    public SshConnectionProperties(
+            String hostname,
+            SshAuthentication authentication) {
         this.hostname = hostname;
         this.authentication = authentication;
     }

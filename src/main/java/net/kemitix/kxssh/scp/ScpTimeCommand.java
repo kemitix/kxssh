@@ -7,6 +7,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static java.lang.System.arraycopy;
+
 /**
  * Represent the SCP Time command for getting the modify and access times of a
  * file.
@@ -33,7 +35,8 @@ class ScpTimeCommand extends ScpCommand {
      *
      * @throws UnsupportedEncodingException not thrown
      */
-    public ScpTimeCommand(String commandLine) throws UnsupportedEncodingException {
+    public ScpTimeCommand(String commandLine)
+            throws UnsupportedEncodingException {
         parseCommandLine(commandLine);
     }
 
@@ -44,14 +47,16 @@ class ScpTimeCommand extends ScpCommand {
      *
      * @throws UnsupportedEncodingException not thrown
      */
-    private void parseCommandLine(String commandLine) throws UnsupportedEncodingException {
+    private void parseCommandLine(String commandLine)
+            throws UnsupportedEncodingException {
         // parse "mtime 0 atime 0"
         Matcher matcher
                 = Pattern
                 .compile(getCommandPattern())
                 .matcher(commandLine);
         if (!matcher.matches()) {
-            throw new IllegalArgumentException("Illegal command format: " + commandLine);
+            throw new IllegalArgumentException(
+                    "Illegal command format: " + commandLine);
         }
         mtime = Long.parseLong(matcher.group("mtime"));
         atime = Long.parseLong(matcher.group("atime"));
@@ -86,11 +91,13 @@ class ScpTimeCommand extends ScpCommand {
 
         buffer[0] = 'T';
 
-        System.arraycopy(mTimeString.getBytes("UTF-8"), 0, buffer, 1, mTimeString.length());
+        arraycopy(mTimeString.getBytes("UTF-8"), 0, buffer, 1,
+                mTimeString.length());
         buffer[mTimeString.length() + 1] = ' ';
         buffer[mTimeString.length() + 2] = '0';
         buffer[mTimeString.length() + 3] = ' ';
-        System.arraycopy(aTimeString.getBytes("UTF-8"), 0, buffer, mTimeString.length() + 4, aTimeString.length());
+        arraycopy(aTimeString.getBytes("UTF-8"), 0, buffer,
+                mTimeString.length() + 4, aTimeString.length());
         buffer[mTimeString.length() + aTimeString.length() + 4] = ' ';
         buffer[mTimeString.length() + aTimeString.length() + 5] = '0';
 

@@ -13,15 +13,16 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import lombok.Setter;
+import lombok.extern.java.Log;
 
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Abstract class representing an SCP operation using JSCH.
  *
  * @author pcampbell
  */
+@Log
 @Setter
 public abstract class JSchScpOperation implements SshStatusProvider {
 
@@ -95,7 +96,8 @@ public abstract class JSchScpOperation implements SshStatusProvider {
 
     // SESSION
     private static final String ERROR_SESSION_HOST = "Error host not set";
-    private static final String ERROR_SESSION = "Error creating/connecting session";
+    private static final String ERROR_SESSION
+            = "Error creating/connecting session";
 
     private Session session;
 
@@ -108,7 +110,8 @@ public abstract class JSchScpOperation implements SshStatusProvider {
         if (session != null) {
             return session;
         }
-        SshAuthentication authentication = connectionProperties.getAuthentication();
+        SshAuthentication authentication
+                = connectionProperties.getAuthentication();
         String hostname = connectionProperties.getHostname();
         String username = authentication.getUsername();
 
@@ -126,10 +129,9 @@ public abstract class JSchScpOperation implements SshStatusProvider {
             session.connect();
         } catch (JSchException ex) {
             if (ex.getMessage().contains("UnknownHostKey")) {
-                Logger.getLogger(this.getClass().getName())
-                        .log(Level.SEVERE, "Try adding key with: ssh-keyscan -t rsa {0} >> {1}", new Object[]{
-                    hostname, knownHosts
-                });
+                log.log(Level.SEVERE,
+                        "Try adding key with: ssh-keyscan -t rsa {0} >> {1}",
+                        new Object[]{hostname, knownHosts});
             }
             updateStatus(SshErrorStatus.SESSION_ERROR);
             throw new SshException(ERROR_SESSION, ex);
