@@ -72,6 +72,7 @@ public class JSchIOChannel implements SshStatusProvider {
      * @throws IOException if there is an error getting either of the IO streams
      *                     from the channel
      */
+    @SuppressWarnings("hiddenfield")
     protected void setChannel(final Channel channel) throws IOException {
         this.channel = channel;
         if (channel == null) {
@@ -346,8 +347,8 @@ public class JSchIOChannel implements SshStatusProvider {
     private SshStatusListener statusListener;
 
     @Override
-    public void setStatusListener(final SshStatusListener statusListener) {
-        this.statusListener = statusListener;
+    public void setStatusListener(final SshStatusListener listener) {
+        statusListener = listener;
     }
 
     @Override

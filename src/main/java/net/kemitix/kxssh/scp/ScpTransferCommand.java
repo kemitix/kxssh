@@ -44,14 +44,14 @@ public abstract class ScpTransferCommand extends ScpCommand {
     /**
      * Sets the file's Unix file permissions mode.
      *
-     * @param fileMode the file mode
+     * @param unixPermissions the file mode
      */
-    public void setFileMode(final byte[] fileMode) {
-        if (fileMode.length != 4) {
+    public void setFileMode(final byte[] unixPermissions) {
+        if (unixPermissions.length != 4) {
             throw new IllegalArgumentException(
                     "File mode must be 4-byte array");
         }
-        arraycopy(fileMode, 0, this.fileMode, 0, 4);
+        arraycopy(unixPermissions, 0, fileMode, 0, 4);
     }
 
     /**

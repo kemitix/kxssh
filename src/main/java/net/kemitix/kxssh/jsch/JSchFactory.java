@@ -37,12 +37,12 @@ public class JSchFactory {
     /**
      * Sets the authentication method.
      *
-     * @param authentication the authentication method
+     * @param sshAuthentication the authentication method
      *
      * @return the factory to allow chained methods
      */
-    public JSchFactory authenticate(final SshAuthentication authentication) {
-        this.authentication = authentication;
+    public JSchFactory authenticate(final SshAuthentication sshAuthentication) {
+        authentication = sshAuthentication;
         return this;
     }
 
@@ -51,12 +51,12 @@ public class JSchFactory {
     /**
      * Sets the name of the known_hosts file.
      *
-     * @param knownHosts the filename of the known_hosts file
+     * @param knownHostsFilename the filename of the known_hosts file
      *
      * @return the factory to allow chained methods
      */
-    public JSchFactory knownHosts(final String knownHosts) {
-        this.knownHosts = knownHosts;
+    public JSchFactory knownHosts(final String knownHostsFilename) {
+        knownHosts = knownHostsFilename;
         return this;
     }
 }

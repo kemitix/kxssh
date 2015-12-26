@@ -26,10 +26,10 @@ public class JSchSftpClient implements SftpClient {
     /**
      * Constructor.
      *
-     * @param connectionProperties the remote host and authentication details
+     * @param connectionProps the remote host and authentication details
      */
-    public JSchSftpClient(final SshConnectionProperties connectionProperties) {
-        this.connectionProperties = connectionProperties;
+    public JSchSftpClient(final SshConnectionProperties connectionProps) {
+        connectionProperties = connectionProps;
     }
 
     @Override
@@ -68,8 +68,8 @@ public class JSchSftpClient implements SftpClient {
     private SshStatusListener statusListener;
 
     @Override
-    public void setStatusListener(final SshStatusListener statusListener) {
-        this.statusListener = statusListener;
+    public void setStatusListener(final SshStatusListener listener) {
+        statusListener = listener;
     }
 
     @Override

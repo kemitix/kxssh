@@ -17,14 +17,14 @@ public class SshConnectionProperties {
     /**
      * Constructor.
      *
-     * @param hostname       the host to connect to
-     * @param authentication the authentication details
+     * @param remoteHostname    the host to connect to
+     * @param sshAuthentication the authentication details
      */
     public SshConnectionProperties(
-            final String hostname,
-            final SshAuthentication authentication) {
-        this.hostname = hostname;
-        this.authentication = authentication;
+            final String remoteHostname,
+            final SshAuthentication sshAuthentication) {
+        hostname = remoteHostname;
+        authentication = sshAuthentication;
     }
 
 }

@@ -20,6 +20,7 @@ public class SshPasswordAuthentication extends SshAuthentication {
      * @param username the username to authenticate as
      * @param password the password the authenticate with
      */
+    @SuppressWarnings("hiddenfield")
     SshPasswordAuthentication(final String username, final String password) {
         super(username);
         this.password = password;

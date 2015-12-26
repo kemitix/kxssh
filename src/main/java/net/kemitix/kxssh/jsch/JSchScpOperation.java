@@ -143,8 +143,8 @@ public abstract class JSchScpOperation implements SshStatusProvider {
     private SshStatusListener statusListener;
 
     @Override
-    public void setStatusListener(final SshStatusListener statusListener) {
-        this.statusListener = statusListener;
+    public void setStatusListener(final SshStatusListener listener) {
+        statusListener = listener;
     }
 
     @Override
