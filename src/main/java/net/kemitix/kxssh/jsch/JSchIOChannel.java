@@ -1,5 +1,6 @@
 package net.kemitix.kxssh.jsch;
 
+import net.kemitix.kxssh.scp.ScpCommandFactory;
 import net.kemitix.kxssh.IOChannelReadReply;
 import net.kemitix.kxssh.IOChannelReadReplyFactory;
 import net.kemitix.kxssh.SshErrorStatus;
@@ -286,7 +287,7 @@ public class JSchIOChannel implements SshStatusProvider {
      */
     protected ScpCommand readScpCommand() throws IOException {
         String commandLine = readToEol(ScpCommand.TERMINATOR);
-        ScpCommand scpCommand = ScpCommand.parse(commandLine);
+        ScpCommand scpCommand = ScpCommandFactory.parse(commandLine);
         return scpCommand;
     }
 

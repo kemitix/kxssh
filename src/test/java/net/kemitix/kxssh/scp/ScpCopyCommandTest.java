@@ -122,7 +122,7 @@ public class ScpCopyCommandTest {
         String command = "C0764 1234 file name" + ScpCommand.TERMINATOR;
 
         //when
-        ScpCommand result = ScpCommand.parse(command);
+        ScpCommand result = ScpCommandFactory.parse(command);
 
         //then
         assertThat(result, is(instanceOf(ScpCopyCommand.class)));
@@ -144,7 +144,7 @@ public class ScpCopyCommandTest {
         String command = "C0764 1234file name" + ScpCommand.TERMINATOR;
 
         //when
-        ScpCommand.parse(command);
+        ScpCommandFactory.parse(command);
 
         //then
     }

@@ -1,12 +1,13 @@
 package net.kemitix.kxssh.scp;
 
-import java.io.UnsupportedEncodingException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.BlockJUnit4ClassRunner;
 
+import java.io.UnsupportedEncodingException;
+
 @RunWith(BlockJUnit4ClassRunner.class)
-public class ScpCommandTest {
+public class ScpCommandFactoryTest {
 
     /**
      * Test of parse method, of class ScpCommand.
@@ -18,7 +19,7 @@ public class ScpCommandTest {
         //given
 
         //when
-        ScpCommand.parse("X\n");
+        ScpCommandFactory.parse("X\n");
 
         //then
     }

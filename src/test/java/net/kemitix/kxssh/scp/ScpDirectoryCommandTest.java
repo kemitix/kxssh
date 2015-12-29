@@ -122,7 +122,7 @@ public class ScpDirectoryCommandTest {
         String command = "D0764 0 directory name" + ScpCommand.TERMINATOR;
 
         //when
-        ScpCommand result = ScpCommand.parse(command);
+        ScpCommand result = ScpCommandFactory.parse(command);
 
         //then
         assertThat(result, is(instanceOf(ScpDirectoryCommand.class)));
@@ -143,7 +143,7 @@ public class ScpDirectoryCommandTest {
         String command = "D0764 1234 directory name" + ScpCommand.TERMINATOR;
 
         //when
-        ScpCommand.parse(command);
+        ScpCommandFactory.parse(command);
 
         //then
     }

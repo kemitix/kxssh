@@ -1,13 +1,15 @@
 package net.kemitix.kxssh.scp;
 
-import java.io.UnsupportedEncodingException;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.BlockJUnit4ClassRunner;
+
+import java.io.UnsupportedEncodingException;
+
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 @RunWith(BlockJUnit4ClassRunner.class)
 public class ScpTimeCommandTest {
@@ -83,7 +85,7 @@ public class ScpTimeCommandTest {
         String command = "T1183828267 0 1183008267 0" + ScpCommand.TERMINATOR;
 
         //when
-        ScpCommand result = ScpCommand.parse(command);
+        ScpCommand result = ScpCommandFactory.parse(command);
 
         //then
         assertThat(result, is(instanceOf(ScpTimeCommand.class)));
@@ -104,7 +106,7 @@ public class ScpTimeCommandTest {
         String command = "T1183828267  1183008267 0" + ScpCommand.TERMINATOR;
 
         //when
-        ScpCommand.parse(command);
+        ScpCommandFactory.parse(command);
 
         //then
     }

@@ -1,13 +1,15 @@
 package net.kemitix.kxssh.scp;
 
-import java.io.UnsupportedEncodingException;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.BlockJUnit4ClassRunner;
+
+import java.io.UnsupportedEncodingException;
+
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 @RunWith(BlockJUnit4ClassRunner.class)
 public class ScpEndCommandTest {
@@ -49,7 +51,7 @@ public class ScpEndCommandTest {
         String command = "E\r";
 
         //when
-        ScpCommand result = ScpCommand.parse(command);
+        ScpCommand result = ScpCommandFactory.parse(command);
 
         //then
         assertThat(result, is(instanceOf(ScpEndCommand.class)));
