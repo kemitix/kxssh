@@ -5,6 +5,10 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import lombok.Getter;
 
+import java.io.FileNotFoundException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 /**
  * Represents authentication using a Private Key.
  *
@@ -28,6 +32,10 @@ public class SshPrivateKeyAuthentication extends SshAuthentication {
             final String sshPrivateKey,
             final String privateKeyPassPhrase) {
         super(username);
+        if (!Files.exists(Paths.get(sshPrivateKey))) {
+            throw new SshException("private key missing",
+                    new FileNotFoundException(sshPrivateKey));
+        }
         privateKey = sshPrivateKey;
         passPhrase = privateKeyPassPhrase;
     }

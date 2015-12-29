@@ -3,11 +3,16 @@ package net.kemitix.kxssh;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.mockito.Mockito;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -20,19 +25,26 @@ public class SshPrivateKeyAuthenticationTest {
 
     private SshPrivateKeyAuthentication authentication;
     private String username;
-    private String privateKey;
+    private Path privateKey;
     private String passPhrase;
     private JSch jsch;
     private Session session;
 
     @Before
-    public void setUp() {
+    public void setUp() throws IOException {
         username = "username";
-        privateKey = "private key";
+        privateKey = Files.createTempFile("private", "key");
         passPhrase = "pass phrase";
-        authentication = new SshPrivateKeyAuthentication(username, privateKey, passPhrase);
-
+        authentication = new SshPrivateKeyAuthentication(username,
+                privateKey.toString(), passPhrase);
         jsch = mock(JSch.class);
+    }
+
+    @After
+    public void tearDown() throws IOException {
+        if (Files.exists(privateKey)) {
+            Files.delete(privateKey);
+        }
     }
 
     /**
@@ -48,7 +60,7 @@ public class SshPrivateKeyAuthenticationTest {
         authentication.prepare(jsch);
 
         //then
-        verify(jsch, times(1)).addIdentity(privateKey, passPhrase);
+        verify(jsch, times(1)).addIdentity(privateKey.toString(), passPhrase);
     }
 
     /**
@@ -63,7 +75,7 @@ public class SshPrivateKeyAuthenticationTest {
         //given
         Mockito.doThrow(JSchException.class)
                 .when(jsch)
-                .addIdentity(privateKey, passPhrase);
+                .addIdentity(privateKey.toString(), passPhrase);
 
         //when
         authentication.prepare(jsch);
@@ -95,7 +107,7 @@ public class SshPrivateKeyAuthenticationTest {
         String result = authentication.getPrivateKey();
 
         //then
-        assertThat(result, is(privateKey));
+        assertThat(result, is(privateKey.toString()));
     }
 
     /**
