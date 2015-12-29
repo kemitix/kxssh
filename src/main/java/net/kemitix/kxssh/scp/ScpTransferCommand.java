@@ -17,6 +17,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  */
 @Setter
 @Getter
+@SuppressWarnings("unused")
 public abstract class ScpTransferCommand extends ScpCommand {
 
     /**

@@ -11,6 +11,7 @@ import lombok.Getter;
  * @author pcampbell
  */
 @Getter
+@SuppressWarnings("unused")
 public abstract class SshAuthentication {
 
     /**

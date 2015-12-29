@@ -26,6 +26,7 @@ import java.util.logging.Level;
  */
 @Log
 @Setter
+@SuppressWarnings("unused")
 public abstract class JSchScpOperation implements SshStatusProvider {
 
     private String knownHosts = "~/.ssh/known_hosts";

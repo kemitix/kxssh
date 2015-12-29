@@ -31,6 +31,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  */
 @Setter
 @Getter
+@SuppressWarnings("unused")
 public class JSchIOChannel implements SshStatusProvider {
 
     private Channel channel;

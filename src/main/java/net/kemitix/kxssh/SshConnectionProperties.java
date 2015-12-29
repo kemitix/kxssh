@@ -9,6 +9,7 @@ import lombok.Getter;
  * @author pcampbell
  */
 @Getter
+@SuppressWarnings("unused")
 public class SshConnectionProperties {
 
     private final String hostname;
