@@ -7,7 +7,7 @@ import java.io.File;
  *
  * @author pcampbell
  */
-public interface ScpDownload extends SshStatusProvider {
+public interface ScpDownload {
 
     /**
      * Downloads the remote file and saves it as the local file.

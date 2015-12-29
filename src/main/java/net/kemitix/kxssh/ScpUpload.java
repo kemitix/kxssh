@@ -7,7 +7,7 @@ import java.io.File;
  *
  * @author pcampbell
  */
-public interface ScpUpload extends SshStatusProvider {
+public interface ScpUpload {
 
     /**
      * Uploads the local file to the remote server.

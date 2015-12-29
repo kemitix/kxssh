@@ -1,7 +1,5 @@
 package net.kemitix.kxssh.jsch;
 
-import net.kemitix.kxssh.ScpDownload;
-import net.kemitix.kxssh.ScpUpload;
 import net.kemitix.kxssh.SftpClient;
 import net.kemitix.kxssh.SshConnectionProperties;
 import net.kemitix.kxssh.SshIOFactory;
@@ -21,8 +19,8 @@ import java.io.File;
 public class JSchSftpClient implements SftpClient {
 
     private final SshConnectionProperties connectionProperties;
-    private ScpDownload download;
-    private ScpUpload upload;
+    private JSchScpDownload download;
+    private JSchScpUpload upload;
 
     /**
      * Constructor.
@@ -70,17 +68,30 @@ public class JSchSftpClient implements SftpClient {
     //STATUS LISTENER
     private SshStatusListener statusListener;
 
-    @Override
+    /**
+     * Set the listener to respond to status updates.
+     *
+     * @param listener the status listener
+     */
     public void setStatusListener(final SshStatusListener listener) {
         statusListener = listener;
     }
 
-    @Override
+    /**
+     * Notify the listener that the progress has updated.
+     *
+     * @param progress the current progress position
+     * @param total    the total that the progress is moving toward
+     */
     public void updateProgress(final long progress, final long total) {
         statusListener.onUpdateProgress(progress, total);
     }
 
-    @Override
+    /**
+     * Notify the listener that the status has updated.
+     *
+     * @param status the updated status
+     */
     public void updateStatus(final SshStatus status) {
         statusListener.onUpdateStatus(status);
     }
