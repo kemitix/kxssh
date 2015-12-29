@@ -1,13 +1,13 @@
 package net.kemitix.kxssh.jsch;
 
+import net.kemitix.kxssh.scp.ScpCommand;
+import net.kemitix.kxssh.scp.ScpCopyCommand;
 import net.kemitix.kxssh.ssh.IOChannelReadReply;
 import net.kemitix.kxssh.ssh.IOChannelReadReplyFactory;
 import net.kemitix.kxssh.ssh.SshErrorStatus;
 import net.kemitix.kxssh.ssh.SshException;
 import net.kemitix.kxssh.ssh.SshOperationStatus;
 import net.kemitix.kxssh.ssh.SshStatusListener;
-import net.kemitix.kxssh.scp.ScpCommand;
-import net.kemitix.kxssh.scp.ScpCopyCommand;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
@@ -31,6 +31,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.contains;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -336,17 +337,16 @@ public class JSchIOChannelTest {
      *
      * @throws java.io.IOException
      */
-    @Test(expected = SshException.class, timeout = 100L)
-    public void testCheckStatusIOEXception() throws IOException {
+    @Test(expected = SshException.class, timeout = 250L)
+    public void testCheckStatusIOException() throws IOException {
         //given
         ioChannel.setChannel(channel);
-        when(channel.isConnected()).thenReturn(true);
-        when(input.read()).thenThrow(IOException.class);
-
+        doReturn(true).when(channel).isConnected();
+        doThrow(IOException.class).when(input).read();
         //when
         ioChannel.checkStatus();
-
         //then
+        // SshException thrown
     }
 
     /**
