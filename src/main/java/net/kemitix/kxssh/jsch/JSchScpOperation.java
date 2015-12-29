@@ -1,13 +1,13 @@
 package net.kemitix.kxssh.jsch;
 
-import net.kemitix.kxssh.SshAuthentication;
-import net.kemitix.kxssh.SshConnectionProperties;
-import net.kemitix.kxssh.SshErrorStatus;
-import net.kemitix.kxssh.SshException;
-import net.kemitix.kxssh.SshIOFactory;
-import net.kemitix.kxssh.SshStatus;
-import net.kemitix.kxssh.SshStatusListener;
-import net.kemitix.kxssh.SshStatusProvider;
+import net.kemitix.kxssh.ssh.SshAuthentication;
+import net.kemitix.kxssh.ssh.SshConnectionProperties;
+import net.kemitix.kxssh.ssh.SshErrorStatus;
+import net.kemitix.kxssh.ssh.SshException;
+import net.kemitix.kxssh.ssh.SshIOFactory;
+import net.kemitix.kxssh.ssh.SshStatus;
+import net.kemitix.kxssh.ssh.SshStatusListener;
+import net.kemitix.kxssh.ssh.SshStatusProvider;
 
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;

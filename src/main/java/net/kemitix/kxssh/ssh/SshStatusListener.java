@@ -1,4 +1,4 @@
-package net.kemitix.kxssh;
+package net.kemitix.kxssh.ssh;
 
 /**
  * Interface for receiving the status of an SSH connection.
@@ -8,7 +8,7 @@ package net.kemitix.kxssh;
 public interface SshStatusListener {
 
     /**
-     * Called when a {@link net.kemitix.kxssh.SshStatusProvider} updates the
+     * Called when a {@link net.kemitix.kxssh.ssh.SshStatusProvider} updates the
      * progress.
      *
      * @param remaining the number of bytes still to be transfered
@@ -17,7 +17,7 @@ public interface SshStatusListener {
     void onUpdateProgress(long remaining, long filesize);
 
     /**
-     * Called when a {@link net.kemitix.kxssh.SshStatusProvider} updates the
+     * Called when a {@link net.kemitix.kxssh.ssh.SshStatusProvider} updates the
      * status.
      *
      * @param status the updated status

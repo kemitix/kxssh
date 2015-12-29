@@ -1,7 +1,7 @@
 package net.kemitix.kxssh.jsch;
 
-import net.kemitix.kxssh.IOChannelReadReply;
-import net.kemitix.kxssh.IOChannelReadReplyFactory;
+import net.kemitix.kxssh.ssh.IOChannelReadReply;
+import net.kemitix.kxssh.ssh.IOChannelReadReplyFactory;
 
 import org.junit.Before;
 import org.junit.Test;

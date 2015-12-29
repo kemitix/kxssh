@@ -1,4 +1,4 @@
-package net.kemitix.kxssh;
+package net.kemitix.kxssh.ssh;
 
 import lombok.Getter;
 import lombok.Setter;

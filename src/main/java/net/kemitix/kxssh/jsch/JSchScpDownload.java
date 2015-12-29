@@ -1,11 +1,11 @@
 package net.kemitix.kxssh.jsch;
 
-import net.kemitix.kxssh.ScpDownload;
-import net.kemitix.kxssh.SshConnectionProperties;
-import net.kemitix.kxssh.SshErrorStatus;
-import net.kemitix.kxssh.SshException;
-import net.kemitix.kxssh.SshIOFactory;
-import net.kemitix.kxssh.SshOperationStatus;
+import net.kemitix.kxssh.scp.ScpDownload;
+import net.kemitix.kxssh.ssh.SshConnectionProperties;
+import net.kemitix.kxssh.ssh.SshErrorStatus;
+import net.kemitix.kxssh.ssh.SshException;
+import net.kemitix.kxssh.ssh.SshIOFactory;
+import net.kemitix.kxssh.ssh.SshOperationStatus;
 import net.kemitix.kxssh.scp.ScpCommand;
 import net.kemitix.kxssh.scp.ScpCopyCommand;
 

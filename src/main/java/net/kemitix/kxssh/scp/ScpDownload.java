@@ -1,4 +1,4 @@
-package net.kemitix.kxssh;
+package net.kemitix.kxssh.scp;
 
 import java.io.File;
 

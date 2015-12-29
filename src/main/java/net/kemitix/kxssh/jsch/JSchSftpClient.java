@@ -1,10 +1,10 @@
 package net.kemitix.kxssh.jsch;
 
-import net.kemitix.kxssh.SftpClient;
-import net.kemitix.kxssh.SshConnectionProperties;
-import net.kemitix.kxssh.SshIOFactory;
-import net.kemitix.kxssh.SshStatus;
-import net.kemitix.kxssh.SshStatusListener;
+import net.kemitix.kxssh.ssh.SftpClient;
+import net.kemitix.kxssh.ssh.SshConnectionProperties;
+import net.kemitix.kxssh.ssh.SshIOFactory;
+import net.kemitix.kxssh.ssh.SshStatus;
+import net.kemitix.kxssh.ssh.SshStatusListener;
 
 import lombok.Setter;
 

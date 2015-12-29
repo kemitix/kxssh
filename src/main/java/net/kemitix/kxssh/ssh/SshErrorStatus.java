@@ -1,4 +1,4 @@
-package net.kemitix.kxssh;
+package net.kemitix.kxssh.ssh;
 
 /**
  * Enumerations of error statuses for an SSH connection.

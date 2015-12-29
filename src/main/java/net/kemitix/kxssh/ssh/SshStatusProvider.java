@@ -1,4 +1,4 @@
-package net.kemitix.kxssh;
+package net.kemitix.kxssh.ssh;
 
 /**
  * Interface for dispatching SSH Status updates.

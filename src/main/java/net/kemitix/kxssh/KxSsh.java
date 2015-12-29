@@ -1,5 +1,10 @@
 package net.kemitix.kxssh;
 
+import net.kemitix.kxssh.ssh.SftpClient;
+import net.kemitix.kxssh.ssh.SshAuthentication;
+import net.kemitix.kxssh.ssh.SshConnectionProperties;
+import net.kemitix.kxssh.ssh.SshPrivateKeyAuthentication;
+import net.kemitix.kxssh.ssh.SshPasswordAuthentication;
 import net.kemitix.kxssh.jsch.JSchSftpClient;
 
 /**

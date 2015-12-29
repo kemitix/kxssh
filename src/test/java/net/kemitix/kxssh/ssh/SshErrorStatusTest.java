@@ -1,7 +1,10 @@
-package net.kemitix.kxssh;
+package net.kemitix.kxssh.ssh;
+
+import net.kemitix.kxssh.ssh.SshErrorStatus;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.BlockJUnit4ClassRunner;

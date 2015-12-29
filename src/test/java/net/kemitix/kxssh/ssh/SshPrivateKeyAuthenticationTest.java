@@ -1,4 +1,7 @@
-package net.kemitix.kxssh;
+package net.kemitix.kxssh.ssh;
+
+import net.kemitix.kxssh.ssh.SshPrivateKeyAuthentication;
+import net.kemitix.kxssh.ssh.SshException;
 
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;

@@ -1,8 +1,11 @@
-package net.kemitix.kxssh;
+package net.kemitix.kxssh.ssh;
+
+import net.kemitix.kxssh.ssh.SshIOFactory;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

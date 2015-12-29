@@ -1,7 +1,12 @@
-package net.kemitix.kxssh;
+package net.kemitix.kxssh.ssh;
+
+import net.kemitix.kxssh.ssh.SshPasswordAuthentication;
+import net.kemitix.kxssh.ssh.SshConnectionProperties;
+import net.kemitix.kxssh.ssh.SshAuthentication;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

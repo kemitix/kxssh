@@ -1,4 +1,4 @@
-package net.kemitix.kxssh;
+package net.kemitix.kxssh.ssh;
 
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
@@ -21,7 +21,9 @@ public class SshPasswordAuthentication extends SshAuthentication {
      * @param password the password the authenticate with
      */
     @SuppressWarnings("hiddenfield")
-    SshPasswordAuthentication(final String username, final String password) {
+    public SshPasswordAuthentication(
+            final String username,
+            final String password) {
         super(username);
         this.password = password;
     }

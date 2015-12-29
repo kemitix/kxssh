@@ -1,13 +1,13 @@
 package net.kemitix.kxssh.jsch;
 
 import net.kemitix.kxssh.scp.ScpCommandFactory;
-import net.kemitix.kxssh.IOChannelReadReply;
-import net.kemitix.kxssh.IOChannelReadReplyFactory;
-import net.kemitix.kxssh.SshErrorStatus;
-import net.kemitix.kxssh.SshException;
-import net.kemitix.kxssh.SshStatus;
-import net.kemitix.kxssh.SshStatusListener;
-import net.kemitix.kxssh.SshStatusProvider;
+import net.kemitix.kxssh.ssh.IOChannelReadReply;
+import net.kemitix.kxssh.ssh.IOChannelReadReplyFactory;
+import net.kemitix.kxssh.ssh.SshErrorStatus;
+import net.kemitix.kxssh.ssh.SshException;
+import net.kemitix.kxssh.ssh.SshStatus;
+import net.kemitix.kxssh.ssh.SshStatusListener;
+import net.kemitix.kxssh.ssh.SshStatusProvider;
 import net.kemitix.kxssh.scp.ScpCommand;
 
 import com.jcraft.jsch.Channel;
